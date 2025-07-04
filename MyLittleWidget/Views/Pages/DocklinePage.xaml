@@ -9,45 +9,5 @@
     mc:Ignorable="d">
 
     <Canvas x:Name="RootCanvas" Background="Transparent">
-        <!--  辅助线  -->
-        <Line
-            x:Name="VerticalGuide1"
-            Stroke="DodgerBlue"
-            StrokeDashArray="4,2"
-            StrokeThickness="1"
-            Visibility="Collapsed" />
-        <Line
-            x:Name="VerticalGuide2"
-            Stroke="DodgerBlue"
-            StrokeDashArray="4,2"
-            StrokeThickness="1"
-            Visibility="Collapsed" />
-        <Line
-            x:Name="HorizontalGuide1"
-            Stroke="DodgerBlue"
-            StrokeDashArray="4,2"
-            StrokeThickness="1"
-            Visibility="Collapsed" />
-        <Line
-            x:Name="HorizontalGuide2"
-            Stroke="DodgerBlue"
-            StrokeDashArray="4,2"
-            StrokeThickness="1"
-            Visibility="Collapsed" />
-
-        <!--  可拖动的 Border  -->
-        <Border
-            x:Name="DraggableBorder"
-            Canvas.Left="{x:Bind ViewModel.PositionX, Mode=OneWay}"
-            Canvas.Top="{x:Bind ViewModel.PositionY, Mode=OneWay}"
-            Width="200"
-            Height="200"
-            Background="AliceBlue"
-            BorderBrush="Black"
-            BorderThickness="1"
-            CornerRadius="8"
-            PointerMoved="Border_PointerMoved"
-            PointerPressed="Border_PointerPressed"
-            PointerReleased="Border_PointerReleased" />
     </Canvas>
 </Page>

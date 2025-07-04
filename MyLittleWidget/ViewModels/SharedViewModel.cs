@@ -1,20 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MyLittleWidget.Custom;
 
 namespace MyLittleWidget.ViewModels;
 public partial class SharedViewModel : ObservableObject
 {
-    private static readonly SharedViewModel _viewModel = new SharedViewModel();
-    public static SharedViewModel ViewModel => _viewModel;
-    [ObservableProperty]
-    private double _positionX;
-
-    [ObservableProperty]
-    private double _positionY;
+    private static readonly SharedViewModel _instance = new SharedViewModel();
+    public static SharedViewModel Instance => _instance;
 
     [ObservableProperty]
     private double _scale = 1.0;
     [ObservableProperty]
     private bool _isDragging;
+    [ObservableProperty]
+    private WidgetBase _activeWidget;
+    // 定义组件
+    [ObservableProperty]
+    private ObservableCollection<WidgetBase> _widgetBases ;
     // 吸附的距离阈值
     private const double SnapThreshold = 10.0;
 
@@ -28,22 +29,32 @@ public partial class SharedViewModel : ObservableObject
         _verticalGuides = vertical;
         _horizontalGuides = horizontal;
     }
+    // 配置组件组
+    public void ConfigureWidget(ObservableCollection<WidgetBase> widget)
+    {
+        _widgetBases = widget;
+    }
 
     // 更新位置
-    public void UpdatePosition(double newX, double newY, double width, double height)
+    public void UpdateActiveWidgetPosition(double newX, double newY)
     {
-        var snappedPosition = CheckAndApplySnapping(newX, newY, width, height);
-        PositionX = snappedPosition.X;
-        PositionY = snappedPosition.Y;
+        if (ActiveWidget == null) return;
+
+        var snappedPosition = CheckAndApplySnapping(newX, newY, ActiveWidget.ActualWidth, ActiveWidget.ActualHeight);
+
+        // 更新的是活动组件的位置属性
+        ActiveWidget.PositionX = snappedPosition.X;
+        ActiveWidget.PositionY = snappedPosition.Y;
     }
 
     // 从PreviewWindow开始处理计算
-    public void UpdatePositionFromPreview(double previewX, double previewY, double width, double height)
+    public void UpdatePositionFromPreview(double previewX, double previewY)
     {
+        if (ActiveWidget == null) return;
         double actualX = previewX / Scale;
         double actualY = previewY / Scale;
 
-        UpdatePosition(actualX, actualY, width, height);
+        UpdateActiveWidgetPosition(actualX, actualY);
     }
 
     // 吸附计算
