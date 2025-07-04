@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Window
-    x:Class="MyLittleWidget.Views.GridContainerWindow"
+    x:Class="MyLittleWidget.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:MyLittleWidget.Views"
+    xmlns:local="using:MyLittleWidget"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:util="using:MyLittleWidget.Utils"
-    Title="GridContainerWindow"
+    xmlns:pages="using:MyLittleWidget.Views.Pages"
+    Title="MyLittleWidget"
     mc:Ignorable="d">
-    <Page Loaded="Page_Loaded">
-    <Grid Background="Transparent" PointerMoved="Grid_PointerMoved">
-        <Canvas x:Name="GridCanvas" />
-    </Grid>
-    </Page>
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+    <!--<local:DeskTopCapturePage Margin="8,32,8,8" />-->
+    <pages:PreviewWindow />
 </Window>

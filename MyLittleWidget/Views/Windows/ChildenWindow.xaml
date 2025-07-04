@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Window
-    x:Class="MyLittleWidget.MainWindow"
+    x:Class="MyLittleWidget.Views.ChildenWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:MyLittleWidget"
+    xmlns:local="using:MyLittleWidget.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="MyLittleWidget"
+    xmlns:pages="using:MyLittleWidget.Views.Pages"
+    xmlns:utils="using:MyLittleWidget.Utils"
+    Title="ChildenWindow"
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>
-        <MicaBackdrop />
+        <utils:TransparentBackdrop />
     </Window.SystemBackdrop>
-    <local:DeskTopCapturePage Margin="8,32,8,8" />
+
+    <pages:DocklinePage />
 </Window>

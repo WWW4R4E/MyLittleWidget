@@ -13,6 +13,9 @@
   <ItemGroup>
     <None Remove="BlankPage.xaml" />
     <None Remove="DeskTopCapturePage.xaml" />
+    <None Remove="Views\ChildenWindow.xaml" />
+    <None Remove="Views\Pages\DocklinePage.xaml" />
+    <None Remove="Views\Pages\PreviewWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.3.2" />
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.183">
       <PrivateAssets>all</PrivateAssets>
@@ -45,9 +49,19 @@
     <None Update="GetItemSpacing.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Page Update="Views\DocklineWindow.xaml">
+    <Page Update="Views\Pages\PreviewWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Update="Views\Pages\DocklinePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\ChildenWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Windows\" />
   </ItemGroup>
 
     <!-- Publish Properties -->

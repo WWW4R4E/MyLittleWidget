@@ -52,20 +52,9 @@ namespace MyLittleWidget
 
             window.AppWindow.MoveAndResize(rect, displayArea);
 
+            childWindow = new ChildenWindow();
+            childWindow.Activate();
 
-
-            // 获取桌面分辨率
-   //         var screenWidth = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().ScreenWidthInRawPixels;
-			//var screenHeight = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().ScreenHeightInRawPixels;
-
-			//// 全屏设置
-			//childWindow.AppWindow.MoveAndResize(new RectInt32
-   //         {
-			//	X = 0,
-			//	Y = 0,
-			//	Width = (int)screenWidth,
-			//	Height = (int)screenHeight
-			//});
-		}
+        }
     }
 }

@@ -165,10 +165,10 @@ namespace MyLittleWidget
 
         private void StopCaptureButton_Click(object sender, RoutedEventArgs e)
         {
-            var size = GetDesktop.GetDesktopGridInfo();
-            var rect = size.rcWorkArea;
-            var childWindow = ((App)App.Current).childWindow = new GridContainerWindow(rect);
-            childWindow.Activate();
+            //var size = GetDesktop.GetDesktopGridInfo();
+            //var rect = size.rcWorkArea;
+            //var childWindow = ((App)App.Current).childWindow = new GridContainerWindow(rect);
+            //childWindow.Activate();
         }
     }
 }

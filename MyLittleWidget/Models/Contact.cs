@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyLittleWidget
+namespace MyLittleWidget.Models
 {
     public class Contact
     {

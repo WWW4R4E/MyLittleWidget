@@ -5,7 +5,10 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
-    <Page Update="Views\DocklineWindow.xaml">
+    <Page Update="Views\Pages\PreviewWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\DocklinePage.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
