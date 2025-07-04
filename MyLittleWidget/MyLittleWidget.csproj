@@ -7,6 +7,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+      <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <UseWinUI>true</UseWinUI>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -15,7 +16,6 @@
     <None Remove="DeskTopCapturePage.xaml" />
     <None Remove="Views\ChildenWindow.xaml" />
     <None Remove="Views\Pages\DocklinePage.xaml" />
-    <None Remove="Views\Pages\PreviewWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +31,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4188" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,7 +50,7 @@
     <None Update="GetItemSpacing.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Page Update="Views\Pages\PreviewWindow.xaml">
+    <Page Update="Views\Pages\PreviewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\Pages\DocklinePage.xaml">

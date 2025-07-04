@@ -3,19 +3,19 @@ using MyLittleWidget.Custom;
 using MyLittleWidget.ViewModels;
 
 
-namespace MyLittleWidget.Views.Pages
+namespace MyLittleWidget.Views
 {
-    public sealed partial class PreviewWindow : Page
+    public sealed partial class InteractiveCanvas : UserControl
     {
 
         private SharedViewModel _viewModel = SharedViewModel.Instance;
         private bool _isDragging = false;
         private Point _pointerOffset;
 
-        public PreviewWindow()
+        public InteractiveCanvas()
         {
             InitializeComponent();
-            double mainWinWidth = 800; 
+            double mainWinWidth = 400; 
             double previewCanvasWidth = 800; 
             _viewModel.Scale = previewCanvasWidth / mainWinWidth;
         }

@@ -1,79 +1,21 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Buffers;
-using System.Collections.Generic;
+﻿using Microsoft.UI.Xaml.Media.Imaging;
+using MyLittleWidget.Utils.BackDrop;
+using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing.Imaging;
 using Windows.Graphics.Imaging;
+using WinRT;
+using Windows.Win32.UI.WindowsAndMessaging;
 
 namespace MyLittleWidget.Utils
 {
     internal class GetDesktop
     {
+        public const uint PW_RENDERFULLCONTENT = 0x00000002;
 
-        #region DllImport
-        [DllImport("user32.dll")]
-        internal static extern IntPtr GetDC(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        internal static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
-
-        [DllImport("gdi32.dll")]
-        internal static extern IntPtr CreateCompatibleDC(IntPtr hDC);
-
-        [DllImport("gdi32.dll")]
-        internal static extern IntPtr CreateCompatibleBitmap(IntPtr hDC, int nWidth, int nHeight);
-
-        [DllImport("gdi32.dll")]
-        internal static extern IntPtr SelectObject(IntPtr hDC, IntPtr hgdiobj);
-
-        [DllImport("gdi32.dll")]
-        internal static extern int BitBlt(IntPtr hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, uint dwRop);
-
-        [DllImport("gdi32.dll")]
-        internal static extern int DeleteObject(IntPtr hObject);
-
-        [DllImport("gdi32.dll")]
-        static extern int DeleteDC(nint hdc);
-
-        [DllImport("gdi32.dll")]
-        static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
-
-        [DllImport("gdi32.dll")]
-        static extern int GetBitmapBits(nint hbit, int cb, nint lpvBits);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
-        [DllImport("user32.dll")]
-        static extern int GetClientRect(nint hWnd, ref int lpRect);
-        [Flags]
-        public enum SendMessageTimeoutFlags : uint { SMTO_NORMAL = 0x0, }
-        public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SendMessageTimeout(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam, SendMessageTimeoutFlags fuFlags, uint uTimeout, out IntPtr lpdwResult);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
-
-
-        const int LOGPIXELSX = 88;
-        const int LOGPIXELSY = 90;
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern bool SystemParametersInfo(int uAction, int uParam, StringBuilder lpvParam, int fuWinIni);
 
         internal const int SPI_GETDESKWALLPAPER = 0x0073;
         internal const int MAX_PATH = 260;
-        #endregion
-
-
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT
         {
@@ -81,14 +23,14 @@ namespace MyLittleWidget.Utils
             public int Y;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }
+        //[StructLayout(LayoutKind.Sequential)]
+        //public struct RECT
+        //{
+        //    public int left;
+        //    public int top;
+        //    public int right;
+        //    public int bottom;
+        //}
 
         [StructLayout(LayoutKind.Sequential)]
         public struct GridInfo
@@ -100,110 +42,151 @@ namespace MyLittleWidget.Utils
         [DllImport("GetItemSpacing.dll")]
         internal static extern GridInfo GetDesktopGridInfo();
 
-   
-        public static string GetWallpaperPath()
-        {
-            var sb = new StringBuilder(MAX_PATH);
-            if (SystemParametersInfo(SPI_GETDESKWALLPAPER, sb.Capacity, sb, 0))
-            {
-                return sb.ToString();
-            }
-            return string.Empty;
-        }
+
         public static float GetSystemDpiScale()
         {
-            IntPtr hdc = GetDC(IntPtr.Zero);
-            int dpiX = GetDeviceCaps(hdc, LOGPIXELSX);
-            ReleaseDC(IntPtr.Zero, hdc);
+            var hdc = PInvoke.GetDC(HWND.Null);
+            int dpiX = PInvoke.GetDeviceCaps(hdc, GET_DEVICE_CAPS_INDEX.LOGPIXELSX);
+            PInvoke.ReleaseDC(HWND.Null, hdc);
             return (float)(dpiX / 96.0); // 96为标准DPI
         }
-        internal static  IntPtr GetTargetHwnd()
+
+        public static unsafe SoftwareBitmap CaptureWindow()
         {
-            IntPtr progman = FindWindow("Progman", null);
-             IntPtr shellDllDefView = FindWindowEx(progman, IntPtr.Zero, "SHELLDLL_DefView", null);
-            return shellDllDefView;
-        }
-        internal static unsafe SoftwareBitmap CaptureWindow()
-        {
-            var hWnd = GetTargetHwnd();
-            var hdc = GetDC(hWnd);
-            nint hdcMem = 0;
-            nint hBitmap = 0;
-            byte[]? bitmapData = null;
+            // 1. 获取顶层窗口句柄  
+            HWND hwnd = (HWND)WindowNative.GetWindowHandle(((App)App.Current).childWindow);
+
+            // 2. 获取窗口尺寸  
+            PInvoke.GetWindowRect(hwnd, out RECT rect);
+            int width = rect.right - rect.left;
+            int height = rect.bottom - rect.top;
+
+            // 3. 创建 GDI 对象用于绘图  
+            var hdcScreen = PInvoke.GetWindowDC(hwnd);
+            var hdcMem = PInvoke.CreateCompatibleDC(hdcScreen);
+            var hBitmap = PInvoke.CreateCompatibleBitmap(hdcScreen, width, height);
+            var hOldBitmap = PInvoke.SelectObject(hdcMem, hBitmap);
 
             try
             {
-                hdcMem = CreateCompatibleDC(hdc);
-
-                int* rect = stackalloc int[4];
-                GetClientRect(hWnd, ref rect[0]);
-
-                var left = rect[0];
-                var top = rect[1];
-                var width = rect[2] - rect[0];
-                var height = rect[3] - rect[1];
-
-                hBitmap = CreateCompatibleBitmap(hdc, width, height);
-                var oldObj = SelectObject(hdcMem, hBitmap);
-
-                BitBlt(hdcMem, 0, 0, width, height, hdc, left, top, 0x00CC0020);
-
-                var count = width * height * 4;
-                bitmapData = ArrayPool<byte>.Shared.Rent(count);
-
-                fixed (byte* ptr = bitmapData)
+                bool success = PInvoke.PrintWindow(hwnd, hdcMem, (PRINT_WINDOW_FLAGS)PW_RENDERFULLCONTENT);
+                //bool success = PInvoke.PrintWindow(hwnd, hdcMem, PW_RENDERFULLCONTENT);
+                if (success)
                 {
-                    count = GetBitmapBits(hBitmap, count, (nint)ptr);
-                }
-                SelectObject(hdcMem, oldObj);
-
-                var softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, width, height, BitmapAlphaMode.Premultiplied);
-
-                WriteBuffer(softwareBitmap, bitmapData.AsSpan(0, count));
-
-                return softwareBitmap;
-            }
-            finally
-            {
-                if (hdc != 0) ReleaseDC(hWnd, hdc);
-                if (hBitmap != 0) DeleteObject(hBitmap);
-                if (hdcMem != 0) DeleteDC(hdcMem);
-                if (bitmapData != null) ArrayPool<byte>.Shared.Return(bitmapData);
-            }
-
-            static void WriteBuffer(SoftwareBitmap softwareBitmap, Span<byte> bitmapData)
-            {
-                using (var lockBuffer = softwareBitmap.LockBuffer(BitmapBufferAccessMode.Write))
-                using (var reference = lockBuffer.CreateReference())
-                {
-                    var desc = lockBuffer.GetPlaneDescription(0);
-                    var width = desc.Width;
-                    var height = desc.Height;
-                    if (ComWrappers.TryGetComInstance(reference, out var punk))
+                    using (Bitmap bmp = Bitmap.FromHbitmap(hBitmap))
                     {
-                        var IID_IMemoryBufferByteAccess = new Guid("5b0d3235-4dba-4d44-865e-8f1d0e4fd04d");
-                        if (Marshal.QueryInterface(punk, in IID_IMemoryBufferByteAccess, out var ppv) == 0)
+                        var softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, bmp.Width, bmp.Height, BitmapAlphaMode.Premultiplied);
+
+                        // 锁定源和目标的内存
+                        BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                        using (var buffer = softwareBitmap.LockBuffer(BitmapBufferAccessMode.Write))
+                        using (var reference = buffer.CreateReference())
                         {
                             try
                             {
-                                byte* ptr = null;
-                                uint capacity = 0;
-                                if (((delegate* unmanaged[Stdcall]<nint, byte**, uint*, int>)(*(void***)ppv)[3])(ppv, &ptr, &capacity) == 0)
+                                byte* destPtr;
+                                uint capacity;
+                                reference.As<IMemoryBufferByteAccess>().GetBuffer(out destPtr, out capacity);
+
+                                var desc = buffer.GetPlaneDescription(0);
+
+                                // 逐行复制数据，以防 stride（行距）不同
+                                for (int i = 0; i < bmp.Height; i++)
                                 {
-                                    for (int i = 0; i < height; i++)
-                                    {
-                                        bitmapData.Slice(i * width * 4, width * 4).CopyTo(new Span<byte>(ptr + desc.Stride * i, width * 4));
-                                    }
+                                    var sourceLine = new Span<byte>((void*)(bmpData.Scan0 + i * bmpData.Stride), bmp.Width * 4);
+                                    var destLine = new Span<byte>(destPtr + i * desc.Stride, bmp.Width * 4);
+                                    sourceLine.CopyTo(destLine);
                                 }
                             }
                             finally
                             {
-                                Marshal.Release(ppv);
+                                bmp.UnlockBits(bmpData);
                             }
                         }
+                        return softwareBitmap;
                     }
                 }
+                else
+                {
+                    Debug.WriteLine("PrintWindow failed.");
+                    throw new InvalidOperationException("PrintWindow failed to capture the window.");
+                }
+            }
+            finally
+            {
+                PInvoke.SelectObject((HDC)hdcMem, (HGDIOBJ)hOldBitmap);
+                PInvoke.DeleteObject((HGDIOBJ)hBitmap);
+                PInvoke.DeleteDC((HDC)hdcMem);
+                PInvoke.ReleaseDC(HWND.Null, (HDC)hdcScreen);
             }
         }
+        [ComImport]
+        [Guid("5B0D3235-4DBA-4D44-865E-8F1D0E4FD04D")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        unsafe interface IMemoryBufferByteAccess
+        {
+            void GetBuffer(out byte* buffer, out uint capacity);
+        }
+        //private static unsafe void WriteBitmapData(SoftwareBitmap softwareBitmap, byte[] bitmapData, int width, int height)
+        //{
+        //    using (var buffer = softwareBitmap.LockBuffer(BitmapBufferAccessMode.Write))
+        //    using (var reference = buffer.CreateReference())
+        //    {
+        //        var desc = buffer.GetPlaneDescription(0);
+        //        var iid = new Guid("5b0d3235-4dba-4d44-865e-8f1d0e4fd04d");
+        //        if (ComWrappers.TryGetComInstance(reference, out nint punk))
+        //        {
+        //            try
+        //            {
+        //                if (Marshal.QueryInterface(punk, in iid, out nint ppv) == 0)
+        //                {
+        //                    try
+        //                    {
+        //                        byte* ptr = null;
+        //                        uint capacity = 0;
+        //                        if (((delegate* unmanaged[Stdcall]<nint, byte**, uint*, int>)(*(void***)ppv)[3])(ppv, &ptr, &capacity) == 0)
+        //                        {
+        //                            for (int i = 0; i < height; i++)
+        //                            {
+        //                                var sourceLine = bitmapData.AsSpan(i * width * 4, width * 4);
+        //                                var destLine = new Span<byte>(ptr + desc.Stride * i, width * 4);
+        //                                sourceLine.CopyTo(destLine);
+        //                            }
+        //                        }
+        //                    }
+        //                    finally
+        //                    {
+        //                        Marshal.Release(ppv);
+        //                    }
+        //                }
+        //            }
+        //            finally
+        //            {
+        //                Marshal.Release(punk);
+        //            }
+        //        }
+        //    }
+        //}
+
+        //public static unsafe string GetWallpaperPath()
+        //{
+        //    var sb = new StringBuilder(MAX_PATH);
+
+
+        //    fixed (char* pPath = sb.ToString())
+        //    {
+        //        if (PInvoke.SystemParametersInfo(
+        //                SYSTEM_PARAMETERS_INFO_ACTION.SPI_GETDESKWALLPAPER,
+        //                (uint)sb.Capacity,
+        //                pPath,
+        //               (SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS)0
+        //            ))
+        //        {
+
+        //            return new string(pPath);
+        //        }
+        //    }
+        //    return string.Empty;
+        //}
     }
 }

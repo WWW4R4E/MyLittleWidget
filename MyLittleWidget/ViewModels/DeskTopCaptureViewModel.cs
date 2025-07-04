@@ -3,17 +3,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using MyLittleWidget.Models;
 using MyLittleWidget.Utils;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace MyLittleWidget.ViewModels
 {
@@ -31,7 +20,7 @@ namespace MyLittleWidget.ViewModels
         internal bool isdo = false;
         internal float Dpiscale = GetDesktop.GetSystemDpiScale();
         private Thickness _workAreaMargin;
-        public Thickness WorkAreaMargin// x=0,y=0,width=1920,height=1080
+        public Thickness WorkAreaMargin
         {
             get => _workAreaMargin;
             set

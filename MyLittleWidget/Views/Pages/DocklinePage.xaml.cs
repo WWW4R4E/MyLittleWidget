@@ -2,7 +2,9 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Shapes;
 using MyLittleWidget.Custom;
 using MyLittleWidget.CustomBase;
+using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
+using Windows.System;
 
 namespace MyLittleWidget.Views.Pages
 {
@@ -10,12 +12,6 @@ namespace MyLittleWidget.Views.Pages
     public sealed partial class DocklinePage : Page
     {
         public SharedViewModel ViewModel { get; } = SharedViewModel.Instance;
-        //// 指针相对于 Border 左上角的偏移
-        //private Point _pointerOffset;
-
-        // --- 吸附逻辑相关 ---
-        // 吸附的距离阈值，当边缘距离辅助线小于这个值时，触发吸附
-        private const double SnapThreshold = 10.0;
         // 垂直和水平辅助线
         private readonly List<double> _vGuideCoordinates = new List<double>();
         private readonly List<double> _hGuideCoordinates = new List<double>();
@@ -30,6 +26,9 @@ namespace MyLittleWidget.Views.Pages
         }
         private void OnPageLoaded(object sender, RoutedEventArgs e)
         {
+
+            EmbedIntoTargetWindow();
+
             // 创建辅助线
             SetupGuideLines(vLineCount: 3, vLineSpacing: 200, hLineCount: 2, hLineSpacing: 150);
 
@@ -41,7 +40,7 @@ namespace MyLittleWidget.Views.Pages
 
             var widgets = new ObservableCollection<WidgetBase> { widget1, widget2 };
 
-            // 将组件列表配置到ViewModel中
+            // 组件列表配置
             ViewModel.ConfigureWidget(widgets);
             foreach (var widget in widgets)
             {
@@ -49,7 +48,24 @@ namespace MyLittleWidget.Views.Pages
             }
             ViewModel.PropertyChanged += ViewModel_PropertyChanged_ForGuideVisibility;
         }
+        // 窗口嵌入方法
+        private void EmbedIntoTargetWindow()
+        {
+            var workArea = GetDesktop.GetDesktopGridInfo().rcWorkArea;
+            var childenWindow = ((App)App.Current).childWindow;
+            childenWindow.AppWindow.MoveAndResize(new RectInt32(
+                workArea.X,
+                workArea.Y,
+                workArea.Width,
+                workArea.Height
+            ));
+            HWND myHwnd = (HWND)WindowNative.GetWindowHandle(childenWindow);
+            HWND progman = PInvoke.FindWindow("Progman", null);
+            HWND workerw = PInvoke.FindWindowEx(progman, HWND.Null, "WorkerW", null);
 
+            PInvoke.SetParent(myHwnd, workerw);
+
+        }
         private void ViewModel_PropertyChanged_ForGuideVisibility(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ViewModel.IsDragging) || e.PropertyName == nameof(ViewModel.ActiveWidget))
@@ -70,7 +86,7 @@ namespace MyLittleWidget.Views.Pages
             for (int i = 1; i <= vLineCount; i++)
             {
                 double xPos = i * vLineSpacing;
-                _vGuideCoordinates.Add(xPos); 
+                _vGuideCoordinates.Add(xPos);
             }
 
             // 水平线的坐标
@@ -122,7 +138,7 @@ namespace MyLittleWidget.Views.Pages
         {
             if (isVertical)
             {
-                // 在垂直坐标列表中找到这个坐标的索引
+                // 在垂直坐标列表中这个坐标的索引
                 int index = _vGuideCoordinates.IndexOf(coordinate);
                 if (index != -1 && index < _vGuideLines.Count)
                 {
@@ -131,7 +147,7 @@ namespace MyLittleWidget.Views.Pages
             }
             else
             {
-                // 在水平坐标列表中找到这个坐标的索引
+                // 在水平坐标列表中这个坐标的索引
                 int index = _hGuideCoordinates.IndexOf(coordinate);
                 if (index != -1 && index < _hGuideLines.Count)
                 {
@@ -172,43 +188,5 @@ namespace MyLittleWidget.Views.Pages
             foreach (var line in _vGuideLines) line.Visibility = Visibility.Collapsed;
             foreach (var line in _hGuideLines) line.Visibility = Visibility.Collapsed;
         }
-
-        //private void Border_PointerPressed(object sender, PointerRoutedEventArgs e)
-        //{
-        //    var border = sender as Border;
-        //    if (border == null) return;
-
-        //    Instance.IsDragging = true;
-        //    // 记录指针相对于Border左上角的偏移
-        //    var startPoint = e.GetCurrentPoint(RootCanvas).Position;
-        //    _pointerOffset = new Point(startPoint.X - Canvas.GetLeft(border), startPoint.Y - Canvas.GetTop(border));
-
-        //    border.CapturePointer(e.Pointer);
-        //}
-
-        //private void Border_PointerMoved(object sender, PointerRoutedEventArgs e)
-        //{
-        //    if (Instance.IsDragging)
-        //    {
-        //        var border = sender as FrameworkElement;
-        //        var currentPointerPosition = e.GetCurrentPoint(RootCanvas).Position;
-        //        double newX = currentPointerPosition.X - _pointerOffset.X;
-        //        double newY = currentPointerPosition.Y - _pointerOffset.Y;
-
-        //        Instance.UpdateActiveWidgetPosition(newX, newY);
-        //    }
-        //}
-
-        //// 拖动结束后，确保所有辅助线都隐藏了
-        //private void Border_PointerReleased(object sender, PointerRoutedEventArgs e)
-        //{
-        //    ViewModel.IsDragging = false;
-        //    var border = sender as Border;
-        //    border?.ReleasePointerCapture(e.Pointer);
-
-        //    HideAllGuides();
-        //}
-
-      
     }
 }

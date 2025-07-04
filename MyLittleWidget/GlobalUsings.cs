@@ -25,3 +25,5 @@ global using Windows.Win32;
 global using Windows.Win32.Foundation;
 global using WinRT.Interop;
 global using Windows.Win32.Graphics.Dwm;
+global using Windows.Win32.Storage.Xps;
+global using Windows.Win32.Graphics.Gdi;

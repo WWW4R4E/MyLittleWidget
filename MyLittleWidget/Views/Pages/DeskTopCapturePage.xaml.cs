@@ -8,11 +8,11 @@ using MyLittleWidget.Views;
 using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
 
-namespace MyLittleWidget
+namespace MyLittleWidget.Views.Pages
 {
     public sealed partial class DeskTopCapturePage : Page
     {
-        DeskTopCaptureViewModel viewModel = new ();
+        DeskTopCaptureViewModel viewModel = new();
 
         public DeskTopCapturePage()
         {
@@ -20,7 +20,7 @@ namespace MyLittleWidget
             viewModel.timer.Interval = TimeSpan.FromMilliseconds(33);
             viewModel.timer.Tick += async (s, e) => await RefreshCaptureAsync();
             Console.WriteLine();
-            _ = LoadWallpaperAsync();
+            //_ = LoadWallpaperAsync();
         }
 
 
@@ -46,25 +46,25 @@ namespace MyLittleWidget
                 viewModel.isdo = true;
             }
         }
-        private async Task LoadWallpaperAsync()
-        {
-            var wallpaperPath = GetDesktop.GetWallpaperPath();
+        //private async Task LoadWallpaperAsync()
+        //{
+        //    var wallpaperPath = GetDesktop.GetWallpaperPath();
 
-            if (File.Exists(wallpaperPath))
-            {
-                var file = await StorageFile.GetFileFromPathAsync(wallpaperPath);
-                using var stream = await file.OpenAsync(FileAccessMode.Read);
+        //    if (File.Exists(wallpaperPath))
+        //    {
+        //        var file = await StorageFile.GetFileFromPathAsync(wallpaperPath);
+        //        using var stream = await file.OpenAsync(FileAccessMode.Read);
 
-                var bitmap = new BitmapImage();
-                await bitmap.SetSourceAsync(stream);
-                DesktopBackground.Source = bitmap;
-            }
-        }
+        //        var bitmap = new BitmapImage();
+        //        await bitmap.SetSourceAsync(stream);
+        //        DesktopBackground.Source = bitmap;
+        //    }
+        //}
 
 
         private async Task RefreshCaptureAsync()
         {
-            var softwareBitmap = GetDesktop.CaptureWindow();
+            var softwareBitmap =  GetDesktop.CaptureWindow();
             if (softwareBitmap != null)
             {
                 viewModel.latestBitmap?.Dispose();
@@ -83,8 +83,8 @@ namespace MyLittleWidget
                 float imageHeight = viewModel.latestBitmap.SizeInPixels.Height;
                 // 计算缩放比例，按比例完整展示
                 viewModel.scale = Math.Min(canvasWidth / imageWidth, canvasHeight / imageHeight);
-                DesktopBackground.Width = canvasWidth;
-                DesktopBackground.Height = canvasHeight;
+                //DesktopBackground.Width = canvasWidth;
+                //DesktopBackground.Height = canvasHeight;
                 DeskTopCapturePage_Loaded(canvasWidth, canvasHeight);
                 // 计算居中偏移`
                 float offsetX = (canvasWidth - imageWidth * viewModel.scale) / 2;
@@ -126,7 +126,7 @@ namespace MyLittleWidget
                     {
                         paths += file.Path + "\n";
                     }
-                    Debug.WriteLine( paths.Trim());
+                    Debug.WriteLine(paths.Trim());
                 }
             }
         }
