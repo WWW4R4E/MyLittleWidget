@@ -10,6 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:MyLittleWidget.Models"
     xmlns:views="using:MyLittleWidget.Views"
+    Unloaded="Page_Unloaded"
     mc:Ignorable="d">
     <Page.Resources>
         <DataTemplate x:Name="ImageOverlayTemplate" x:DataType="models:LittleWidget">

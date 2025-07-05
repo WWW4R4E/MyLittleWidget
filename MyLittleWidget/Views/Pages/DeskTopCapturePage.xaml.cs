@@ -49,7 +49,7 @@ namespace MyLittleWidget.Views.Pages
 
         private async Task RefreshCaptureAsync()
         {
-            var softwareBitmap =  GetDesktop.CaptureWindow();
+            var softwareBitmap = GetDesktop.CaptureWindow();
             if (softwareBitmap != null)
             {
                 viewModel.latestBitmap?.Dispose();
@@ -67,12 +67,12 @@ namespace MyLittleWidget.Views.Pages
                 float imageWidth = viewModel.latestBitmap.SizeInPixels.Width;
                 float imageHeight = viewModel.latestBitmap.SizeInPixels.Height;
                 // 计算缩放比例，(逻辑像素/物理像素)
-                viewModel.scale = Math.Min(canvasWidth / imageWidth, canvasHeight / imageHeight) *viewModel.Dpiscale;
+                viewModel.scale = Math.Min(canvasWidth / imageWidth, canvasHeight / imageHeight) * viewModel.Dpiscale;
                 SharedViewModel.Instance.Scale = viewModel.scale;
                 DeskTopCapturePage_Loaded(canvasWidth, canvasHeight);
                 args.DrawingSession.DrawImage(
                     viewModel.latestBitmap,
-                    new Rect(0, 0, canvasWidth , canvasHeight),
+                    new Rect(0, 0, canvasWidth, canvasHeight),
                     new Rect(0, 0, imageWidth, imageHeight),
                     1.0f,
                     CanvasImageInterpolation.HighQualityCubic
@@ -99,5 +99,18 @@ namespace MyLittleWidget.Views.Pages
             e.AcceptedOperation = DataPackageOperation.Move;
         }
 
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+
+            viewModel.timer.Stop();
+
+            if (viewModel.latestBitmap != null)
+            {
+                viewModel.latestBitmap.Dispose();
+                viewModel.latestBitmap = null;
+            }
+
+
+        }
     }
 }
