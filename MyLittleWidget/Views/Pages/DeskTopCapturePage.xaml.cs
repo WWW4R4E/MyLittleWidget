@@ -20,7 +20,6 @@ namespace MyLittleWidget.Views.Pages
             viewModel.timer.Interval = TimeSpan.FromMilliseconds(33);
             viewModel.timer.Tick += async (s, e) => await RefreshCaptureAsync();
             Console.WriteLine();
-            //_ = LoadWallpaperAsync();
         }
 
 
@@ -46,20 +45,6 @@ namespace MyLittleWidget.Views.Pages
                 viewModel.isdo = true;
             }
         }
-        //private async Task LoadWallpaperAsync()
-        //{
-        //    var wallpaperPath = GetDesktop.GetWallpaperPath();
-
-        //    if (File.Exists(wallpaperPath))
-        //    {
-        //        var file = await StorageFile.GetFileFromPathAsync(wallpaperPath);
-        //        using var stream = await file.OpenAsync(FileAccessMode.Read);
-
-        //        var bitmap = new BitmapImage();
-        //        await bitmap.SetSourceAsync(stream);
-        //        DesktopBackground.Source = bitmap;
-        //    }
-        //}
 
 
         private async Task RefreshCaptureAsync()
@@ -81,7 +66,7 @@ namespace MyLittleWidget.Views.Pages
                 float canvasHeight = (float)canvasSize.Height;
                 float imageWidth = viewModel.latestBitmap.SizeInPixels.Width;
                 float imageHeight = viewModel.latestBitmap.SizeInPixels.Height;
-                // 计算缩放比例，按比例完整展示 (逻辑像素/bitmap_Width (物理像素)
+                // 计算缩放比例，(逻辑像素/物理像素)
                 viewModel.scale = Math.Min(canvasWidth / imageWidth, canvasHeight / imageHeight) *viewModel.Dpiscale;
                 SharedViewModel.Instance.Scale = viewModel.scale;
                 DeskTopCapturePage_Loaded(canvasWidth, canvasHeight);
@@ -109,61 +94,10 @@ namespace MyLittleWidget.Views.Pages
             }
 
         }
-        private async void Grid_Drop(object sender, DragEventArgs e)
-        {
-            if (e.DataView.Contains(StandardDataFormats.StorageItems))
-            {
-                var items = await e.DataView.GetStorageItemsAsync();
-                if (items.Count > 0)
-                {
-                    string paths = "";
-                    foreach (var file in items)
-                    {
-                        paths += file.Path + "\n";
-                    }
-                    Debug.WriteLine(paths.Trim());
-                }
-            }
-        }
         private void GridView_DragOver(object sender, DragEventArgs e)
         {
             e.AcceptedOperation = DataPackageOperation.Move;
         }
 
-        private void Grid_DragOver(object sender, DragEventArgs e)
-        {
-            e.AcceptedOperation = DataPackageOperation.Copy;
-
-            //var items = e.DataView.GetStorageItemsAsync().GetResults();
-            //Debug.WriteLine(items.ToString());
-        }
-
-        private void Border_DragOver(object sender, DragEventArgs e)
-        {
-            e.AcceptedOperation = DataPackageOperation.Move;
-        }
-
-        private void Border_DragEnter(object sender, DragEventArgs e)
-        {
-            if (sender is Border border)
-            {
-                // 获取绑定到该 Border 的 GridItem 数据
-                var gridItem = border.DataContext as GridItem;
-
-                if (gridItem != null)
-                {
-                    // 现在你可以操作 gridItem 了
-                    System.Diagnostics.Debug.WriteLine($"Clicked on GridItem: Row={gridItem._position.X}, Column={gridItem._position.Y}");
-                }
-            }
-        }
-
-        private void StopCaptureButton_Click(object sender, RoutedEventArgs e)
-        {
-            //var size = GetDesktop.GetDesktopGridInfo();
-            //var rect = size.rcWorkArea;
-            //var childWindow = ((App)App.Current).childWindow = new GridContainerWindow(rect);
-            //childWindow.Activate();
-        }
     }
 }

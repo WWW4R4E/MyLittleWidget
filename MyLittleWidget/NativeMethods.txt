@@ -26,6 +26,7 @@ GetCurrentPackageFullName
 GetCurrentProcess
 GetCursorPos
 GetCurrentThreadId
+GetWindowLongPtr
 GetDC
 GetDpiForWindow
 GetModuleFileName
@@ -74,4 +75,3 @@ GetClientRect
 GetLastError
 SystemParametersInfo
 GetWindowDC
-PRINT_WINDOW_FLAGS

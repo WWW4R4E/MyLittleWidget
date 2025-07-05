@@ -4,7 +4,7 @@ using MyLittleWidget.Custom;
 using MyLittleWidget.CustomBase;
 using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
-using System.Diagnostics;
+using Windows.Win32.UI.WindowsAndMessaging;
 using Windows.System;
 
 namespace MyLittleWidget.Views.Pages
@@ -31,41 +31,65 @@ namespace MyLittleWidget.Views.Pages
             EmbedIntoTargetWindow();
 
             // 创建辅助线
-            SetupGuideLines(vLineCount: 3, vLineSpacing: 200, hLineCount: 2, hLineSpacing: 150);
+            var LineInfo = GetDesktop.GetDesktopGridInfo();
+            var dpiScale = XamlRoot.RasterizationScale;
+            SetupGuideLines(vLineCount: LineInfo.grid.X, vLineSpacing: LineInfo.spacing.X / ViewModel.Scale / 1.5, hLineCount: LineInfo.grid.Y, hLineSpacing: LineInfo.spacing.Y / ViewModel.Scale / 1.5);
 
             SharedViewModel.Instance.ConfigureGuides(_vGuideCoordinates, _hGuideCoordinates);
 
-            // 创建组件
             var widget1 = new TestWidget { PositionX = 100, PositionY = 100, };
             var widget2 = new TestWidget { PositionX = 400, PositionY = 200, };
 
             var widgets = new ObservableCollection<WidgetBase> { widget1, widget2 };
 
-            // 组件列表配置
             ViewModel.ConfigureWidget(widgets);
             foreach (var widget in widgets)
             {
                 RootCanvas.Children.Add(widget);
+                widget.PositionUpdated += OnWidgetPositionUpdated;
             }
             ViewModel.PropertyChanged += ViewModel_PropertyChanged_ForGuideVisibility;
         }
-        // 窗口嵌入方法
         private void EmbedIntoTargetWindow()
         {
             var workArea = GetDesktop.GetDesktopGridInfo().rcWorkArea;
-            var childenWindow = ((App)App.Current).childWindow;
-            childenWindow.AppWindow.MoveAndResize(new RectInt32(
+            var childWindow = ((App)App.Current).childWindow;
+            childWindow.AppWindow.MoveAndResize(new RectInt32(
                 workArea.X,
                 workArea.Y,
                 workArea.Width,
                 workArea.Height
             ));
-            HWND myHwnd = (HWND)WindowNative.GetWindowHandle(childenWindow);
+            HWND myHwnd = (HWND)WindowNative.GetWindowHandle(childWindow);
+            childWindow. AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+            var presenter = childWindow. AppWindow.Presenter as OverlappedPresenter;
+
+            if (presenter != null)
+            {
+                presenter.SetBorderAndTitleBar(false, false);
+                presenter.IsResizable = false;
+                presenter.IsMaximizable = false;
+                presenter.IsMinimizable = false;
+            }
+            childWindow.AppWindow.MoveAndResize(new RectInt32(
+                workArea.X,
+                workArea.Y,
+                workArea.Width,
+                workArea.Height
+            ));
             HWND progman = PInvoke.FindWindow("Progman", null);
             HWND workerw = PInvoke.FindWindowEx(progman, HWND.Null, "WorkerW", null);
 
             PInvoke.SetParent(myHwnd, workerw);
+            childWindow.Activate();
 
+        }
+        private void OnWidgetPositionUpdated(object sender, EventArgs e)
+        {
+            if (sender is WidgetBase widget && ViewModel.IsDragging && ViewModel.ActiveWidget == widget)
+            {
+                UpdateGuideVisibility(widget);
+            }
         }
         private void ViewModel_PropertyChanged_ForGuideVisibility(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -84,14 +108,14 @@ namespace MyLittleWidget.Views.Pages
         private void SetupGuideLines(int vLineCount, double vLineSpacing, int hLineCount, double hLineSpacing)
         {
             // 垂直线的坐标
-            for (int i = 1; i <= vLineCount; i++)
+            for (int i = 0; i <= vLineCount; i++)
             {
                 double xPos = i * vLineSpacing;
                 _vGuideCoordinates.Add(xPos);
             }
 
             // 水平线的坐标
-            for (int i = 1; i <= hLineCount; i++)
+            for (int i = 0; i <= hLineCount; i++)
             {
                 double yPos = i * hLineSpacing;
                 _hGuideCoordinates.Add(yPos);
@@ -99,19 +123,26 @@ namespace MyLittleWidget.Views.Pages
 
             foreach (double xPos in _vGuideCoordinates)
             {
+
                 var guideLine = new Line
                 {
                     Stroke = new SolidColorBrush(Colors.DodgerBlue),
                     StrokeDashArray = new DoubleCollection { 4, 2 },
                     StrokeThickness = 1,
-                    Visibility = Visibility.Collapsed
+#if DEBUG
+                    Visibility = Visibility.Visible
+#else
+     Visibility = Visibility.Collapsed
+#endif
                 };
+
                 Canvas.SetLeft(guideLine, xPos);
                 guideLine.Y1 = 0;
                 guideLine.Y2 = RootCanvas.ActualHeight;
                 RootCanvas.Children.Add(guideLine);
                 _vGuideLines.Add(guideLine);
             }
+
 
             foreach (double yPos in _hGuideCoordinates)
             {
@@ -120,7 +151,11 @@ namespace MyLittleWidget.Views.Pages
                     Stroke = new SolidColorBrush(Colors.DodgerBlue),
                     StrokeDashArray = new DoubleCollection { 4, 2 },
                     StrokeThickness = 1,
-                    Visibility = Visibility.Collapsed
+#if DEBUG
+                    Visibility = Visibility.Visible
+#else
+     Visibility = Visibility.Collapsed
+#endif
                 };
                 Canvas.SetTop(guideLine, yPos);
                 guideLine.X1 = 0;
@@ -186,8 +221,11 @@ namespace MyLittleWidget.Views.Pages
         }
         private void HideAllGuides()
         {
+#if RELEASE
+            
             foreach (var line in _vGuideLines) line.Visibility = Visibility.Collapsed;
             foreach (var line in _hGuideLines) line.Visibility = Visibility.Collapsed;
+#endif
         }
     }
 }

@@ -13,5 +13,14 @@ namespace MyLittleWidget
             InitializeComponent();
             ExtendsContentIntoTitleBar = true;
         }
+
+        private void Window_Closed(object sender, WindowEventArgs args)
+        {
+            ((App)App.Current).window.Close();
+            //args.Handled = true;
+            //((OverlappedPresenter)AppWindow.Presenter).Minimize();
+            //AppWindow.Hide();
+         
+        }
     }
 }

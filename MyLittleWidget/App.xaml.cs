@@ -1,60 +1,68 @@
 ﻿using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using MyLittleWidget.Utils;
 using MyLittleWidget.Views;
-using Windows.Graphics;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace MyLittleWidget
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
     public partial class App : Application
     {
         public Window? window;
         public Window childWindow;
 
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
         public App()
         {
             InitializeComponent();
         }
-
-        /// <summary>
-        /// Invoked when the application is launched.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            window = new MainWindow();
-            window.Activate();
-            DisplayArea displayArea = DisplayArea.GetFromWindowId(window.AppWindow.Id, DisplayAreaFallback.Primary);
-
-            int targetWidth = window.AppWindow.Size.Width - 300;
-            int targetHeight = window.AppWindow.Size.Height;
-
-            // 计算居中位置
-            int centerX = displayArea.WorkArea.Width / 2 - targetWidth / 2 + displayArea.WorkArea.X;
-            int centerY = displayArea.WorkArea.Height / 2 - targetHeight / 2 + displayArea.WorkArea.Y;
-
-            RectInt32 rect = new RectInt32
+            if (!SingleInstanceHelper.Register())
             {
-                X = centerX,
-                Y = centerY,
-                Width = targetWidth,
-                Height = targetHeight
-            };
+                SingleInstanceHelper.ActivateEditorWindow();
+                Environment.Exit(0);
+                return;
+            }
+            if (GetShowMainWindow())
+            {
+                window = new MainWindow();
+                window.Activate();
+                DisplayArea displayArea = DisplayArea.GetFromWindowId(window.AppWindow.Id, DisplayAreaFallback.Primary);
 
-            window.AppWindow.MoveAndResize(rect, displayArea);
+                int targetWidth = window.AppWindow.Size.Width - 300;
+                int targetHeight = window.AppWindow.Size.Height;
 
+                // 计算居中位置
+                int centerX = displayArea.WorkArea.Width / 2 - targetWidth / 2 + displayArea.WorkArea.X;
+                int centerY = displayArea.WorkArea.Height / 2 - targetHeight / 2 + displayArea.WorkArea.Y;
+
+                RectInt32 rect = new RectInt32
+                {
+                    X = centerX,
+                    Y = centerY,
+                    Width = targetWidth,
+                    Height = targetHeight
+                };
+
+                window.AppWindow.MoveAndResize(rect, displayArea);
+            }
             childWindow = new ChildenWindow();
-            childWindow.Activate();
 
+        }
+        private static void SetShowMainWindow(bool show)
+        {
+            var settings = ApplicationData.Current.LocalSettings;
+            settings.Values["ShowMainWindow"] = show;
+        }
+
+        private static bool GetShowMainWindow()
+        {
+            var settings = ApplicationData.Current.LocalSettings;
+            if (settings.Values.TryGetValue("ShowMainWindow", out object? value) &&
+                value is bool show)
+            {
+                return show;
+            }
+            return true;
         }
     }
 }
