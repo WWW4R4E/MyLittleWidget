@@ -1,5 +1,7 @@
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using MyLittleWidget.Custom;
+using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
 
 
@@ -15,34 +17,55 @@ namespace MyLittleWidget.Views
         public InteractiveCanvas()
         {
             InitializeComponent();
-            double mainWinWidth = 400; 
-            double previewCanvasWidth = 800; 
-            _viewModel.Scale = previewCanvasWidth / mainWinWidth;
+
         }
         private void PreviewCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            _isDragging = true;
             var canvas = sender as Canvas;
-            canvas.CapturePointer(e.Pointer);
+            if (canvas == null) return;
+
+            var transform = canvas.TransformToVisual(null);
+
+            Point canvasOriginInWindow = transform.TransformPoint(new Point(0, 0));
 
             var currentPoint = e.GetCurrentPoint(canvas).Position;
 
-
-            // 命中测试
             WidgetBase hitWidget = null;
             for (int i = _viewModel.WidgetBases.Count - 1; i >= 0; i--)
             {
                 var widget = _viewModel.WidgetBases[i];
+
+                if (widget.ActualWidth == 0 || widget.ActualHeight == 0)
+                {
+                    continue;
+                }
+
+                var finalScale = _viewModel.Scale;
                 var previewRect = new Rect(
-                    widget.PositionX * _viewModel.Scale,
-                    widget.PositionY * _viewModel.Scale,
-                    widget.ActualWidth * _viewModel.Scale,
-                    widget.ActualHeight * _viewModel.Scale
+                    widget.PositionX * finalScale,
+                    widget.PositionY * finalScale,
+                    widget.ActualWidth * finalScale,
+                    widget.ActualHeight * finalScale
                 );
+#if DEBUG
+                var debugRect = new Microsoft.UI.Xaml.Shapes.Rectangle
+                {
+                    Name = "DebugRect",
+                    Stroke = new SolidColorBrush(Colors.Red),
+                    StrokeThickness = 2
+                };
+                canvas.Children.Add(debugRect);
+
+                debugRect.Width = previewRect.Width;
+                debugRect.Height = previewRect.Height;
+                Canvas.SetLeft(debugRect, previewRect.X);
+                Canvas.SetTop(debugRect, previewRect.Y);
+#endif
+
                 if (previewRect.Contains(currentPoint))
                 {
                     hitWidget = widget;
-                    break; 
+                    break;
                 }
             }
 
@@ -65,11 +88,15 @@ namespace MyLittleWidget.Views
         {
             if (_isDragging)
             {
-                var currentPoint = e.GetCurrentPoint(sender as UIElement).Position;
+                var currentPoint = e.GetCurrentPoint(sender as Canvas).Position;
 
                 double previewX = currentPoint.X - _pointerOffset.X;
                 double previewY = currentPoint.Y - _pointerOffset.Y;
-
+#if DEBUG
+                //  更新辅助框
+                Canvas.SetLeft(SelectionBox, previewX);
+                Canvas.SetTop(SelectionBox, previewY);
+#endif
                 _viewModel.UpdatePositionFromPreview(previewX, previewY);
             }
         }
@@ -81,7 +108,9 @@ namespace MyLittleWidget.Views
             _viewModel.IsDragging = false;
             var canvas = sender as Canvas;
             canvas.ReleasePointerCapture(e.Pointer);
-         
+#if DEBUG
+            canvas.Children.Clear();
+#endif
         }
     }
 }

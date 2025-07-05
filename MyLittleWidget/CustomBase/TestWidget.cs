@@ -19,5 +19,6 @@ namespace MyLittleWidget.CustomBase
                 contentBorder.Background = new SolidColorBrush(Colors.Gold);
             }
         }
+        
     }
 }

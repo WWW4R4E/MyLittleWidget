@@ -27,19 +27,12 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
-        <!--<Image
-            x:Name="DesktopBackground"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Stretch="Uniform" />-->
-
         <canvas:CanvasControl
             x:Name="DesktopCanvas"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Draw="DesktopCanvas_Draw" />
-        <views:InteractiveCanvas />
+        <views:InteractiveCanvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         <Border
             Grid.Row="1"
             Width="1"
@@ -50,11 +43,6 @@
                 HorizontalAlignment="Center"
                 Click="CaptureDesktopButton_Click"
                 Content="开始预览" />
-            <Button
-                x:Name="StopCaptureButton"
-                HorizontalAlignment="Center"
-                Click="StopCaptureButton_Click"
-                Content="显示辅助线" />
             <GridView
                 Margin="8"
                 VerticalAlignment="Stretch"

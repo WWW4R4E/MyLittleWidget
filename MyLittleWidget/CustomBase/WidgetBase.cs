@@ -116,6 +116,7 @@ namespace MyLittleWidget.Custom
                     this.PositionY = newY;
                 }
             }
+   
         }
 
         private void OnWidgetPointerReleased(object sender, PointerRoutedEventArgs e)

@@ -15,6 +15,17 @@
             Background="Transparent"
             PointerMoved="PreviewCanvas_PointerMoved"
             PointerPressed="PreviewCanvas_PointerPressed"
-            PointerReleased="PreviewCanvas_PointerReleased" />
+            PointerReleased="PreviewCanvas_PointerReleased">
+            <Rectangle
+                x:Name="SelectionBox"
+                Stroke="Cyan"
+                StrokeDashArray="4 2"
+                StrokeThickness="2"
+                Visibility="Collapsed" />
+            <!--<Grid x:Name="SelectionCrosshair" Visibility="Collapsed">
+                <Line x:Name="VLine" Stroke="Cyan" StrokeThickness="1" StrokeDashArray="2 2" />
+                <Line x:Name="HLine" Stroke="Cyan" StrokeThickness="1" StrokeDashArray="2 2" />
+            </Grid>-->
+        </Canvas>
     </Grid>
 </UserControl>

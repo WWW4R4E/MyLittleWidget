@@ -81,18 +81,13 @@ namespace MyLittleWidget.Views.Pages
                 float canvasHeight = (float)canvasSize.Height;
                 float imageWidth = viewModel.latestBitmap.SizeInPixels.Width;
                 float imageHeight = viewModel.latestBitmap.SizeInPixels.Height;
-                // 计算缩放比例，按比例完整展示
-                viewModel.scale = Math.Min(canvasWidth / imageWidth, canvasHeight / imageHeight);
-                //DesktopBackground.Width = canvasWidth;
-                //DesktopBackground.Height = canvasHeight;
+                // 计算缩放比例，按比例完整展示 (逻辑像素/bitmap_Width (物理像素)
+                viewModel.scale = Math.Min(canvasWidth / imageWidth, canvasHeight / imageHeight) *viewModel.Dpiscale;
+                SharedViewModel.Instance.Scale = viewModel.scale;
                 DeskTopCapturePage_Loaded(canvasWidth, canvasHeight);
-                // 计算居中偏移`
-                float offsetX = (canvasWidth - imageWidth * viewModel.scale) / 2;
-                float offsetY = (canvasHeight - imageHeight * viewModel.scale) / 2;
-
                 args.DrawingSession.DrawImage(
                     viewModel.latestBitmap,
-                    new Rect(offsetX, offsetY, imageWidth * viewModel.scale, imageHeight * viewModel.scale),
+                    new Rect(0, 0, canvasWidth , canvasHeight),
                     new Rect(0, 0, imageWidth, imageHeight),
                     1.0f,
                     CanvasImageInterpolation.HighQualityCubic

@@ -4,6 +4,7 @@ using MyLittleWidget.Custom;
 using MyLittleWidget.CustomBase;
 using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
+using System.Diagnostics;
 using Windows.System;
 
 namespace MyLittleWidget.Views.Pages
