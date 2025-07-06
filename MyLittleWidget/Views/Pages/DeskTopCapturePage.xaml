@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:converters="using:MyLittleWidget.Converter"
+    xmlns:custombase="using:MyLittleWidget.CustomBase"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:MyLittleWidget"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

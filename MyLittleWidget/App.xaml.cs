@@ -14,7 +14,7 @@ namespace MyLittleWidget
 
         public static DispatcherQueue DispatcherQueue { get; private set; }
 
-        private const string AppKey = "A0C5839C-E53D-4A4E-B23A-56B93822C175";
+        private const string AppKey = "c51f15b1-e8d6-4e1a-aca5-a0d63b14cc03";
         private AppInstance mainInstance;
 
         public App()
@@ -24,8 +24,6 @@ namespace MyLittleWidget
             mainInstance = AppInstance.FindOrRegisterForKey(AppKey);
             if (!mainInstance.IsCurrent)
             {
-                // 如果不是主实例，异步重定向并退出。
-                // 使用 Task.Run 避免阻塞UI线程（尽管此时UI线程还没正式跑循环）
                 Task.Run(async () =>
                 {
                     var activatedArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
@@ -38,17 +36,12 @@ namespace MyLittleWidget
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            // 1. **关键**：在这里获取 DispatcherQueue，确保它肯定有效。
             DispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
-            // 2. **关键**：在这里注册激活事件。此时应用环境已准备好。
             mainInstance.Activated += OnAppActivated;
 
-            // 3. 创建常驻窗口
             childWindow = new ChildenWindow();
-            // childWindow.Activate(); // 常驻窗口一般不抢焦点
 
-            // 4. 根据设置决定是否显示主窗口
             if (GetShowMainWindow())
             {
                 ShowMainWindow();

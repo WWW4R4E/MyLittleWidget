@@ -1,83 +1,143 @@
-﻿using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Input;
 using MyLittleWidget.ViewModels;
 
-namespace MyLittleWidget.Custom
+namespace MyLittleWidget.CustomBase
 {
-    public abstract class WidgetBase : ContentControl
+    public partial class WidgetBase : ContentControl
     {
-        private readonly SharedViewModel _viewModel = SharedViewModel.Instance;
-        public Guid Id { get; } = Guid.NewGuid();
+        private bool _isDragging;
+        private Point _pointerOffset;
+        private Canvas _parentCanvas;
 
-        #region 依赖属性：存储状态 (Position, Size, etc.)
-
-        public static readonly DependencyProperty PositionXProperty =
-            DependencyProperty.Register(nameof(PositionX), typeof(double), typeof(WidgetBase), new PropertyMetadata(0.0, OnPositionChanged));
-
-        public double PositionX
-        {
-            get { return (double)GetValue(PositionXProperty); }
-            set { SetValue(PositionXProperty, value); }
-        }
-
-        public static readonly DependencyProperty PositionYProperty =
-            DependencyProperty.Register(nameof(PositionY), typeof(double), typeof(WidgetBase), new PropertyMetadata(0.0, OnPositionChanged));
-
-        public double PositionY
-        {
-            get { return (double)GetValue(PositionYProperty); }
-            set { SetValue(PositionYProperty, value); }
-        }
+        #region Dependency Properties for Position
 
         private static void OnPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is WidgetBase widget)
             {
-                Canvas.SetLeft(widget, widget.PositionX);
-                Canvas.SetTop(widget, widget.PositionY);
+                Canvas.SetLeft(widget, widget.Config.PositionX);
+                Canvas.SetTop(widget, widget.Config.PositionY);
                 widget.PositionUpdated?.Invoke(widget, EventArgs.Empty);
             }
         }
         #endregion
-        #region 新增：吸附逻辑的回调
-        public Func<Point, Size, Point> SnappingHandler { get; set; }
-        #endregion
-        #region 事件：用于通知外部
+
+        #region Events and Handlers
         public event EventHandler PositionUpdated;
         public event EventHandler DragStarted;
         public event EventHandler DragCompleted;
+        public Func<Point, Size, Point> SnappingHandler { get; set; }
         #endregion
 
-        #region 内部拖动逻辑 (对组件开发者隐藏)
-
-        private bool _isDragging;
-        private Point _pointerOffset;
-        private Canvas _parentCanvas; // 用来获取父Canvas的引用
-
-        protected WidgetBase()
+        #region Configuration and Initialization
+        internal WidgetConfig Config { get; private set; } = new WidgetConfig();
+        public virtual void Initialize(WidgetConfig config)
         {
+            // 1. 退订旧的 Config (如果存在)
+            if (this.Config != null)
+            {
+                this.Config.PropertyChanged -= OnConfigPropertyChanged;
+            }
+            this.Config = config;
+            this.Config.PropertyChanged += OnConfigPropertyChanged;
+            UpdatePositionFromConfig();
+        }
+        #endregion
+        private void OnConfigPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // 在 UI 线程上更新
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                if (e.PropertyName == nameof(WidgetConfig.PositionX) ||
+                    e.PropertyName == nameof(WidgetConfig.PositionY))
+                {
+                    UpdatePositionFromConfig();
+                }
+            });
+        }
+
+        private void UpdatePositionFromConfig()
+        {
+            if (Config == null) return;
+
+            // 这就是你之前 OnPositionChanged 回调里做的事情
+            Canvas.SetLeft(this, Config.PositionX);
+            Canvas.SetTop(this, Config.PositionY);
+            PositionUpdated?.Invoke(this, EventArgs.Empty);
+        }
+        public WidgetBase()
+        {
+            this.DefaultStyleKey = typeof(WidgetBase);
             // 默认样式
             this.Content = new Border
             {
                 CornerRadius = new CornerRadius(8),
-                Width = 200,
-                Height = 200,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch
             };
-
-            // 绑定事件
+            // 绑定事件 (这是拖动逻辑的核心)
             this.Loaded += OnWidgetLoaded;
             this.PointerPressed += OnWidgetPointerPressed;
             this.PointerMoved += OnWidgetPointerMoved;
             this.PointerReleased += OnWidgetPointerReleased;
-            this.PointerCanceled += OnWidgetPointerReleased; 
-            this.PointerCaptureLost += OnWidgetPointerReleased; 
+            this.PointerCanceled += OnWidgetPointerReleased;
+            this.PointerCaptureLost += OnWidgetPointerReleased;
+            this.Unloaded += OnWidgetUnloaded;
+            SetupContextMenu();
+
         }
 
         private void OnWidgetLoaded(object sender, RoutedEventArgs e)
         {
-            // 控件加载后，尝试获取父Canvas的引用
+            // 订阅全局设置的变化
+            AppSettings.Instance.PropertyChanged += OnAppSettingsChanged;
+
+            UpdateTheme(AppSettings.Instance.IsDarkTheme);
+            UpdateSize(AppSettings.Instance.BaseUnit);
+
             _parentCanvas = VisualTreeHelper.GetParent(this) as Canvas;
+        }
+
+        private void OnWidgetUnloaded(object sender, RoutedEventArgs e)
+        {
+            AppSettings.Instance.PropertyChanged -= OnAppSettingsChanged;
+
+            if (this.Config != null)
+            {
+                this.Config.PropertyChanged -= OnConfigPropertyChanged;
+            }
+        }
+
+        private void OnAppSettingsChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                if (e.PropertyName == nameof(AppSettings.Instance.BaseUnit))
+                {
+                    UpdateSize(AppSettings.Instance.BaseUnit);
+                }
+                else if (e.PropertyName == nameof(AppSettings.Instance.IsDarkTheme))
+                {
+                    UpdateTheme(AppSettings.Instance.IsDarkTheme);
+                }
+            });
+        }
+
+        private void UpdateSize(double newBaseUnit)
+        {
+            this.Width = Config.UnitWidth * newBaseUnit;
+            this.Height = Config.UnitHeight * newBaseUnit;
+        }
+
+        // 更新主题的逻辑
+        private void UpdateTheme(bool isDark)
+        {
+            // 示例：根据主题改变背景色
+            // 注意：这里只是一个简单示例，真实项目中你可能会使用资源字典和主题绑定
+            if (this.Content is Border border)
+            {
+                border.Background = new SolidColorBrush(isDark ? Colors.DarkSlateGray : Colors.LightGray);
+            }
         }
 
         private void OnWidgetPointerPressed(object sender, PointerRoutedEventArgs e)
@@ -86,13 +146,17 @@ namespace MyLittleWidget.Custom
 
             _isDragging = true;
             var startPoint = e.GetCurrentPoint(_parentCanvas).Position;
-            _pointerOffset = new Point(startPoint.X - this.PositionX, startPoint.Y - this.PositionY);
+            _pointerOffset = new Point(startPoint.X - this.Config.PositionX, startPoint.Y - this.Config.PositionY);
 
             this.CapturePointer(e.Pointer);
             DragStarted?.Invoke(this, EventArgs.Empty);
 
-            // 将此组件置于顶层（如果Canvas中有多个组件）
-            Canvas.SetZIndex(this, 99);
+            // 将此组件置于顶层
+            if (VisualTreeHelper.GetParent(this) is Canvas)
+            {
+                Canvas.SetZIndex(this, 99);
+            }
+            e.Handled = true; // 阻止事件冒泡，以免触发父容器的其他行为
         }
 
         private void OnWidgetPointerMoved(object sender, PointerRoutedEventArgs e)
@@ -102,21 +166,19 @@ namespace MyLittleWidget.Custom
                 var currentPointerPosition = e.GetCurrentPoint(_parentCanvas).Position;
                 double newX = currentPointerPosition.X - _pointerOffset.X;
                 double newY = currentPointerPosition.Y - _pointerOffset.Y;
-                // 吸附处理
+
                 if (SnappingHandler != null)
                 {
-                    
                     var snappedPosition = SnappingHandler(new Point(newX, newY), new Size(this.ActualWidth, this.ActualHeight));
-                    this.PositionX = snappedPosition.X;
-                    this.PositionY = snappedPosition.Y;
+                    this.Config.PositionX = snappedPosition.X;
+                    this.Config.PositionY = snappedPosition.Y;
                 }
                 else
                 {
-                    this.PositionX = newX;
-                    this.PositionY = newY;
+                    this.Config.PositionX = newX;
+                    this.Config.PositionY = newY;
                 }
             }
-   
         }
 
         private void OnWidgetPointerReleased(object sender, PointerRoutedEventArgs e)
@@ -126,9 +188,23 @@ namespace MyLittleWidget.Custom
                 _isDragging = false;
                 this.ReleasePointerCapture(e.Pointer);
                 DragCompleted?.Invoke(this, EventArgs.Empty);
-                Canvas.SetZIndex(this, 0); 
+
+                if (VisualTreeHelper.GetParent(this) is Canvas)
+                {
+                    Canvas.SetZIndex(this, 0);
+                }
             }
         }
-        #endregion
+
+        // 6. 你原来的其他方法 (保持不变)
+        protected virtual void OnSettingsChanged()
+        {
+            // ...
+        }
+
+        private void SetupContextMenu()
+        {
+            // 实现通用右键菜单的代码...
+        }
     }
 }

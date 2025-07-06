@@ -1,7 +1,6 @@
-using Microsoft.UI.Xaml.Controls;
+
 using Microsoft.UI.Xaml.Input;
-using MyLittleWidget.Custom;
-using MyLittleWidget.Utils;
+using MyLittleWidget.CustomBase;
 using MyLittleWidget.ViewModels;
 
 
@@ -42,8 +41,8 @@ namespace MyLittleWidget.Views
 
                 var finalScale = _viewModel.Scale;
                 var previewRect = new Rect(
-                    widget.PositionX * finalScale,
-                    widget.PositionY * finalScale,
+                    widget.Config.PositionX * finalScale,
+                    widget.Config.PositionY * finalScale,
                     widget.ActualWidth * finalScale,
                     widget.ActualHeight * finalScale
                 );
@@ -77,8 +76,8 @@ namespace MyLittleWidget.Views
                 _viewModel.IsDragging = true;
 
                 // 计算偏移
-                _pointerOffset = new Point(currentPoint.X - (hitWidget.PositionX * _viewModel.Scale),
-                                         currentPoint.Y - (hitWidget.PositionY * _viewModel.Scale));
+                _pointerOffset = new Point (currentPoint.X - (hitWidget.Config.PositionX * _viewModel.Scale),
+                                         currentPoint.Y - (hitWidget.Config.PositionY * _viewModel.Scale));
                 _viewModel.IsDragging = true;
             }
 

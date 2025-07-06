@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using MyLittleWidget.Custom;
+using MyLittleWidget.CustomBase;
+
+
 
 namespace MyLittleWidget.ViewModels;
 public partial class SharedViewModel : ObservableObject
@@ -43,8 +45,10 @@ public partial class SharedViewModel : ObservableObject
         var snappedPosition = CheckAndApplySnapping(newX, newY, ActiveWidget.ActualWidth, ActiveWidget.ActualHeight);
 
         // 更新的是活动组件的位置属性
-        ActiveWidget.PositionX = snappedPosition.X;
-        ActiveWidget.PositionY = snappedPosition.Y;
+        ActiveWidget.Config.PositionX = snappedPosition.X;
+        ActiveWidget.Config.PositionY = snappedPosition.Y;
+        ActiveWidget.Config.PositionX = snappedPosition.X;
+        ActiveWidget.Config.PositionY = snappedPosition.Y;
     }
 
     // 从PreviewWindow开始处理计算

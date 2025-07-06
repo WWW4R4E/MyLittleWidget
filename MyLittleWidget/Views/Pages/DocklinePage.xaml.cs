@@ -1,12 +1,10 @@
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Shapes;
-using MyLittleWidget.Custom;
 using MyLittleWidget.CustomBase;
 using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
 using Windows.Win32.UI.WindowsAndMessaging;
 using Windows.System;
-
 namespace MyLittleWidget.Views.Pages
 {
 
@@ -36,9 +34,26 @@ namespace MyLittleWidget.Views.Pages
             SetupGuideLines(vLineCount: LineInfo.grid.X, vLineSpacing: LineInfo.spacing.X / ViewModel.Scale / 1.5, hLineCount: LineInfo.grid.Y, hLineSpacing: LineInfo.spacing.Y / ViewModel.Scale / 1.5);
 
             SharedViewModel.Instance.ConfigureGuides(_vGuideCoordinates, _hGuideCoordinates);
+            var widget1 = new CustomControl1();
+            var widget2 = new WidgetBase();
 
-            var widget1 = new TestWidget { PositionX = 100, PositionY = 100, };
-            var widget2 = new TestWidget { PositionX = 400, PositionY = 200, };
+            var config1 = new WidgetConfig
+            {
+                PositionX = 100,
+                PositionY = 100,
+                UnitHeight=1,
+                UnitWidth=3
+            };
+
+            var config2 = new WidgetConfig
+            {
+                PositionX = 200,
+                PositionY = 200,
+              
+            };
+
+            widget1.Initialize(config1);
+            widget2.Initialize(config2);
 
             var widgets = new ObservableCollection<WidgetBase> { widget1, widget2 };
 
@@ -196,8 +211,8 @@ namespace MyLittleWidget.Views.Pages
             HideAllGuides();
             if (widget == null) return;
 
-            double currentX = widget.PositionX;
-            double currentY = widget.PositionY;
+            double currentX = widget.Config.PositionX;
+            double currentY = widget.Config.PositionY;
             double width = widget.ActualWidth;
             double height = widget.ActualHeight;
 
