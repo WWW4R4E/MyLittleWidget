@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
+using MyLittleWidget.CustomBase;
 using MyLittleWidget.Models;
 using MyLittleWidget.Utils;
 
@@ -9,8 +10,8 @@ namespace MyLittleWidget.ViewModels
     internal class DeskTopCaptureViewModel : INotifyPropertyChanged
     {
         internal List<LittleWidget> littleWidgets = new List<LittleWidget>() {
-        new() { Title = "小组件1"},
-        new LittleWidget{ Title = "小组件2"},
+        new() { Title = "小组件1",widget = new CustomControl1()},
+        new LittleWidget{ Title = "小组件2",widget = new CustomControl2()},
         };
 
         internal ObservableCollection<GridItem> GridData { get; set; }
@@ -32,8 +33,8 @@ namespace MyLittleWidget.ViewModels
                 }
             }
         }
-        private Windows.Foundation.Point _desktopItemSpace;
-        public Windows.Foundation.Point DesktopItemSpace// x=115,y=156
+        private Point _desktopItemSpace;
+        public Point DesktopItemSpace
         {
             get => _desktopItemSpace;
             set

@@ -4,11 +4,17 @@ public sealed partial class CustomControl1 : WidgetBase
 {
     public CustomControl1()
     {
+        // 配置组件相关属性
+        this.Config = new WidgetConfig
+        {
+            Id = 1,
+            Name = "CustomControl1",
+            UnitWidth = 2,
+            UnitHeight = 2
+        };
         // 创建你自己的内容(也可以使用xaml创建然后这里new出来)
         var myContentGrid = new Grid
         {
-            //HorizontalAlignment = HorizontalAlignment.Stretch,
-            //VerticalAlignment = VerticalAlignment.Stretch,
             Background = new SolidColorBrush(Colors.AliceBlue)
         };
 

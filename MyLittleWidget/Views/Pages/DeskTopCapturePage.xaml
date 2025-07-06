@@ -14,19 +14,33 @@
     Unloaded="Page_Unloaded"
     mc:Ignorable="d">
     <Page.Resources>
+        <converters:UnitToPixelConverter x:Key="UnitToPixelConverter" />
         <DataTemplate x:Name="ImageOverlayTemplate" x:DataType="models:LittleWidget">
-            <Grid Width="100">
-                <Image Source="/002.png" Stretch="UniformToFill" />
-                <TextBlock Text="{x:Bind Title}" />
+            <Grid Width="200" Height="200">
+                <StackPanel>
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind Title}" />
+                    <Viewbox Stretch="Uniform" StretchDirection="Both">
+                        <ContentPresenter
+                            Width="{x:Bind widget.Config.UnitWidth, Converter={StaticResource UnitToPixelConverter}, ConverterParameter=150}"
+                            Height="{x:Bind widget.Config.UnitHeight, Converter={StaticResource UnitToPixelConverter}, ConverterParameter=150}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="{x:Bind widget}" />
+                    </Viewbox>
+                </StackPanel>
             </Grid>
         </DataTemplate>
+
 
         <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="3*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <canvas:CanvasControl
@@ -35,11 +49,7 @@
             VerticalAlignment="Stretch"
             Draw="DesktopCanvas_Draw" />
         <views:InteractiveCanvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        <Border
-            Grid.Row="1"
-            Width="1"
-            Background="Black" />
-        <StackPanel Grid.Row="2" Height="200">
+        <StackPanel Grid.Row="2">
             <Button
                 x:Name="CaptureDesktopButton"
                 HorizontalAlignment="Center"
@@ -47,7 +57,6 @@
                 Content="开始预览" />
             <GridView
                 Margin="8"
-                VerticalAlignment="Stretch"
                 AllowDrop="True"
                 CanDragItems="True"
                 CanReorderItems="True"

@@ -17,7 +17,7 @@ namespace MyLittleWidget.Views.Pages
         public DeskTopCapturePage()
         {
             this.InitializeComponent();
-            viewModel.timer.Interval = TimeSpan.FromMilliseconds(33);
+            viewModel.timer.Interval = TimeSpan.FromMilliseconds(60);
             viewModel.timer.Tick += async (s, e) => await RefreshCaptureAsync();
             Console.WriteLine();
         }
@@ -49,12 +49,14 @@ namespace MyLittleWidget.Views.Pages
 
         private async Task RefreshCaptureAsync()
         {
-            var softwareBitmap = GetDesktop.CaptureWindow();
-            if (softwareBitmap != null)
+            using (var softwareBitmap = GetDesktop.CaptureWindow())
             {
-                viewModel.latestBitmap?.Dispose();
-                viewModel.latestBitmap = CanvasBitmap.CreateFromSoftwareBitmap(CanvasDevice.GetSharedDevice(), softwareBitmap);
-                DesktopCanvas.Invalidate();
+                if (softwareBitmap != null)
+                {
+                    viewModel.latestBitmap?.Dispose();
+                    viewModel.latestBitmap = CanvasBitmap.CreateFromSoftwareBitmap(CanvasDevice.GetSharedDevice(), softwareBitmap);
+                    DesktopCanvas.Invalidate();
+                }
             }
         }
         private void DesktopCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
@@ -86,6 +88,16 @@ namespace MyLittleWidget.Views.Pages
             {
                 viewModel.timer.Stop();
                 CaptureDesktopButton.Content = "开始预览";
+                if (viewModel.latestBitmap != null)
+                {
+                    viewModel.latestBitmap.Dispose();
+                    viewModel.latestBitmap = null;
+                }
+                DesktopCanvas.Invalidate();
+                // 神奇,配合RefreshCaptureAsync的using可以让内存降低到比初始化的时候还低,但是缺一个都不行
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
             }
             else
             {
@@ -103,13 +115,14 @@ namespace MyLittleWidget.Views.Pages
         {
 
             viewModel.timer.Stop();
+            viewModel.latestBitmap?.Dispose();
+            viewModel.latestBitmap = null;
 
-            if (viewModel.latestBitmap != null)
-            {
-                viewModel.latestBitmap.Dispose();
-                viewModel.latestBitmap = null;
-            }
+            DesktopCanvas.RemoveFromVisualTree();
+            DesktopCanvas = null; 
 
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
 
         }
     }

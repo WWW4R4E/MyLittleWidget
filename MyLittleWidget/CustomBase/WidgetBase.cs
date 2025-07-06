@@ -9,19 +9,6 @@ namespace MyLittleWidget.CustomBase
         private Point _pointerOffset;
         private Canvas _parentCanvas;
 
-        #region Dependency Properties for Position
-
-        private static void OnPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is WidgetBase widget)
-            {
-                Canvas.SetLeft(widget, widget.Config.PositionX);
-                Canvas.SetTop(widget, widget.Config.PositionY);
-                widget.PositionUpdated?.Invoke(widget, EventArgs.Empty);
-            }
-        }
-        #endregion
-
         #region Events and Handlers
         public event EventHandler PositionUpdated;
         public event EventHandler DragStarted;
@@ -30,15 +17,14 @@ namespace MyLittleWidget.CustomBase
         #endregion
 
         #region Configuration and Initialization
-        internal WidgetConfig Config { get; private set; } = new WidgetConfig();
-        public virtual void Initialize(WidgetConfig config)
+        internal WidgetConfig Config { get; set; }
+        public virtual void Initialize()
         {
-            // 1. 退订旧的 Config (如果存在)
             if (this.Config != null)
             {
                 this.Config.PropertyChanged -= OnConfigPropertyChanged;
             }
-            this.Config = config;
+            //this.Config = config;
             this.Config.PropertyChanged += OnConfigPropertyChanged;
             UpdatePositionFromConfig();
         }
@@ -71,9 +57,9 @@ namespace MyLittleWidget.CustomBase
             // 默认样式
             this.Content = new Border
             {
+                HorizontalAlignment =HorizontalAlignment.Stretch,
+                VerticalAlignment =VerticalAlignment.Stretch,
                 CornerRadius = new CornerRadius(8),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch
             };
             // 绑定事件 (这是拖动逻辑的核心)
             this.Loaded += OnWidgetLoaded;

@@ -3,7 +3,7 @@ namespace MyLittleWidget.CustomBase
 {
     public partial class WidgetConfig : ObservableObject
     {
-        public Guid Id { get; init; } 
+        public int Id { get; init; } 
         public string Name { get; set; }
    
         public int UnitWidth { get; set; } = 2;

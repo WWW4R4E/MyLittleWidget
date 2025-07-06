@@ -35,25 +35,9 @@ namespace MyLittleWidget.Views.Pages
 
             SharedViewModel.Instance.ConfigureGuides(_vGuideCoordinates, _hGuideCoordinates);
             var widget1 = new CustomControl1();
-            var widget2 = new WidgetBase();
-
-            var config1 = new WidgetConfig
-            {
-                PositionX = 100,
-                PositionY = 100,
-                UnitHeight=1,
-                UnitWidth=3
-            };
-
-            var config2 = new WidgetConfig
-            {
-                PositionX = 200,
-                PositionY = 200,
-              
-            };
-
-            widget1.Initialize(config1);
-            widget2.Initialize(config2);
+            var widget2 = new CustomControl2();
+            widget1.Initialize();
+            widget2.Initialize();
 
             var widgets = new ObservableCollection<WidgetBase> { widget1, widget2 };
 
