@@ -17,7 +17,7 @@ public partial class SharedViewModel : ObservableObject
     private WidgetBase _activeWidget;
     // 定义组件
     [ObservableProperty]
-    private ObservableCollection<WidgetBase> _widgetBases ;
+    private ObservableCollection<WidgetBase> _widgetList ;
     // 吸附的距离阈值
     private const double SnapThreshold = 10.0;
 
@@ -34,7 +34,7 @@ public partial class SharedViewModel : ObservableObject
     // 配置组件组
     public void ConfigureWidget(ObservableCollection<WidgetBase> widget)
     {
-        _widgetBases = widget;
+        _widgetList = widget;
     }
 
     // 更新位置

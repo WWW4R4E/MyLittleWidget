@@ -11,7 +11,7 @@ namespace MyLittleWidget.ViewModels
     {
         internal List<LittleWidget> littleWidgets = new List<LittleWidget>() {
         new() { Title = "小组件1",widget = new CustomControl1()},
-        new LittleWidget{ Title = "小组件2",widget = new CustomControl2()},
+        new (){ Title = "小组件2",widget = new CustomControl2()},
         };
 
         internal ObservableCollection<GridItem> GridData { get; set; }

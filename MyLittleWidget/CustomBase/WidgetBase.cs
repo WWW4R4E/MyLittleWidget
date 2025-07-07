@@ -24,7 +24,6 @@ namespace MyLittleWidget.CustomBase
             {
                 this.Config.PropertyChanged -= OnConfigPropertyChanged;
             }
-            //this.Config = config;
             this.Config.PropertyChanged += OnConfigPropertyChanged;
             UpdatePositionFromConfig();
         }
@@ -46,7 +45,6 @@ namespace MyLittleWidget.CustomBase
         {
             if (Config == null) return;
 
-            // 这就是你之前 OnPositionChanged 回调里做的事情
             Canvas.SetLeft(this, Config.PositionX);
             Canvas.SetTop(this, Config.PositionY);
             PositionUpdated?.Invoke(this, EventArgs.Empty);
@@ -54,12 +52,12 @@ namespace MyLittleWidget.CustomBase
         public WidgetBase()
         {
             this.DefaultStyleKey = typeof(WidgetBase);
-            // 默认样式
             this.Content = new Border
             {
-                HorizontalAlignment =HorizontalAlignment.Stretch,
-                VerticalAlignment =VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
                 CornerRadius = new CornerRadius(8),
+                Background = new SolidColorBrush(Colors.Red)
             };
             // 绑定事件 (这是拖动逻辑的核心)
             this.Loaded += OnWidgetLoaded;
@@ -75,7 +73,6 @@ namespace MyLittleWidget.CustomBase
 
         private void OnWidgetLoaded(object sender, RoutedEventArgs e)
         {
-            // 订阅全局设置的变化
             AppSettings.Instance.PropertyChanged += OnAppSettingsChanged;
 
             UpdateTheme(AppSettings.Instance.IsDarkTheme);
@@ -115,11 +112,8 @@ namespace MyLittleWidget.CustomBase
             this.Height = Config.UnitHeight * newBaseUnit;
         }
 
-        // 更新主题的逻辑
         private void UpdateTheme(bool isDark)
         {
-            // 示例：根据主题改变背景色
-            // 注意：这里只是一个简单示例，真实项目中你可能会使用资源字典和主题绑定
             if (this.Content is Border border)
             {
                 border.Background = new SolidColorBrush(isDark ? Colors.DarkSlateGray : Colors.LightGray);
@@ -137,12 +131,11 @@ namespace MyLittleWidget.CustomBase
             this.CapturePointer(e.Pointer);
             DragStarted?.Invoke(this, EventArgs.Empty);
 
-            // 将此组件置于顶层
             if (VisualTreeHelper.GetParent(this) is Canvas)
             {
                 Canvas.SetZIndex(this, 99);
             }
-            e.Handled = true; // 阻止事件冒泡，以免触发父容器的其他行为
+            e.Handled = true;
         }
 
         private void OnWidgetPointerMoved(object sender, PointerRoutedEventArgs e)

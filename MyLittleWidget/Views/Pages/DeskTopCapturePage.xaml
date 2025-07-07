@@ -11,21 +11,23 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:MyLittleWidget.Models"
     xmlns:views="using:MyLittleWidget.Views"
-    Unloaded="Page_Unloaded"
     mc:Ignorable="d">
     <Page.Resources>
         <converters:UnitToPixelConverter x:Key="UnitToPixelConverter" />
         <DataTemplate x:Name="ImageOverlayTemplate" x:DataType="models:LittleWidget">
-            <Grid Width="200" Height="200">
+            <Grid Width="180" Height="200">
                 <StackPanel>
                     <TextBlock
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Text="{x:Bind Title}" />
-                    <Viewbox Stretch="Uniform" StretchDirection="Both">
+                    <Viewbox
+                        Margin="8"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Stretch="Uniform"
+                        StretchDirection="Both">
                         <ContentPresenter
-                            Width="{x:Bind widget.Config.UnitWidth, Converter={StaticResource UnitToPixelConverter}, ConverterParameter=150}"
-                            Height="{x:Bind widget.Config.UnitHeight, Converter={StaticResource UnitToPixelConverter}, ConverterParameter=150}"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Content="{x:Bind widget}" />
@@ -37,18 +39,26 @@
 
         <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
     </Page.Resources>
-    <Grid>
+    <Grid Padding="24,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="3*" />
             <RowDefinition Height="4" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <canvas:CanvasControl
             x:Name="DesktopCanvas"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Draw="DesktopCanvas_Draw" />
-        <views:InteractiveCanvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <views:InteractiveCanvas
+            x:Name="DropInteractiveCanvas"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            AllowDrop="True"
+            Background="Transparent"
+            DragEnter="InteractiveCanvas_DragEnter"
+            DragOver="InteractiveCanvas_DragOver"
+            Drop="InteractiveCanvas_Drop" />
         <StackPanel Grid.Row="2">
             <Button
                 x:Name="CaptureDesktopButton"
@@ -57,12 +67,12 @@
                 Content="开始预览" />
             <GridView
                 Margin="8"
-                AllowDrop="True"
                 CanDragItems="True"
                 CanReorderItems="True"
-                DragOver="GridView_DragOver"
+                DragItemsStarting="GridView_DragItemsStarting"
                 ItemTemplate="{StaticResource ImageOverlayTemplate}"
-                ItemsSource="{x:Bind viewModel.littleWidgets}" />
+                ItemsSource="{x:Bind viewModel.littleWidgets}"
+                SelectionMode="Extended" />
         </StackPanel>
     </Grid>
 </Page>
