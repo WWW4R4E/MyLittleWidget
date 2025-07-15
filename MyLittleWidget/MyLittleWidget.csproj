@@ -65,6 +65,10 @@
     <Folder Include="Views\Windows\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MyLittleWidget.Contracts\MyLittleWidget.Contracts.csproj" />
+  </ItemGroup>
+
     <!-- Publish Properties -->
   <PropertyGroup>
     <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>

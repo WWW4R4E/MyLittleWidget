@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace MyLittleWidget.ViewModels;
 
-public partial class AppSettings : ObservableObject
+public partial class AppSettings : ObservableObject, Contracts.IApplicationSettings
 {
   public static AppSettings Instance { get; } = new();
   [JsonConstructor]

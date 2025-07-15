@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using MyLittleWidget.CustomBase;
+using MyLittleWidget.Contracts;
 
 namespace MyLittleWidget.ViewModels;
 

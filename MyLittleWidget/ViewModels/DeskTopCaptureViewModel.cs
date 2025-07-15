@@ -1,5 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas;
-using MyLittleWidget.CustomBase;
+using MyLittleWidget.Contracts;
 using MyLittleWidget.Models;
 using MyLittleWidget.Utils;
 
@@ -8,8 +8,8 @@ namespace MyLittleWidget.ViewModels
   internal class DeskTopCaptureViewModel : INotifyPropertyChanged
   {
     internal List<LittleWidget> littleWidgets = new List<LittleWidget>() {
-        new() { Title = "小组件1",widget = new CustomControl1(new WidgetConfig())},
-        new() { Title = "小组件2",widget = new CustomControl2(new WidgetConfig())},
+        new() { Title = "小组件1",widget = new CustomControl1(new WidgetConfig(),AppSettings.Instance)},
+        new() { Title = "小组件2",widget = new CustomControl2(new WidgetConfig(),AppSettings.Instance)},
         };
 
     internal ObservableCollection<GridItem> GridData { get; set; }

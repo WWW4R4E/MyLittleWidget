@@ -1,22 +1,22 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿//using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace MyLittleWidget.CustomBase
-{
-  public partial class WidgetConfig : ObservableObject
-  {
-    public int Id { get; init; }
-    public string Name { get; set; }
+//namespace MyLittleWidget.CustomBase
+//{
+//  public partial class WidgetConfig : ObservableObject
+//  {
+//    public int Id { get; init; }
+//    public string Name { get; set; }
 
-    public int UnitWidth { get; set; } = 2;
-    public int UnitHeight { get; set; } = 2;
+//    public int UnitWidth { get; set; } = 2;
+//    public int UnitHeight { get; set; } = 2;
 
-    [ObservableProperty]
-    private double _positionX;
+//    [ObservableProperty]
+//    private double _positionX;
 
-    [ObservableProperty]
-    private double _positionY;
+//    [ObservableProperty]
+//    private double _positionY;
 
-    [ObservableProperty]
-    private string _widgetType;
-  }
-}
+//    [ObservableProperty]
+//    private string _widgetType;
+//  }
+//}

@@ -1,5 +1,5 @@
 using Microsoft.UI.Xaml.Shapes;
-using MyLittleWidget.CustomBase;
+using MyLittleWidget.Contracts;
 using MyLittleWidget.Services;
 using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
@@ -58,14 +58,13 @@ namespace MyLittleWidget.Views.Pages
       HWND progman = PInvoke.FindWindow("Progman", null);
       HWND workerw = PInvoke.FindWindowEx(progman, HWND.Null, "WorkerW", null);
 
-      PInvoke.SetParent(myHwnd, workerw);
+      //PInvoke.SetParent(myHwnd, workerw);
       childWindow.Activate();
     }
     private void CreateDefaultWidgets()
     {
-      var widget1 = new CustomControl1(new WidgetConfig());
-      var widget2 = new CustomControl2(new WidgetConfig());
-
+      var widget1 = new CustomControl1(new WidgetConfig(),AppSettings.Instance);
+      var widget2 = new PomodoroClock(new WidgetConfig(), AppSettings.Instance);
       var widgets = new ObservableCollection<WidgetBase> { widget1, widget2 };
       ViewModel.ConfigureWidget(widgets);
     }
@@ -80,15 +79,49 @@ namespace MyLittleWidget.Views.Pages
       // 根据类型，调用需要 config 的那个构造函数
       if (loadedConfig.WidgetType == typeof(CustomControl1).FullName)
       {
-        return new CustomControl1(loadedConfig);
+        return new CustomControl1(loadedConfig, AppSettings.Instance);
       }
       if (loadedConfig.WidgetType == typeof(CustomControl2).FullName)
       {
-        return new CustomControl2(loadedConfig);
+        return new CustomControl2(loadedConfig, AppSettings.Instance);
       }
       return null;
     }
+    //private WidgetBase CreateWidgetFromType(WidgetConfig loadedConfig)
+    //{
+    //  if (loadedConfig == null || string.IsNullOrEmpty(loadedConfig.WidgetType))
+    //  {
+    //    return null;
+    //  }
 
+    //  // 1. 从我们的注册服务中，根据名字查找类型
+    //  Type widgetType = ComponentRegistryService.GetWidgetType(loadedConfig.WidgetType);
+
+    //  if (widgetType == null)
+    //  {
+    //    // 在注册表中找不到这个类型，可能插件被删除了
+    //    System.Diagnostics.Debug.WriteLine($"Widget type '{loadedConfig.WidgetType}' not found in registry.");
+    //    return null;
+    //  }
+
+    //  try
+    //  {
+    //    // 2. 使用反射 (Activator.CreateInstance) 来创建实例
+    //    //    这个方法会自动查找并调用匹配的构造函数。
+    //    //    我们告诉它，我们要调用那个接收一个 WidgetConfig 的构造函数。
+    //    object[] constructorArgs = { loadedConfig };
+    //    var widgetInstance = Activator.CreateInstance(widgetType, constructorArgs);
+
+    //    // 3. 将返回的 object 转换为我们需要的 WidgetBase 类型
+    //    return widgetInstance as WidgetBase;
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    // 创建实例时可能失败（比如构造函数抛出异常）
+    //    System.Diagnostics.Debug.WriteLine($"Failed to create instance of '{widgetType.FullName}': {ex.Message}");
+    //    return null;
+    //  }
+    //}
     private void LoadAndApplyConfiguration()
     {
       var saveData = _configService.Load();

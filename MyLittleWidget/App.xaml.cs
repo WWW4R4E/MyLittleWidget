@@ -37,8 +37,9 @@ namespace MyLittleWidget
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-      DispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
+      DispatcherQueue = DispatcherQueue.GetForCurrentThread();
+      ComponentRegistryService.DiscoverWidgets();
       mainInstance.Activated += OnAppActivated;
 
       childWindow = new ChildenWindow();
@@ -63,12 +64,6 @@ namespace MyLittleWidget
       {
         ShowMainWindow();
       });
-    }
-
-    private static void SetShowMainWindow(bool show)
-    {
-      var settings = ApplicationData.Current.LocalSettings;
-      settings.Values["ShowMainWindow"] = show;
     }
 
     private void ShowMainWindow()

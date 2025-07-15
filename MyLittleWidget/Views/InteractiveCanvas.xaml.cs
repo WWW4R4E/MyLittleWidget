@@ -1,5 +1,5 @@
 using Microsoft.UI.Xaml.Input;
-using MyLittleWidget.CustomBase;
+using MyLittleWidget.Contracts;
 using MyLittleWidget.Services;
 using MyLittleWidget.ViewModels;
 

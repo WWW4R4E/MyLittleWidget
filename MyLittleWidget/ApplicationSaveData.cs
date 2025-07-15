@@ -1,4 +1,4 @@
-﻿using MyLittleWidget.CustomBase;
+﻿using MyLittleWidget.Contracts;
 using MyLittleWidget.ViewModels;
 
 namespace MyLittleWidget
