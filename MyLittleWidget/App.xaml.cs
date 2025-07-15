@@ -54,11 +54,6 @@ namespace MyLittleWidget
                 ShowMainWindow();
             });
         }
-        private static void SetShowMainWindow(bool show)
-        {
-            var settings = ApplicationData.Current.LocalSettings;
-            settings.Values["ShowMainWindow"] = show;
-        }
         private void ShowMainWindow()
         {
             window = new MainWindow();
