@@ -1,0 +1,1 @@
+MainPackage=C:\Users\123\Desktop\MyLittleWidget\MyLittleWidget (Package)\bin\x64\Release\MyLittleWidget (Package)_1.0.0.0_x64.msix

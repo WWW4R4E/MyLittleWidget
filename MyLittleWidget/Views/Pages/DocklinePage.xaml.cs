@@ -41,6 +41,80 @@ namespace MyLittleWidget.Views.Pages
       HWND myHwnd = (HWND)WindowNative.GetWindowHandle(childWindow);
       childWindow.AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
       var presenter = childWindow.AppWindow.Presenter as OverlappedPresenter;
+        public DocklinePage()
+        {
+            InitializeComponent();
+            this.Loaded += OnPageLoaded;
+
+        }
+        private void OnPageLoaded(object sender, RoutedEventArgs e)
+        {
+
+            EmbedIntoTargetWindow();
+
+            // 创建辅助线
+            var LineInfo = GetDesktop.GetDesktopGridInfo();
+            var dpiScale = XamlRoot.RasterizationScale;
+            SetupGuideLines(vLineCount: LineInfo.grid.X, vLineSpacing: LineInfo.spacing.X / ViewModel.Scale / 1.5, hLineCount: LineInfo.grid.Y, hLineSpacing: LineInfo.spacing.Y / ViewModel.Scale / 1.5);
+
+            SharedViewModel.Instance.ConfigureGuides(_vGuideCoordinates, _hGuideCoordinates);
+            var widget1 = new CustomControl1();
+            var widget2 = new CustomControl2();
+            var widget3 = new CustomControl1();
+            widget1.Initialize();
+            widget2.Initialize();
+            var widgets = new ObservableCollection<WidgetBase> { widget1, widget2 };
+            ViewModel.ConfigureWidget(widgets);
+     
+            foreach (var widget in widgets)
+            {
+                RootCanvas.Children.Add(widget);
+                widget.PositionUpdated += OnWidgetPositionUpdated;
+            }
+            ViewModel.WidgetList.CollectionChanged += OnWidgetsCollectionChanged;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged_ForGuideVisibility;
+        }
+
+        private void OnWidgetsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            // 当有新项被添加时
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                foreach (WidgetBase newItem in e.NewItems)
+                {
+                    newItem.Initialize();
+                    Debug.WriteLine(newItem.Content.GetType);
+                    // 将新添加的控件也加入到 RootCanvas 中进行渲染
+                    RootCanvas.Children.Add(newItem);
+                    // 别忘了也给新控件订阅事件
+                    newItem.PositionUpdated += OnWidgetPositionUpdated;
+                }
+            }
+            // （可选）当有项被移除时
+            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+            {
+                foreach (WidgetBase oldItem in e.OldItems)
+                {
+                    // 从 RootCanvas 中移除，停止渲染
+                    RootCanvas.Children.Remove(oldItem);
+                    // 取消订阅，防止内存泄漏
+                    oldItem.PositionUpdated -= OnWidgetPositionUpdated;
+                }
+            }
+        }
+        private void EmbedIntoTargetWindow()
+        {
+            var workArea = GetDesktop.GetDesktopGridInfo().rcWorkArea;
+            var childWindow = ((App)App.Current).childWindow;
+            childWindow.AppWindow.MoveAndResize(new RectInt32(
+                workArea.X,
+                workArea.Y,
+                workArea.Width,
+                workArea.Height
+            ));
+            HWND myHwnd = (HWND)WindowNative.GetWindowHandle(childWindow);
+            childWindow. AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+            var presenter = childWindow. AppWindow.Presenter as OverlappedPresenter;
 
       if (presenter != null)
       {

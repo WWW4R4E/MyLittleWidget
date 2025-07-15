@@ -52,25 +52,23 @@ namespace MyLittleWidget
         new ConfigurationService().Save();
       };
 
-      if (GetShowMainWindow())
-      {
-        ShowMainWindow();
-      }
-    }
-
-    private void OnAppActivated(object? sender, AppActivationArguments args)
-    {
-      DispatcherQueue.TryEnqueue(() =>
-      {
-        ShowMainWindow();
-      });
-    }
-
-    private void ShowMainWindow()
-    {
-      window = new MainWindow();
-      window.Activate();
-      DisplayArea displayArea = DisplayArea.GetFromWindowId(window.AppWindow.Id, DisplayAreaFallback.Primary);
+            if (GetShowMainWindow())
+            {
+                ShowMainWindow();
+            }
+        }
+        private void OnAppActivated(object? sender, AppActivationArguments args)
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                ShowMainWindow();
+            });
+        }
+        private void ShowMainWindow()
+        {
+            window = new MainWindow();
+            window.Activate();
+            DisplayArea displayArea = DisplayArea.GetFromWindowId(window.AppWindow.Id, DisplayAreaFallback.Primary);
 
       int targetWidth = window.AppWindow.Size.Width - 300;
       int targetHeight = window.AppWindow.Size.Height;

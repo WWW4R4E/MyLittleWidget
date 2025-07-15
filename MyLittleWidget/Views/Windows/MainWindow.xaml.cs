@@ -1,6 +1,8 @@
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
+using Microsoft.UI.Xaml;
+
 namespace MyLittleWidget
 {
   /// <summary>
@@ -14,10 +16,13 @@ namespace MyLittleWidget
       ExtendsContentIntoTitleBar = true;
     }
 
-    private void Window_Closed(object sender, WindowEventArgs args)
-    {
-      //((App)Application.Current).window = null;
-      Close();
+        private void Window_Closed(object sender, WindowEventArgs args)
+        {
+            var currentSize = AppWindow.Size;
+            Properties.Settings.Default.WindowSize = new System.Drawing.Size(currentSize.Width, currentSize.Height);
+            Properties.Settings.Default.Save();
+            Close();
+        }
+
     }
-  }
 }
