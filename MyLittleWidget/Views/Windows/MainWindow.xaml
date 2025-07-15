@@ -15,5 +15,4 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
     <pages:DeskTopCapturePage Margin="8,32,8,8" />
-
 </Window>

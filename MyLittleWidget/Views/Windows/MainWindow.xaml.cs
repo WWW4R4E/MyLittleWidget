@@ -5,16 +5,16 @@ using Microsoft.UI.Xaml;
 
 namespace MyLittleWidget
 {
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class MainWindow : Window
+  /// <summary>
+  /// An empty window that can be used on its own or navigated to within a Frame.
+  /// </summary>
+  public sealed partial class MainWindow : Window
+  {
+    public MainWindow()
     {
-        public MainWindow()
-        {
-            InitializeComponent();
-            ExtendsContentIntoTitleBar = true;
-        }
+      InitializeComponent();
+      ExtendsContentIntoTitleBar = true;
+    }
 
         private void Window_Closed(object sender, WindowEventArgs args)
         {

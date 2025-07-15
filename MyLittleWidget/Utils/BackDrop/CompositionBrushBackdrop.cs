@@ -1,54 +1,55 @@
-﻿
-
-namespace MyLittleWidget.Utils.BackDrop;
+﻿namespace MyLittleWidget.Utils.BackDrop;
 
 public abstract partial class CompositionBrushBackdrop : SystemBackdrop
 {
-    private static WindowsSystemDispatcherQueueHelper dispatcherQueueHelper;
+  private static WindowsSystemDispatcherQueueHelper dispatcherQueueHelper;
 
-    static Windows.UI.Composition.Compositor? compositor;
-    static object compositorLock = new object();
-    internal static Windows.UI.Composition.Compositor Compositor
+  private static Windows.UI.Composition.Compositor? compositor;
+  private static object compositorLock = new object();
+
+  internal static Windows.UI.Composition.Compositor Compositor
+  {
+    get
     {
-        get
+      if (compositor == null)
+      {
+        lock (compositorLock)
         {
-            if (compositor == null)
-            {
-                lock (compositorLock)
-                {
-                    if (compositor == null)
-                    {
-                        dispatcherQueueHelper = new WindowsSystemDispatcherQueueHelper();
-                        dispatcherQueueHelper.EnsureWindowsSystemDispatcherQueueController();
-                        compositor = new Windows.UI.Composition.Compositor();
-                    }
-                }
-            }
-            return compositor;
+          if (compositor == null)
+          {
+            dispatcherQueueHelper = new WindowsSystemDispatcherQueueHelper();
+            dispatcherQueueHelper.EnsureWindowsSystemDispatcherQueueController();
+            compositor = new Windows.UI.Composition.Compositor();
+          }
         }
+      }
+      return compositor;
     }
-    public CompositionBrushBackdrop()
-    {
-    }
-    protected abstract Windows.UI.Composition.CompositionBrush CreateBrush(Windows.UI.Composition.Compositor compositor);
+  }
 
-    protected override void OnDefaultSystemBackdropConfigurationChanged(ICompositionSupportsSystemBackdrop target, XamlRoot xamlRoot)
-    {
-        if (target != null)
-            base.OnDefaultSystemBackdropConfigurationChanged(target, xamlRoot);
-    }
+  public CompositionBrushBackdrop()
+  {
+  }
 
-    protected override void OnTargetConnected(ICompositionSupportsSystemBackdrop connectedTarget, XamlRoot xamlRoot)
-    {
-        connectedTarget.SystemBackdrop = CreateBrush(Compositor);
-        base.OnTargetConnected(connectedTarget, xamlRoot);
-    }
+  protected abstract Windows.UI.Composition.CompositionBrush CreateBrush(Windows.UI.Composition.Compositor compositor);
 
-    protected override void OnTargetDisconnected(ICompositionSupportsSystemBackdrop disconnectedTarget)
-    {
-        var backdrop = disconnectedTarget.SystemBackdrop;
-        disconnectedTarget.SystemBackdrop = null;
-        backdrop?.Dispose();
-        base.OnTargetDisconnected(disconnectedTarget);
-    }
+  protected override void OnDefaultSystemBackdropConfigurationChanged(ICompositionSupportsSystemBackdrop target, XamlRoot xamlRoot)
+  {
+    if (target != null)
+      base.OnDefaultSystemBackdropConfigurationChanged(target, xamlRoot);
+  }
+
+  protected override void OnTargetConnected(ICompositionSupportsSystemBackdrop connectedTarget, XamlRoot xamlRoot)
+  {
+    connectedTarget.SystemBackdrop = CreateBrush(Compositor);
+    base.OnTargetConnected(connectedTarget, xamlRoot);
+  }
+
+  protected override void OnTargetDisconnected(ICompositionSupportsSystemBackdrop disconnectedTarget)
+  {
+    var backdrop = disconnectedTarget.SystemBackdrop;
+    disconnectedTarget.SystemBackdrop = null;
+    backdrop?.Dispose();
+    base.OnTargetDisconnected(disconnectedTarget);
+  }
 }

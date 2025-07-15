@@ -2,9 +2,9 @@
 
 namespace MyLittleWidget.Models
 {
-    class LittleWidget
-    {
-        public string Title { get; set; }
-        public WidgetBase widget { get; set; }
-    }
+  internal class LittleWidget
+  {
+    public string Title { get; set; }
+    public WidgetBase widget { get; set; }
+  }
 }

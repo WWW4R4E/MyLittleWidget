@@ -36,7 +36,6 @@
             </Grid>
         </DataTemplate>
 
-
         <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
     </Page.Resources>
     <Grid Padding="24,0">
