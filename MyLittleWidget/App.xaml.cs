@@ -1,9 +1,6 @@
 ﻿using Microsoft.UI.Dispatching;
-using Microsoft.UI.Windowing;
-using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using MyLittleWidget.Services;
-using MyLittleWidget.Utils;
 using MyLittleWidget.Views;
 
 namespace MyLittleWidget
@@ -11,7 +8,7 @@ namespace MyLittleWidget
   public partial class App : Application
   {
     public Window? window;
-    public Window childWindow;
+    public Window? childWindow;
 
     public static DispatcherQueue DispatcherQueue { get; private set; }
 
@@ -46,13 +43,10 @@ namespace MyLittleWidget
 
       childWindow.Closed += (sender, e) =>
       {
-        // 当窗口关闭时，执行这个代码块
-        // 创建一个 ConfigurationService 的临时实例，并调用 Save()
-        // 这里我们不需要持有这个实例，用完即弃即可
         new ConfigurationService().Save();
       };
 
-            if (GetShowMainWindow())
+      if (GetShowMainWindow())
             {
                 ShowMainWindow();
             }

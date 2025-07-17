@@ -22,17 +22,12 @@ namespace MyLittleWidget.Views
     {
       var canvas = sender as Canvas;
       if (canvas == null) return;
-
-      var transform = canvas.TransformToVisual(null);
-
-      Point canvasOriginInWindow = transform.TransformPoint(new Point(0, 0));
-
       var currentPoint = e.GetCurrentPoint(canvas).Position;
 
       WidgetBase hitWidget = null;
-      for (int i = _viewModel.WidgetBases.Count - 1; i >= 0; i--)
+      for (int i = _viewModel.WidgetList.Count - 1; i >= 0; i--)
       {
-        var widget = _viewModel.WidgetBases[i];
+        var widget = _viewModel.WidgetList[i];
 
         if (widget.ActualWidth == 0 || widget.ActualHeight == 0)
         {
@@ -101,6 +96,7 @@ namespace MyLittleWidget.Views
 
     private void PreviewCanvas_PointerReleased(object sender, PointerRoutedEventArgs e)
     {
+      if(_isDragging){
       _isDragging = false;
       _viewModel.ActiveWidget = null;
       _viewModel.IsDragging = false;
@@ -110,6 +106,7 @@ namespace MyLittleWidget.Views
       canvas.Children.Clear();
 #endif
       _configService.Save();
+      }
     }
   }
 }

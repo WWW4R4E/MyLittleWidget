@@ -5,12 +5,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:converters="using:MyLittleWidget.Converter"
-    xmlns:custombase="using:MyLittleWidget.CustomBase"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:MyLittleWidget"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:MyLittleWidget.Models"
     xmlns:views="using:MyLittleWidget.Views"
+   
     mc:Ignorable="d">
     <Page.Resources>
         <converters:UnitToPixelConverter x:Key="UnitToPixelConverter" />
@@ -44,12 +44,11 @@
             <RowDefinition Height="4" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <canvas:CanvasControl
+        <canvas:CanvasControl Grid.Row="0"
             x:Name="DesktopCanvas"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            Draw="DesktopCanvas_Draw" />
-        <views:InteractiveCanvas
+            VerticalAlignment="Stretch"/>
+        <views:InteractiveCanvas Grid.Row="0"
             x:Name="DropInteractiveCanvas"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
@@ -59,11 +58,17 @@
             DragOver="InteractiveCanvas_DragOver"
             Drop="InteractiveCanvas_Drop" />
         <StackPanel Grid.Row="2">
+            <StackPanel Orientation="Horizontal" Spacing="8">
             <Button
                 x:Name="CaptureDesktopButton"
                 HorizontalAlignment="Center"
                 Click="CaptureDesktopButton_Click"
                 Content="开始预览" />
+            <Button
+             Click="Button_Click"
+                  HorizontalAlignment="Center"
+                Content="保存布局"/>
+         </StackPanel>
             <GridView
                 Margin="8"
                 CanDragItems="True"

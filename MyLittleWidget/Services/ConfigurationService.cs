@@ -39,7 +39,7 @@ namespace MyLittleWidget.Services
       {
         GlobalSettings = AppSettings.Instance,
 
-        WidgetConfigs = SharedViewModel.Instance.WidgetBases
+        WidgetConfigs = SharedViewModel.Instance.WidgetList
                                        .Select(widget => widget.Config)
                                        .ToList()
       };

@@ -7,9 +7,9 @@ namespace MyLittleWidget.ViewModels
 {
   internal class DeskTopCaptureViewModel : INotifyPropertyChanged
   {
-    internal List<LittleWidget> littleWidgets = new List<LittleWidget>() {
-        new() { Title = "小组件1",widget = new CustomControl1(new WidgetConfig(),AppSettings.Instance)},
-        new() { Title = "小组件2",widget = new CustomControl2(new WidgetConfig(),AppSettings.Instance)},
+    internal List<LittleWidget> littleWidgets = new() {
+        new() { Title = "小组件1",widget = new OneLineOfWisdom(new WidgetConfig(),AppSettings.Instance)},
+        new() { Title = "小组件2",widget = new PomodoroClock(new WidgetConfig(),AppSettings.Instance)},
         };
 
     internal ObservableCollection<GridItem> GridData { get; set; }

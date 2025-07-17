@@ -3,6 +3,7 @@ using MyLittleWidget.Contracts;
 using MyLittleWidget.Services;
 using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
+using System.Diagnostics;
 
 namespace MyLittleWidget.Views.Pages
 {
@@ -13,6 +14,7 @@ namespace MyLittleWidget.Views.Pages
 
     // 垂直和水平辅助线
     private readonly List<double> _vGuideCoordinates = new List<double>();
+
     private readonly List<double> _hGuideCoordinates = new List<double>();
     private readonly List<Line> _vGuideLines = new List<Line>();
     private readonly List<Line> _hGuideLines = new List<Line>();
@@ -23,6 +25,7 @@ namespace MyLittleWidget.Views.Pages
       _configService = new ConfigurationService();
       this.Loaded += OnPageLoaded;
     }
+
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
       EmbedIntoTargetWindow();
@@ -31,6 +34,7 @@ namespace MyLittleWidget.Views.Pages
       var dpiScale = XamlRoot.RasterizationScale;
       SetupGuideLines(vLineCount: LineInfo.grid.X, vLineSpacing: LineInfo.spacing.X / ViewModel.Scale / dpiScale, hLineCount: LineInfo.grid.Y, hLineSpacing: LineInfo.spacing.Y / ViewModel.Scale / dpiScale);
       SharedViewModel.Instance.ConfigureGuides(_vGuideCoordinates, _hGuideCoordinates);
+      ViewModel.WidgetList.CollectionChanged += OnWidgetsCollectionChanged;
       ViewModel.PropertyChanged += ViewModel_PropertyChanged_ForGuideVisibility;
     }
 
@@ -38,83 +42,15 @@ namespace MyLittleWidget.Views.Pages
     {
       var workArea = GetDesktop.GetDesktopGridInfo().rcWorkArea;
       var childWindow = ((App)App.Current).childWindow;
+      childWindow.AppWindow.MoveAndResize(new RectInt32(
+          workArea.X,
+          workArea.Y,
+          workArea.Width,
+          workArea.Height
+      ));
       HWND myHwnd = (HWND)WindowNative.GetWindowHandle(childWindow);
       childWindow.AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
       var presenter = childWindow.AppWindow.Presenter as OverlappedPresenter;
-        public DocklinePage()
-        {
-            InitializeComponent();
-            this.Loaded += OnPageLoaded;
-
-        }
-        private void OnPageLoaded(object sender, RoutedEventArgs e)
-        {
-
-            EmbedIntoTargetWindow();
-
-            // 创建辅助线
-            var LineInfo = GetDesktop.GetDesktopGridInfo();
-            var dpiScale = XamlRoot.RasterizationScale;
-            SetupGuideLines(vLineCount: LineInfo.grid.X, vLineSpacing: LineInfo.spacing.X / ViewModel.Scale / 1.5, hLineCount: LineInfo.grid.Y, hLineSpacing: LineInfo.spacing.Y / ViewModel.Scale / 1.5);
-
-            SharedViewModel.Instance.ConfigureGuides(_vGuideCoordinates, _hGuideCoordinates);
-            var widget1 = new CustomControl1();
-            var widget2 = new CustomControl2();
-            var widget3 = new CustomControl1();
-            widget1.Initialize();
-            widget2.Initialize();
-            var widgets = new ObservableCollection<WidgetBase> { widget1, widget2 };
-            ViewModel.ConfigureWidget(widgets);
-     
-            foreach (var widget in widgets)
-            {
-                RootCanvas.Children.Add(widget);
-                widget.PositionUpdated += OnWidgetPositionUpdated;
-            }
-            ViewModel.WidgetList.CollectionChanged += OnWidgetsCollectionChanged;
-            ViewModel.PropertyChanged += ViewModel_PropertyChanged_ForGuideVisibility;
-        }
-
-        private void OnWidgetsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            // 当有新项被添加时
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-            {
-                foreach (WidgetBase newItem in e.NewItems)
-                {
-                    newItem.Initialize();
-                    Debug.WriteLine(newItem.Content.GetType);
-                    // 将新添加的控件也加入到 RootCanvas 中进行渲染
-                    RootCanvas.Children.Add(newItem);
-                    // 别忘了也给新控件订阅事件
-                    newItem.PositionUpdated += OnWidgetPositionUpdated;
-                }
-            }
-            // （可选）当有项被移除时
-            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
-            {
-                foreach (WidgetBase oldItem in e.OldItems)
-                {
-                    // 从 RootCanvas 中移除，停止渲染
-                    RootCanvas.Children.Remove(oldItem);
-                    // 取消订阅，防止内存泄漏
-                    oldItem.PositionUpdated -= OnWidgetPositionUpdated;
-                }
-            }
-        }
-        private void EmbedIntoTargetWindow()
-        {
-            var workArea = GetDesktop.GetDesktopGridInfo().rcWorkArea;
-            var childWindow = ((App)App.Current).childWindow;
-            childWindow.AppWindow.MoveAndResize(new RectInt32(
-                workArea.X,
-                workArea.Y,
-                workArea.Width,
-                workArea.Height
-            ));
-            HWND myHwnd = (HWND)WindowNative.GetWindowHandle(childWindow);
-            childWindow. AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
-            var presenter = childWindow. AppWindow.Presenter as OverlappedPresenter;
 
       if (presenter != null)
       {
@@ -131,36 +67,53 @@ namespace MyLittleWidget.Views.Pages
       ));
       HWND progman = PInvoke.FindWindow("Progman", null);
       HWND workerw = PInvoke.FindWindowEx(progman, HWND.Null, "WorkerW", null);
-
-      //PInvoke.SetParent(myHwnd, workerw);
       childWindow.Activate();
+      PInvoke.SetParent(myHwnd, workerw);
+
     }
+    // 添加和删除Widget
+    private void OnWidgetsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+      if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+      {
+        foreach (WidgetBase newItem in e.NewItems)
+        {
+          Debug.WriteLine(newItem.Content.GetType);
+          RootCanvas.Children.Add(newItem);
+          newItem.PositionUpdated += OnWidgetPositionUpdated;
+        }
+      }
+      else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+      {
+        foreach (WidgetBase oldItem in e.OldItems)
+        {
+          RootCanvas.Children.Remove(oldItem);
+          oldItem.PositionUpdated -= OnWidgetPositionUpdated;
+        }
+      }
+    }
+
     private void CreateDefaultWidgets()
     {
-      var widget1 = new CustomControl1(new WidgetConfig(),AppSettings.Instance);
-      var widget2 = new PomodoroClock(new WidgetConfig(), AppSettings.Instance);
-      var widgets = new ObservableCollection<WidgetBase> { widget1, widget2 };
+      var widgets = new ObservableCollection<WidgetBase>();
       ViewModel.ConfigureWidget(widgets);
     }
 
     private WidgetBase CreateWidgetFromType(WidgetConfig loadedConfig)
     {
-      if (loadedConfig == null || string.IsNullOrEmpty(loadedConfig.WidgetType))
+      if (loadedConfig != null || !string.IsNullOrEmpty(loadedConfig.WidgetType))
       {
-        return null;
+        if (loadedConfig.WidgetType == typeof(OneLineOfWisdom).FullName)
+        {
+          return new OneLineOfWisdom(loadedConfig, AppSettings.Instance);
+        }
+        if (loadedConfig.WidgetType == typeof(PomodoroClock).FullName)
+          return new PomodoroClock(loadedConfig, AppSettings.Instance);
       }
 
-      // 根据类型，调用需要 config 的那个构造函数
-      if (loadedConfig.WidgetType == typeof(CustomControl1).FullName)
-      {
-        return new CustomControl1(loadedConfig, AppSettings.Instance);
-      }
-      if (loadedConfig.WidgetType == typeof(CustomControl2).FullName)
-      {
-        return new CustomControl2(loadedConfig, AppSettings.Instance);
-      }
       return null;
     }
+
     //private WidgetBase CreateWidgetFromType(WidgetConfig loadedConfig)
     //{
     //  if (loadedConfig == null || string.IsNullOrEmpty(loadedConfig.WidgetType))
@@ -225,13 +178,13 @@ namespace MyLittleWidget.Views.Pages
         CreateDefaultWidgets();
       }
 
-      // 这个循环保持不变
-      foreach (var widget in ViewModel.WidgetBases)
+      foreach (var widget in ViewModel.WidgetList)
       {
         RootCanvas.Children.Add(widget);
         widget.PositionUpdated += OnWidgetPositionUpdated;
       }
     }
+
     private void OnWidgetPositionUpdated(object sender, EventArgs e)
     {
       if (sender is WidgetBase widget && ViewModel.IsDragging && ViewModel.ActiveWidget == widget)
@@ -240,7 +193,7 @@ namespace MyLittleWidget.Views.Pages
       }
     }
 
-    private void ViewModel_PropertyChanged_ForGuideVisibility(object sender,PropertyChangedEventArgs e)
+    private void ViewModel_PropertyChanged_ForGuideVisibility(object sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == nameof(ViewModel.IsDragging) || e.PropertyName == nameof(ViewModel.ActiveWidget))
       {

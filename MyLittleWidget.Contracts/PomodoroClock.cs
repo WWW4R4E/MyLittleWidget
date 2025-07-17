@@ -9,7 +9,7 @@ using System;
 namespace MyLittleWidget.Contracts;
 public sealed partial class PomodoroClock : WidgetBase
 {
-  private readonly PomodoroViewModel _viewModel = new PomodoroViewModel();
+  private readonly PomodoroColor _viewModel = new PomodoroColor();
 
   public PomodoroClock(WidgetConfig config, IApplicationSettings settings) : base(config, settings)
   {
@@ -38,7 +38,7 @@ public sealed partial class PomodoroClock : WidgetBase
     stateTextBlock.SetBinding(TextBlock.TextProperty, new Binding
     {
       Source = _viewModel,
-      Path = new PropertyPath(nameof(PomodoroViewModel.CurrentState)),
+      Path = new PropertyPath(nameof(PomodoroColor.CurrentState)),
       Mode = BindingMode.OneWay
     });
     Grid.SetRow(stateTextBlock, 0);
@@ -53,7 +53,7 @@ public sealed partial class PomodoroClock : WidgetBase
     timeTextBlock.SetBinding(TextBlock.TextProperty, new Binding
     {
       Source = _viewModel,
-      Path = new PropertyPath(nameof(PomodoroViewModel.TimeDisplay)),
+      Path = new PropertyPath(nameof(PomodoroColor.TimeDisplay)),
       Mode = BindingMode.OneWay,
       FallbackValue = "25:00"
     });
@@ -70,13 +70,13 @@ public sealed partial class PomodoroClock : WidgetBase
     startStopButton.SetBinding(Button.CommandProperty, new Binding
     {
       Source = _viewModel,
-      Path = new PropertyPath(nameof(PomodoroViewModel.StartStopCommand))
+      Path = new PropertyPath(nameof(PomodoroColor.StartStopCommand))
     });
     // 绑定内容文本 (需要一个Converter)
     var buttonContentBinding = new Binding
     {
       Source = _viewModel,
-      Path = new PropertyPath(nameof(PomodoroViewModel.IsTimerRunning)),
+      Path = new PropertyPath(nameof(PomodoroColor.IsTimerRunning)),
       Converter = new IsRunningToTextConverter() // 我们需要创建这个Converter
     };
     startStopButton.SetBinding(Button.ContentProperty, buttonContentBinding);
@@ -85,7 +85,7 @@ public sealed partial class PomodoroClock : WidgetBase
     resetButton.SetBinding(Button.CommandProperty, new Binding
     {
       Source = _viewModel,
-      Path = new PropertyPath(nameof(PomodoroViewModel.ResetCommand))
+      Path = new PropertyPath(nameof(PomodoroColor.ResetCommand))
     });
 
     var buttonPanel = new StackPanel

@@ -14,7 +14,7 @@ namespace PomodoroWidget
     LongBreak
   }
 
-  public partial class PomodoroViewModel : ObservableObject
+  public partial class PomodoroColor : ObservableObject
   {
     // --- 配置 ---
     private readonly TimeSpan _workDuration = TimeSpan.FromMinutes(25);
@@ -43,7 +43,7 @@ namespace PomodoroWidget
     public ICommand StartStopCommand { get; }
     public ICommand ResetCommand { get; }
 
-    public PomodoroViewModel()
+    public PomodoroColor()
     {
       StartStopCommand = new RelayCommand(ExecuteStartStop);
       ResetCommand = new RelayCommand(ExecuteReset);
