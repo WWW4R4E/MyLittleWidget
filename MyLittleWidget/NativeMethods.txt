@@ -43,7 +43,6 @@ GetWindowThreadProcessId
 IFileOpenDialog
 IFileSaveDialog
 IsWindowEnabled
-MessageBox
 MonitorFromWindow
 MONITORINFOEXW
 OpenProcessToken

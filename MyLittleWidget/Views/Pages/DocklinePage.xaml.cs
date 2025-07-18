@@ -1,7 +1,9 @@
 using Microsoft.UI.Xaml.Shapes;
 using MyLittleWidget.Contracts;
+using MyLittleWidget.Models;
 using MyLittleWidget.Services;
 using MyLittleWidget.Utils;
+using MyLittleWidget.Utils.BackDrop;
 using MyLittleWidget.ViewModels;
 using System.Diagnostics;
 
@@ -99,16 +101,28 @@ namespace MyLittleWidget.Views.Pages
       ViewModel.ConfigureWidget(widgets);
     }
 
-    private WidgetBase CreateWidgetFromType(WidgetConfig loadedConfig)
+    private WidgetBase CreateWidgetFromType(WidgetConfigData configData)
     {
-      if (loadedConfig != null || !string.IsNullOrEmpty(loadedConfig.WidgetType))
+      var activeConfig = new WidgetConfig
       {
-        if (loadedConfig.WidgetType == typeof(OneLineOfWisdom).FullName)
+        Id = configData.Id,
+        Name = configData.Name,
+        UnitWidth = configData.UnitWidth,
+        UnitHeight = configData.UnitHeight,
+        PositionX = configData.PositionX,
+        PositionY = configData.PositionY,
+        WidgetType = configData.WidgetType
+      };
+      if (activeConfig != null && !string.IsNullOrEmpty(activeConfig.WidgetType))
+      {
+        if (activeConfig.WidgetType == typeof(OneLineOfWisdom).FullName)
         {
-          return new OneLineOfWisdom(loadedConfig, AppSettings.Instance);
+          return new OneLineOfWisdom(activeConfig, AppSettings.Instance);
         }
-        if (loadedConfig.WidgetType == typeof(PomodoroClock).FullName)
-          return new PomodoroClock(loadedConfig, AppSettings.Instance);
+        if (activeConfig.WidgetType == typeof(PomodoroClock).FullName)
+        {
+          return new PomodoroClock(activeConfig, AppSettings.Instance);
+        }
       }
 
       return null;
@@ -149,11 +163,11 @@ namespace MyLittleWidget.Views.Pages
     //    return null;
     //  }
     //}
+
     private void LoadAndApplyConfiguration()
     {
       var saveData = _configService.Load();
-
-      if (saveData != null)
+if (saveData != null)
       {
         AppSettings.Instance.BaseUnit = saveData.GlobalSettings.BaseUnit;
         AppSettings.Instance.IsDarkTheme = saveData.GlobalSettings.IsDarkTheme;
@@ -163,7 +177,6 @@ namespace MyLittleWidget.Views.Pages
         {
           foreach (var config_from_file in saveData.WidgetConfigs)
           {
-            // 现在工厂方法直接使用从文件加载的 config
             WidgetBase widget = CreateWidgetFromType(config_from_file);
             if (widget != null)
             {

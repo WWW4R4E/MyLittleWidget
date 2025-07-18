@@ -47,11 +47,15 @@
         <canvas:CanvasControl Grid.Row="0"
             x:Name="DesktopCanvas"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"/>
+            VerticalAlignment="Stretch"
+ 
+            Draw="DesktopCanvas_Draw"/>
         <views:InteractiveCanvas Grid.Row="0"
             x:Name="DropInteractiveCanvas"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
+            PointerEntered="InteractiveCanvas_OnPointerEntered"
+            PointerExited="InteractiveCanvas_OnPointerExited"
             AllowDrop="True"
             Background="Transparent"
             DragEnter="InteractiveCanvas_DragEnter"

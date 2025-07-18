@@ -6,6 +6,8 @@ using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
 using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.Windows.AppLifecycle;
 
 namespace MyLittleWidget.Views.Pages
 {
@@ -18,35 +20,12 @@ namespace MyLittleWidget.Views.Pages
       this.InitializeComponent();
       viewModel.timer.Interval = TimeSpan.FromMilliseconds(30);
       viewModel.timer.Tick += async (s, e) => await RefreshCaptureAsync();
-      this.Loaded += DeskTopCapturePage_Loaded;
+      Loaded += DeskTopCapturePage_Loaded;
     }
 
-    // 将窗口相关的初始化代码移到 Loaded 事件处理程序中
     private void DeskTopCapturePage_Loaded(object sender, RoutedEventArgs e)
     {
-      // 此时，App.window 肯定已经被赋值了
-      var _window = ((App)Application.Current).window;
-      _window.VisibilityChanged += Window_VisibilityChanged;
-
-
-      if (viewModel.isdo == false)
-      {
-        var displayArea = DisplayArea.GetFromWindowId(_window.AppWindow.Id, DisplayAreaFallback.Primary);
-        int targetWidth = _window.AppWindow.Size.Width;
-        int targetHeight = (int)this.ActualHeight + (int)(550 * viewModel.Dpiscale);
-        int centerX = displayArea.WorkArea.Width / 2 - targetWidth / 2 + displayArea.WorkArea.X;
-        int centerY = displayArea.WorkArea.Height / 2 - targetHeight / 2 + displayArea.WorkArea.Y;
-        RectInt32 rect = new RectInt32
-        {
-          X = centerX,
-          Y = centerY,
-          Width = targetWidth,
-          Height = targetHeight
-        };
-
-        _window.AppWindow.MoveAndResize(rect, displayArea);
-        viewModel.isdo = true;
-      }
+      LoadAndApplyWindowSize();
     }
 
     private async Task RefreshCaptureAsync()
@@ -62,8 +41,9 @@ namespace MyLittleWidget.Views.Pages
       }
     }
 
-    private void AdjustWindowSizeToContent(Size desktopBitmapSize)
+    private void AdjustWindowSizeToContent()
     {
+      RECT desktopBitmapSize = GetDesktop.GetDesktopGridInfo().rcWorkArea;
       double maxPreviewHeight = desktopBitmapSize.Height / 7 * 4;
       double desktopAspectRatio = desktopBitmapSize.Width / desktopBitmapSize.Height;
       double previewHeight = maxPreviewHeight;
@@ -92,13 +72,6 @@ namespace MyLittleWidget.Views.Pages
     {
       if (viewModel.latestBitmap != null)
       {
-        if (viewModel.isdo == false)
-        {
-          LoadAndApplyWindowSize(viewModel.latestBitmap.Size);
-          viewModel.isdo = true;
-          sender.Invalidate();
-          return;
-        }
         var canvasSize = sender.Size;
         var imageSize = viewModel.latestBitmap.Size;
 
@@ -127,7 +100,7 @@ namespace MyLittleWidget.Views.Pages
         SharedViewModel.Instance.Scale = scale * viewModel.Dpiscale;
       }
     }
-    private void LoadAndApplyWindowSize(Size desktopBitmapSize)
+    private void LoadAndApplyWindowSize()
     {
       var windowSize = Properties.Settings.Default.WindowSize;
       if (windowSize.Width > 200 &&
@@ -138,7 +111,7 @@ namespace MyLittleWidget.Views.Pages
       }
       else
       {
-        AdjustWindowSizeToContent(desktopBitmapSize);
+        AdjustWindowSizeToContent();
       }
     }
     private void CaptureDesktopButton_Click(object sender, RoutedEventArgs e)
@@ -155,10 +128,6 @@ namespace MyLittleWidget.Views.Pages
         DesktopCanvas.Draw -= DesktopCanvas_Draw;
         DesktopCanvas.Invalidate();
         CanvasDevice.GetSharedDevice().Trim();
-        // 神奇,配合RefreshCaptureAsync的using可以让内存降低到比初始化的时候还低,但是缺一个都不行
-        //GC.Collect();
-        //GC.WaitForPendingFinalizers();
-        //GC.Collect();
 
       }
       else
@@ -166,7 +135,6 @@ namespace MyLittleWidget.Views.Pages
         DesktopCanvas.Draw += DesktopCanvas_Draw;
         viewModel.timer.Start();
         CaptureDesktopButton.Content = "停止预览";
-        //TODO 莫名其妙的有点时候重复订阅可以降低内存
         
       }
 
@@ -230,30 +198,29 @@ namespace MyLittleWidget.Views.Pages
     {
       e.AcceptedOperation = DataPackageOperation.Move;
     }
-    private void Window_VisibilityChanged(object sender, WindowVisibilityChangedEventArgs args)
+    private void Button_Click(object sender, RoutedEventArgs e)
     {
-      if (viewModel.timer.IsEnabled)
+      Application.Current.Exit();
+    }
+
+    private void InteractiveCanvas_OnPointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+      if (CaptureDesktopButton.Content == "停止预览")
       {
-        if (args.Visible)
-        {
-          viewModel.timer.Start();
-        }
-        else
+        viewModel.timer.Start();
+      }
+      else
         {
           viewModel.timer.Stop();
-          if (viewModel.latestBitmap != null)
-          {
-            viewModel.latestBitmap.Dispose();
+            viewModel.latestBitmap?.Dispose();
             viewModel.latestBitmap = null;
-          }
           
         }
       }
-    }
 
-    private void Button_Click(object sender, RoutedEventArgs e)
+    private void InteractiveCanvas_OnPointerExited(object sender, PointerRoutedEventArgs e)
     {
-      Environment.Exit(0);
+      viewModel.timer.Stop();
     }
   }
 }

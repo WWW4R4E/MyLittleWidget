@@ -8,13 +8,13 @@ namespace MyLittleWidget.Views
   public sealed partial class InteractiveCanvas : UserControl
   {
     private SharedViewModel _viewModel = SharedViewModel.Instance;
-    private readonly ConfigurationService _configService;
+
     private bool _isDragging = false;
     private Point _pointerOffset;
 
     public InteractiveCanvas()
     {
-      _configService = new ConfigurationService();
+      // _configService = new ConfigurationService();
       InitializeComponent();
     }
 
@@ -105,7 +105,7 @@ namespace MyLittleWidget.Views
 #if DEBUG
       canvas.Children.Clear();
 #endif
-      _configService.Save();
+_= _viewModel.SaveConfigurationAsync();
       }
     }
   }

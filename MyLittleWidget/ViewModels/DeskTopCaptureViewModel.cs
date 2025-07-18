@@ -16,7 +16,6 @@ namespace MyLittleWidget.ViewModels
     internal CanvasBitmap? latestBitmap;
     internal DispatcherTimer timer = new();
     internal float scale;
-    internal bool isdo = false;
     internal float Dpiscale = GetDesktop.GetSystemDpiScale();
     private Thickness _workAreaMargin;
 
@@ -34,6 +33,7 @@ namespace MyLittleWidget.ViewModels
     }
 
     private Point _desktopItemSpace;
+    
 
     public Point DesktopItemSpace
     {

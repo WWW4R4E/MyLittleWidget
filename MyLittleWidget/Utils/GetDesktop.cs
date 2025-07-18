@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using Windows.Graphics.Imaging;
+using Windows.Storage.Streams;
 using WinRT;
 
 namespace MyLittleWidget.Utils

@@ -38,59 +38,62 @@ namespace MyLittleWidget
       DispatcherQueue = DispatcherQueue.GetForCurrentThread();
       ComponentRegistryService.DiscoverWidgets();
       mainInstance.Activated += OnAppActivated;
-
       childWindow = new ChildenWindow();
+      SetupTrayIcon();
+    }
 
-      childWindow.Closed += (sender, e) =>
-      {
-        new ConfigurationService().Save();
-      };
+    private void SetupTrayIcon()
+    {
+      // TODO 托盘实现
 
-      if (GetShowMainWindow())
-            {
-                ShowMainWindow();
-            }
-        }
-        private void OnAppActivated(object? sender, AppActivationArguments args)
+    }
+
+    private void OnAppActivated(object? sender, AppActivationArguments args)
         {
             DispatcherQueue.TryEnqueue(() =>
             {
                 ShowMainWindow();
             });
         }
-        private void ShowMainWindow()
-        {
-            window = new MainWindow();
-            window.Activate();
-            DisplayArea displayArea = DisplayArea.GetFromWindowId(window.AppWindow.Id, DisplayAreaFallback.Primary);
 
-      int targetWidth = window.AppWindow.Size.Width - 300;
-      int targetHeight = window.AppWindow.Size.Height;
-
-      // 计算居中位置
-      int centerX = displayArea.WorkArea.Width / 2 - targetWidth / 2 + displayArea.WorkArea.X;
-      int centerY = displayArea.WorkArea.Height / 2 - targetHeight / 2 + displayArea.WorkArea.Y;
-
-      RectInt32 rect = new RectInt32
+    private void ShowMainWindow()
+    {
+      if (window == null)
       {
-        X = centerX,
-        Y = centerY,
-        Width = targetWidth,
-        Height = targetHeight
-      };
+        window = new MainWindow();
+        window.Closed += (sender, args) => { window = null; };
+        window.Activate();
 
-      window.AppWindow.MoveAndResize(rect, displayArea);
+        DisplayArea displayArea = DisplayArea.GetFromWindowId(window.AppWindow.Id, DisplayAreaFallback.Primary);
+        int targetWidth = window.AppWindow.Size.Width - 300;
+        int targetHeight = window.AppWindow.Size.Height;
+        int centerX = displayArea.WorkArea.Width / 2 - targetWidth / 2 + displayArea.WorkArea.X;
+        int centerY = displayArea.WorkArea.Height / 2 - targetHeight / 2 + displayArea.WorkArea.Y;
+        RectInt32 rect = new RectInt32
+        {
+          X = centerX,
+          Y = centerY,
+          Width = targetWidth,
+          Height = targetHeight
+        };
+        window.AppWindow.MoveAndResize(rect, displayArea);
+      }
+      else
+      {
+        window.Activate();
+      }
     }
 
-    private static bool GetShowMainWindow()
+    private void ShowMainWindowFromTray()
     {
-      var settings = ApplicationData.Current.LocalSettings;
-      if (settings.Values.TryGetValue("ShowMainWindow", out object? value) &&
-          value is bool show)
+      DispatcherQueue.TryEnqueue(() =>
       {
-        return show;
-      }
-      return true;
+        ShowMainWindow();
+      });
+    }
+    private void ExitApplication()
+    {
+      Environment.Exit(0);
     }
   }
 }
