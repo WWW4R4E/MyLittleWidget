@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using PomodoroWidget;
 using System;
+using Windows.Foundation;
 
 namespace MyLittleWidget.Contracts;
 public sealed partial class PomodoroClock : WidgetBase
@@ -13,28 +14,38 @@ public sealed partial class PomodoroClock : WidgetBase
 
   public PomodoroClock(WidgetConfig config, IApplicationSettings settings) : base(config, settings)
   {
-    // --- UI 构建 ---
 
     var mainGrid = new Grid
     {
+      CornerRadius = new CornerRadius(12),
       Padding = new Thickness(12),
-      VerticalAlignment = VerticalAlignment.Center, 
+      
+
+      Background = new LinearGradientBrush
+      {
+        StartPoint = new Point(0, 0),
+        EndPoint = new Point(1, 1),
+        GradientStops = new GradientStopCollection
+        {
+          new GradientStop { Color = Colors.DeepSkyBlue, Offset = 0.0 },
+          new GradientStop { Color = Colors.MediumPurple, Offset = 1.0 }
+        }
+      },
+
       RowDefinitions =
-    {
-        new RowDefinition { Height = GridLength.Auto }, // 第0行：自适应
-        new RowDefinition { Height = GridLength.Auto }, // 第1行：也改为自适应
-        new RowDefinition { Height = GridLength.Auto }  // 第2行：自适应
-    }
+      {
+        new RowDefinition { Height = GridLength.Auto },
+        new RowDefinition { Height = GridLength.Auto },
+        new RowDefinition { Height = GridLength.Auto }
+      }
     };
 
-    // 1. 状态文本
     var stateTextBlock = new TextBlock
     {
       FontSize = 16,
       FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
       HorizontalAlignment = HorizontalAlignment.Center
     };
-    // 绑定状态
     stateTextBlock.SetBinding(TextBlock.TextProperty, new Binding
     {
       Source = _viewModel,
@@ -43,13 +54,11 @@ public sealed partial class PomodoroClock : WidgetBase
     });
     Grid.SetRow(stateTextBlock, 0);
 
-    // 2. 时间显示 (用Viewbox来自动缩放)
     var timeTextBlock = new TextBlock
     {
       FontFamily = new FontFamily("Segoe UI Variable Display"),
       FontWeight = Microsoft.UI.Text.FontWeights.Bold,
     };
-    // 绑定时间显示
     timeTextBlock.SetBinding(TextBlock.TextProperty, new Binding
     {
       Source = _viewModel,

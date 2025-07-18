@@ -10,7 +10,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:MyLittleWidget.Models"
     xmlns:views="using:MyLittleWidget.Views"
-   
     mc:Ignorable="d">
     <Page.Resources>
         <converters:UnitToPixelConverter x:Key="UnitToPixelConverter" />
@@ -48,14 +47,12 @@
             x:Name="DesktopCanvas"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
- 
             Draw="DesktopCanvas_Draw"/>
         <views:InteractiveCanvas Grid.Row="0"
             x:Name="DropInteractiveCanvas"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            PointerEntered="InteractiveCanvas_OnPointerEntered"
-            PointerExited="InteractiveCanvas_OnPointerExited"
+
             AllowDrop="True"
             Background="Transparent"
             DragEnter="InteractiveCanvas_DragEnter"
@@ -63,15 +60,11 @@
             Drop="InteractiveCanvas_Drop" />
         <StackPanel Grid.Row="2">
             <StackPanel Orientation="Horizontal" Spacing="8">
-            <Button
-                x:Name="CaptureDesktopButton"
-                HorizontalAlignment="Center"
-                Click="CaptureDesktopButton_Click"
-                Content="开始预览" />
-            <Button
-             Click="Button_Click"
-                  HorizontalAlignment="Center"
-                Content="保存布局"/>
+                <Button
+                    x:Name="CaptureDesktopButton"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind viewModel.TogglePreviewCommand}"
+                    Content="{x:Bind viewModel.PreviewButtonText, Mode=OneWay}" />
          </StackPanel>
             <GridView
                 Margin="8"

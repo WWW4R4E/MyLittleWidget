@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using MyLittleWidget.Models;
+using MyLittleWidget.ViewModels;
 
 namespace MyLittleWidget.Services
 {
@@ -23,7 +24,8 @@ namespace MyLittleWidget.Services
       try
       {
         var json = File.ReadAllText(_filePath);
-        return JsonSerializer.Deserialize(json, AppJsonSerializerContext.Default.ApplicationSaveData);
+        var result = JsonSerializer.Deserialize(json, AppJsonSerializerContext.Default.ApplicationSaveData);
+        return result;
       }
       catch (Exception ex)
       {
@@ -31,17 +33,19 @@ namespace MyLittleWidget.Services
         return null;
       }
     }
-    public void Save(ApplicationSaveData dataToSave)
+    public void Save()
     {
-      try
       {
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        var json = JsonSerializer.Serialize(dataToSave, options);
+        var dataToSave = new ApplicationSaveData
+        {
+          GlobalSettings = AppSettings.Instance,
+
+          WidgetConfigs = SharedViewModel.Instance.WidgetList
+            .Select(widget => widget.Config)
+            .ToList()
+        };
+        var json = JsonSerializer.Serialize(dataToSave, AppJsonSerializerContext.Default.ApplicationSaveData);
         File.WriteAllText(_filePath, json);
-      }
-      catch (Exception ex)
-      {
-        Debug.WriteLine($"Error saving settings: {ex.Message}");
       }
     }
   }

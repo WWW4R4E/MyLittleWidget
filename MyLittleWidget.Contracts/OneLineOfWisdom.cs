@@ -17,35 +17,26 @@ public sealed partial class OneLineOfWisdom : WidgetBase
   public OneLineOfWisdom(WidgetConfig config, IApplicationSettings settings) : base(config, settings)
   {
     // 创建内容 Grid
-    var contentGrid = new Grid();
+    var contentGrid = new Grid()
+    {
+      CornerRadius = new CornerRadius(12),
+      Background = new LinearGradientBrush
+      {
+        StartPoint = new Point(0, 0),
+        EndPoint = new Point(1, 1),
+        GradientStops = new GradientStopCollection
+        {
+          new GradientStop { Color = Color.FromArgb(255, 60, 80, 120), Offset = 0.0 },
+          new GradientStop { Color = Color.FromArgb(255, 90, 120, 180), Offset = 1.0 }
+        }
+      },
+      
+    };
     contentGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
     contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-
-    // 背景渐变层
-    var backgroundBrush = new LinearGradientBrush
-    {
-      StartPoint = new Point(0, 0),
-      EndPoint = new Point(1, 1),
-      GradientStops = new GradientStopCollection
-            {
-                new GradientStop { Color = Color.FromArgb(255, 60, 80, 120), Offset = 0.0 },
-                new GradientStop { Color = Color.FromArgb(255, 90, 120, 180), Offset = 1.0 }
-            }
-    };
-
-    // Border 设置渐变背景
-    var border = new Border
-    {
-      Background = backgroundBrush,
-      CornerRadius = new CornerRadius(12),
-      Padding = new Thickness(10),
-      Child = contentGrid
-    };
-
     // 引言文本
     _quoteTextBlock = new TextBlock
     {
-      Text = "加载中...",
       FontSize = 20,
       FontWeight = FontWeights.SemiBold,
       Foreground = new SolidColorBrush(Colors.White),
@@ -76,11 +67,7 @@ public sealed partial class OneLineOfWisdom : WidgetBase
     // 布局
     contentGrid.Children.Add(_quoteTextBlock);
     contentGrid.Children.Add(_refreshButton);
-
-    // 设置为 Border.Child
-    var baseBorder = this.Content as Border;
-    baseBorder.Child = border;
-
+    Content = contentGrid;
     // 初始化加载
     _ = LoadQuoteAsync();
   }
@@ -98,7 +85,6 @@ public sealed partial class OneLineOfWisdom : WidgetBase
   {
     try
     {
-      // 实际中你可以从网络加载
       var quote = "你所热爱的就是你的生活";
       _quoteTextBlock.Text = quote;
     }

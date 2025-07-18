@@ -8,13 +8,12 @@ namespace MyLittleWidget.Views
   public sealed partial class InteractiveCanvas : UserControl
   {
     private SharedViewModel _viewModel = SharedViewModel.Instance;
-
-    private bool _isDragging = false;
+    private ConfigurationService _configService;
     private Point _pointerOffset;
 
     public InteractiveCanvas()
     {
-      // _configService = new ConfigurationService();
+      _configService = new ConfigurationService();
       InitializeComponent();
     }
 
@@ -65,7 +64,6 @@ namespace MyLittleWidget.Views
 
       if (hitWidget != null)
       {
-        _isDragging = true;
         canvas.CapturePointer(e.Pointer);
         _viewModel.ActiveWidget = hitWidget;
         _viewModel.IsDragging = true;
@@ -79,7 +77,7 @@ namespace MyLittleWidget.Views
 
     private void PreviewCanvas_PointerMoved(object sender, PointerRoutedEventArgs e)
     {
-      if (_isDragging)
+      if (_viewModel.IsDragging)
       {
         var currentPoint = e.GetCurrentPoint(sender as Canvas).Position;
 
@@ -96,8 +94,8 @@ namespace MyLittleWidget.Views
 
     private void PreviewCanvas_PointerReleased(object sender, PointerRoutedEventArgs e)
     {
-      if(_isDragging){
-      _isDragging = false;
+      if(_viewModel.IsDragging)
+      {
       _viewModel.ActiveWidget = null;
       _viewModel.IsDragging = false;
       var canvas = sender as Canvas;
@@ -105,7 +103,7 @@ namespace MyLittleWidget.Views
 #if DEBUG
       canvas.Children.Clear();
 #endif
-_= _viewModel.SaveConfigurationAsync();
+_configService.Save();
       }
     }
   }

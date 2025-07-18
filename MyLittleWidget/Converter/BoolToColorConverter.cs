@@ -1,10 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace MyLittleWidget.Converter
 {
@@ -14,9 +10,9 @@ namespace MyLittleWidget.Converter
     {
       if (value is bool isSelected && isSelected)
       {
-        return new SolidColorBrush(Microsoft.UI.Colors.Gray);
+        return new SolidColorBrush(Colors.Gray);
       }
-      return new SolidColorBrush(Microsoft.UI.Colors.Transparent);
+      return new SolidColorBrush(Colors.Transparent);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

@@ -1,63 +1,68 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Graphics.Canvas;
 using MyLittleWidget.Contracts;
 using MyLittleWidget.Models;
 using MyLittleWidget.Utils;
 
 namespace MyLittleWidget.ViewModels
 {
-  internal class DeskTopCaptureViewModel : INotifyPropertyChanged
+  internal partial class DeskTopCaptureViewModel : ObservableObject
   {
     internal List<LittleWidget> littleWidgets = new() {
         new() { Title = "小组件1",widget = new OneLineOfWisdom(new WidgetConfig(),AppSettings.Instance)},
         new() { Title = "小组件2",widget = new PomodoroClock(new WidgetConfig(),AppSettings.Instance)},
         };
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PreviewButtonText))]
+    private bool _isPreviewing;
+    [ObservableProperty]
+    internal CanvasBitmap? _latestBitmap;
+    public string PreviewButtonText => IsPreviewing ? "停止预览" : "开始预览";
+    private readonly DispatcherTimer _previewTimer;
+    public event Action? PreviewFrameReady;
 
-    internal ObservableCollection<GridItem> GridData { get; set; }
-    internal CanvasBitmap? latestBitmap;
     internal DispatcherTimer timer = new();
     internal float scale;
     internal float Dpiscale = GetDesktop.GetSystemDpiScale();
-    private Thickness _workAreaMargin;
-
-    public Thickness WorkAreaMargin
+    public DeskTopCaptureViewModel()
     {
-      get => _workAreaMargin;
-      set
+      _previewTimer = new DispatcherTimer
       {
-        if (_workAreaMargin != value)
-        {
-          _workAreaMargin = value;
-          OnPropertyChanged();
-        }
+        Interval = TimeSpan.FromMilliseconds(30)
+      };
+      _previewTimer.Tick += async (s, e) => await RefreshCaptureAsync();
+    }
+    partial void OnIsPreviewingChanged(bool value)
+    {
+      if (value)
+      {
+        _previewTimer.Start();
+      }
+      else
+      {
+        _previewTimer.Stop();
+        LatestBitmap?.Dispose();
+        LatestBitmap = null; // 设置为null，通知UI清除
+        CanvasDevice.GetSharedDevice().Trim();
+        PreviewFrameReady?.Invoke(); // 触发一次刷新来清除画布
+      }
+    }
+    [RelayCommand]
+    private void TogglePreview()
+    {
+      IsPreviewing = !IsPreviewing;
+    }
+    private async Task RefreshCaptureAsync()
+    {
+      using var softwareBitmap = GetDesktop.CaptureWindow();
+      if (softwareBitmap != null)
+      {
+        LatestBitmap?.Dispose();
+        LatestBitmap = CanvasBitmap.CreateFromSoftwareBitmap(CanvasDevice.GetSharedDevice(), softwareBitmap);
+        PreviewFrameReady?.Invoke();
       }
     }
 
-    private Point _desktopItemSpace;
-    
-
-    public Point DesktopItemSpace
-    {
-      get => _desktopItemSpace;
-      set
-      {
-        if (_desktopItemSpace != value)
-        {
-          _desktopItemSpace = value;
-          OnPropertyChanged();
-        }
-      }
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    internal DeskTopCaptureViewModel()
-    {
-      GridData = new ObservableCollection<GridItem>();
-    }
   }
 }

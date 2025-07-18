@@ -7,7 +7,6 @@ using MyLittleWidget.ViewModels;
 using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.Windows.AppLifecycle;
 
 namespace MyLittleWidget.Views.Pages
 {
@@ -25,6 +24,7 @@ namespace MyLittleWidget.Views.Pages
 
     private void DeskTopCapturePage_Loaded(object sender, RoutedEventArgs e)
     {
+      viewModel.PreviewFrameReady += OnPreviewFrameReady;
       LoadAndApplyWindowSize();
     }
 
@@ -34,8 +34,8 @@ namespace MyLittleWidget.Views.Pages
       {
         if (softwareBitmap != null)
         {
-          viewModel.latestBitmap?.Dispose();
-          viewModel.latestBitmap = CanvasBitmap.CreateFromSoftwareBitmap(CanvasDevice.GetSharedDevice(), softwareBitmap);
+          viewModel.LatestBitmap?.Dispose();
+          viewModel.LatestBitmap = CanvasBitmap.CreateFromSoftwareBitmap(CanvasDevice.GetSharedDevice(), softwareBitmap);
           DesktopCanvas.Invalidate();
         }
       }
@@ -68,38 +68,36 @@ namespace MyLittleWidget.Views.Pages
 
       window.AppWindow.MoveAndResize(rect, displayArea);
     }
+    private void OnPreviewFrameReady()
+    {
+      DesktopCanvas.Invalidate();
+    }
     private void DesktopCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
     {
-      if (viewModel.latestBitmap != null)
+      if (viewModel.LatestBitmap != null)
       {
         var canvasSize = sender.Size;
-        var imageSize = viewModel.latestBitmap.Size;
-
+        var imageSize = viewModel.LatestBitmap.Size;
         double scale = Math.Min(canvasSize.Width / imageSize.Width, canvasSize.Height / imageSize.Height);
-
         double scaledWidth = imageSize.Width * scale;
         double scaledHeight = imageSize.Height * scale;
-
         double x = (canvasSize.Width - scaledWidth) / 2;
         double y = (canvasSize.Height - scaledHeight) / 2;
-
-        Rect destinationRect = new Rect(x, y, scaledWidth, scaledHeight);
-
-        args.DrawingSession.DrawImage(
-            viewModel.latestBitmap,
-            destinationRect,
-            viewModel.latestBitmap.Bounds,
-            1.0f,
-            CanvasImageInterpolation.HighQualityCubic
-        );
+        args.DrawingSession.DrawImage(viewModel.LatestBitmap, new Rect(x, y, scaledWidth, scaledHeight));
         DropInteractiveCanvas.Width = scaledWidth;
         DropInteractiveCanvas.Height = scaledHeight;
-        
+        DropInteractiveCanvas.Margin = new Thickness(x, y, 0, 0);
         DropInteractiveCanvas.Margin = new Thickness(x, y, 0, 0);
 
         SharedViewModel.Instance.Scale = scale * viewModel.Dpiscale;
       }
+      else
+      {
+        // 如果 LatestBitmap 为 null，清除画布
+        args.DrawingSession.Clear(Windows.UI.Color.FromArgb(0, 0, 0, 0));
+      }
     }
+
     private void LoadAndApplyWindowSize()
     {
       var windowSize = Properties.Settings.Default.WindowSize;
@@ -120,10 +118,10 @@ namespace MyLittleWidget.Views.Pages
       {
         viewModel.timer.Stop();
         CaptureDesktopButton.Content = "开始预览";
-        if (viewModel.latestBitmap != null)
+        if (viewModel.LatestBitmap != null)
         {
-          viewModel.latestBitmap.Dispose();
-          viewModel.latestBitmap = null;
+          viewModel.LatestBitmap.Dispose();
+          viewModel.LatestBitmap = null;
         }
         DesktopCanvas.Draw -= DesktopCanvas_Draw;
         DesktopCanvas.Invalidate();
@@ -205,22 +203,12 @@ namespace MyLittleWidget.Views.Pages
 
     private void InteractiveCanvas_OnPointerEntered(object sender, PointerRoutedEventArgs e)
     {
-      if (CaptureDesktopButton.Content == "停止预览")
-      {
-        viewModel.timer.Start();
-      }
-      else
-        {
-          viewModel.timer.Stop();
-            viewModel.latestBitmap?.Dispose();
-            viewModel.latestBitmap = null;
-          
-        }
-      }
+      viewModel.IsPreviewing = true;
+    }
 
     private void InteractiveCanvas_OnPointerExited(object sender, PointerRoutedEventArgs e)
     {
-      viewModel.timer.Stop();
+      viewModel.IsPreviewing = false;
     }
   }
 }

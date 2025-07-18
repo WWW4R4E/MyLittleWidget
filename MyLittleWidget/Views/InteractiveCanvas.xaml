@@ -9,7 +9,6 @@
 
     <Grid>
         <Canvas
-            x:Name="PreviewBorder"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Background="Transparent"

@@ -101,27 +101,18 @@ namespace MyLittleWidget.Views.Pages
       ViewModel.ConfigureWidget(widgets);
     }
 
-    private WidgetBase CreateWidgetFromType(WidgetConfigData configData)
+    private WidgetBase CreateWidgetFromType(WidgetConfig config)
     {
-      var activeConfig = new WidgetConfig
+      
+      if (config != null && !string.IsNullOrEmpty(config.WidgetType))
       {
-        Id = configData.Id,
-        Name = configData.Name,
-        UnitWidth = configData.UnitWidth,
-        UnitHeight = configData.UnitHeight,
-        PositionX = configData.PositionX,
-        PositionY = configData.PositionY,
-        WidgetType = configData.WidgetType
-      };
-      if (activeConfig != null && !string.IsNullOrEmpty(activeConfig.WidgetType))
-      {
-        if (activeConfig.WidgetType == typeof(OneLineOfWisdom).FullName)
+        if (config.WidgetType == typeof(OneLineOfWisdom).FullName)
         {
-          return new OneLineOfWisdom(activeConfig, AppSettings.Instance);
+          return new OneLineOfWisdom(config, AppSettings.Instance);
         }
-        if (activeConfig.WidgetType == typeof(PomodoroClock).FullName)
+        if (config.WidgetType == typeof(PomodoroClock).FullName)
         {
-          return new PomodoroClock(activeConfig, AppSettings.Instance);
+          return new PomodoroClock(config, AppSettings.Instance);
         }
       }
 

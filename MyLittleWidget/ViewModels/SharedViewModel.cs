@@ -95,34 +95,5 @@ public partial class SharedViewModel : ObservableObject
 
     return new Point(finalX, finalY);
   }
-  private readonly ConfigurationService _configService = new ();
 
-internal async Task SaveConfigurationAsync()
-  {
-
-    var settingsToSave = new AppSettingsData(
-      AppSettings.Instance.BaseUnit,
-      AppSettings.Instance.IsDarkTheme
-    );
-
-    var widgetsToSave = WidgetList 
-      .Select(widget => new WidgetConfigData(
-        widget.Config.Id,
-        widget.Config.Name,
-        widget.Config.UnitWidth,
-        widget.Config.UnitHeight,
-        widget.Config.PositionX,
-        widget.Config.PositionY,
-        widget.Config.WidgetType
-      ))
-      .ToList();
-
-    var dataToSave = new ApplicationSaveData
-    {
-      GlobalSettings = settingsToSave,
-      WidgetConfigs = widgetsToSave
-    };
-
-    await Task.Run(() => _configService.Save(dataToSave));
-  }
 }

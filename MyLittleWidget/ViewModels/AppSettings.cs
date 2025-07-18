@@ -7,7 +7,7 @@ public partial class AppSettings : ObservableObject, Contracts.IApplicationSetti
 {
   public static AppSettings Instance { get; } = new();
   [JsonConstructor]
-  private AppSettings(){ }
+  public AppSettings(){ }
 
   [ObservableProperty]
   private double _baseUnit = 100.0;
