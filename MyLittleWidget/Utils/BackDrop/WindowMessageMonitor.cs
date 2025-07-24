@@ -11,7 +11,7 @@ namespace MyLittleWidget.Utils
     /// <summary>
     /// Initialize a new instance of the <see cref="WindowMessageMonitor"/> class.
     /// </summary>
-    /// <param name="window">The window to listen to messages for</param>
+    /// <param name="window">The MainWindow to listen to messages for</param>
     public WindowMessageMonitor(Microsoft.UI.Xaml.Window window) : this(WindowNative.GetWindowHandle(window))
     {
     }
@@ -19,7 +19,7 @@ namespace MyLittleWidget.Utils
     /// <summary>
     /// Initialize a new instance of the <see cref="WindowMessageMonitor"/> class.
     /// </summary>
-    /// <param name="hwnd">The window handle to listen to messages for</param>
+    /// <param name="hwnd">The MainWindow handle to listen to messages for</param>
     public WindowMessageMonitor(IntPtr hwnd)
     {
       _hwnd = hwnd;

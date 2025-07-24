@@ -1,9 +1,7 @@
 using Microsoft.UI.Xaml.Shapes;
 using MyLittleWidget.Contracts;
-using MyLittleWidget.Models;
 using MyLittleWidget.Services;
 using MyLittleWidget.Utils;
-using MyLittleWidget.Utils.BackDrop;
 using MyLittleWidget.ViewModels;
 using System.Diagnostics;
 
@@ -14,7 +12,6 @@ namespace MyLittleWidget.Views.Pages
     private ConfigurationService _configService;
     public SharedViewModel ViewModel { get; } = SharedViewModel.Instance;
     private double dpiScale;
-    private bool isChild;
 
     // 垂直和水平辅助线
     private readonly List<double> _vGuideCoordinates = new List<double>();
@@ -23,11 +20,10 @@ namespace MyLittleWidget.Views.Pages
     private readonly List<Line> _vGuideLines = new List<Line>();
     private readonly List<Line> _hGuideLines = new List<Line>();
 
-    public DocklinePage(bool result)
+    public DocklinePage()
     {
       InitializeComponent();
       _configService = new ConfigurationService();
-      isChild =result;
       this.Loaded += OnPageLoaded;
     }
 
@@ -41,17 +37,12 @@ namespace MyLittleWidget.Views.Pages
       ViewModel.WidgetList.CollectionChanged += OnWidgetsCollectionChanged;
       ViewModel.PropertyChanged += ViewModel_PropertyChanged_ForGuideVisibility;
       EmbedIntoTargetWindow();
-      if (!this.isChild)
-      {
-        UpdateWindowShape();
-      }
-      
     }
 
     private void EmbedIntoTargetWindow()
     {
       var workArea = GetDesktop.GetDesktopGridInfo().rcWorkArea;
-      var childWindow = ((App)App.Current).childWindow;
+      var childWindow = ((App)App.Current).WidgetWindow;
       childWindow.AppWindow.MoveAndResize(new RectInt32(
           workArea.X,
           workArea.Y,
@@ -75,21 +66,21 @@ namespace MyLittleWidget.Views.Pages
           workArea.Width,
           workArea.Height
       ));
-      if (isChild)
+      if (Properties.Settings.Default.IsPreview)
       {
         HWND progman = PInvoke.FindWindow("Progman", null);
         HWND workerw = PInvoke.FindWindowEx(progman, HWND.Null, "WorkerW", null);
         PInvoke.SetParent(myHwnd, workerw);
+        childWindow.Activate();
       }
       else
       {
         HWND progman = PInvoke.FindWindow("Progman", null);
         HWND workerw = PInvoke.FindWindowEx(progman, HWND.Null, "SHELLDLL_DefView", null);
         PInvoke.SetParent(myHwnd, workerw);
-      }
-
         childWindow.Activate();
-
+        UpdateWindowShape();
+      }
     }
     // 添加和删除Widget
     private void OnWidgetsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -252,16 +243,13 @@ if (saveData != null)
       if (widgetRects.Count == 0)
       {
         Debug.WriteLine("CRITICAL WARNING: No widgets with valid size found. Window will be fully transparent.");
-        // 在这种情况下，我们可以选择完全不挖洞，以防出错
-        // WindowRegionUtil.RestoreWindowShape(...)
         return;
       }
 
       // 获取窗口句柄
-      var childWindow = ((App)App.Current).childWindow;
+      var childWindow = ((App)App.Current).WidgetWindow;
       HWND myHwnd = (HWND)WindowNative.GetWindowHandle(childWindow);
 
-      // 调用工具类，因为我们已经处理了坐标，所以不需要再传DPI
       WindowRegionUtil.ApplySolidRegions(myHwnd, widgetRects);
     }
     private void OnWidgetPositionUpdated(object sender, EventArgs e)

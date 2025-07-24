@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using Windows.Graphics.Imaging;
-using Windows.Storage.Streams;
 using WinRT;
 
 namespace MyLittleWidget.Utils
@@ -10,9 +9,6 @@ namespace MyLittleWidget.Utils
   internal class GetDesktop
   {
     public const uint PW_RENDERFULLCONTENT = 0x00000002;
-
-    internal const int SPI_GETDESKWALLPAPER = 0x0073;
-    internal const int MAX_PATH = 260;
 
     [StructLayout(LayoutKind.Sequential)]
     public struct POINT
@@ -43,7 +39,7 @@ namespace MyLittleWidget.Utils
     public static unsafe SoftwareBitmap CaptureWindow()
     {
       // 1. 获取顶层窗口句柄
-      HWND hwnd = (HWND)WindowNative.GetWindowHandle(((App)App.Current).childWindow);
+      HWND hwnd = (HWND)WindowNative.GetWindowHandle(((App)App.Current).WidgetWindow);
 
       // 2. 获取窗口尺寸
       PInvoke.GetWindowRect(hwnd, out RECT rect);
@@ -97,7 +93,7 @@ namespace MyLittleWidget.Utils
         else
         {
           Debug.WriteLine("PrintWindow failed.");
-          throw new InvalidOperationException("PrintWindow failed to capture the window.");
+          throw new InvalidOperationException("PrintWindow failed to capture the MainWindow.");
         }
       }
       finally

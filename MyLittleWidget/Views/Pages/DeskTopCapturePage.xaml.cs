@@ -52,7 +52,7 @@ namespace MyLittleWidget.Views.Pages
       const double bottomControlsHeight = 200.0;
       int targetHeight = (int)previewHeight + (int)(bottomControlsHeight * viewModel.Dpiscale);
 
-      var window = ((App)Application.Current).window;
+      var window = ((App)Application.Current).MainWindow;
       DisplayArea displayArea = DisplayArea.GetFromWindowId(window.AppWindow.Id, DisplayAreaFallback.Primary);
 
       int centerX = displayArea.WorkArea.Width / 2 - targetWidth / 2 + displayArea.WorkArea.X;
@@ -104,7 +104,7 @@ namespace MyLittleWidget.Views.Pages
       if (windowSize.Width > 200 &&
           windowSize.Height > 200)
       {
-        var window = ((App)Application.Current).window;
+        var window = ((App)Application.Current).MainWindow;
         window.AppWindow.Resize(new SizeInt32((int)windowSize.Width, (int)windowSize.Height));
       }
       else

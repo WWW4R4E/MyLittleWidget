@@ -4,11 +4,11 @@ namespace MyLittleWidget.Views
 {
   public sealed partial class ChildenWindow : Window
   {
-    public ChildenWindow(bool isChild)
+    public ChildenWindow()
     {
       InitializeComponent();
       ExtendsContentIntoTitleBar = true;
-      Content = new DocklinePage(isChild);
+      Content = new DocklinePage();
     }
   }
 }
