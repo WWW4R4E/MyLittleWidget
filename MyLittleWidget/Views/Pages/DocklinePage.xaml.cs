@@ -13,6 +13,8 @@ namespace MyLittleWidget.Views.Pages
   {
     private ConfigurationService _configService;
     public SharedViewModel ViewModel { get; } = SharedViewModel.Instance;
+    private double dpiScale;
+    private bool isChild;
 
     // 垂直和水平辅助线
     private readonly List<double> _vGuideCoordinates = new List<double>();
@@ -21,23 +23,29 @@ namespace MyLittleWidget.Views.Pages
     private readonly List<Line> _vGuideLines = new List<Line>();
     private readonly List<Line> _hGuideLines = new List<Line>();
 
-    public DocklinePage()
+    public DocklinePage(bool result)
     {
       InitializeComponent();
       _configService = new ConfigurationService();
+      isChild =result;
       this.Loaded += OnPageLoaded;
     }
 
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
-      EmbedIntoTargetWindow();
       LoadAndApplyConfiguration();
       var LineInfo = GetDesktop.GetDesktopGridInfo();
-      var dpiScale = XamlRoot.RasterizationScale;
+      dpiScale = XamlRoot.RasterizationScale;
       SetupGuideLines(vLineCount: LineInfo.grid.X, vLineSpacing: LineInfo.spacing.X / ViewModel.Scale / dpiScale, hLineCount: LineInfo.grid.Y, hLineSpacing: LineInfo.spacing.Y / ViewModel.Scale / dpiScale);
       SharedViewModel.Instance.ConfigureGuides(_vGuideCoordinates, _hGuideCoordinates);
       ViewModel.WidgetList.CollectionChanged += OnWidgetsCollectionChanged;
       ViewModel.PropertyChanged += ViewModel_PropertyChanged_ForGuideVisibility;
+      EmbedIntoTargetWindow();
+      if (!this.isChild)
+      {
+        UpdateWindowShape();
+      }
+      
     }
 
     private void EmbedIntoTargetWindow()
@@ -67,10 +75,20 @@ namespace MyLittleWidget.Views.Pages
           workArea.Width,
           workArea.Height
       ));
-      HWND progman = PInvoke.FindWindow("Progman", null);
-      HWND workerw = PInvoke.FindWindowEx(progman, HWND.Null, "WorkerW", null);
-      childWindow.Activate();
-      PInvoke.SetParent(myHwnd, workerw);
+      if (isChild)
+      {
+        HWND progman = PInvoke.FindWindow("Progman", null);
+        HWND workerw = PInvoke.FindWindowEx(progman, HWND.Null, "WorkerW", null);
+        PInvoke.SetParent(myHwnd, workerw);
+      }
+      else
+      {
+        HWND progman = PInvoke.FindWindow("Progman", null);
+        HWND workerw = PInvoke.FindWindowEx(progman, HWND.Null, "SHELLDLL_DefView", null);
+        PInvoke.SetParent(myHwnd, workerw);
+      }
+
+        childWindow.Activate();
 
     }
     // 添加和删除Widget
@@ -188,7 +206,64 @@ if (saveData != null)
         widget.PositionUpdated += OnWidgetPositionUpdated;
       }
     }
+    // 在 DocklinePage.cs 中，替换现有的 UpdateWindowShape 方法
 
+    private void UpdateWindowShape()
+    {
+      Debug.WriteLine("--- Running FINAL version of UpdateWindowShape ---");
+      var widgetRects = new List<Rect>();
+
+      // 获取每个单位格的尺寸，这是我们计算尺寸的基准
+      double baseUnitSize = AppSettings.Instance.BaseUnit;
+      if (baseUnitSize <= 0)
+      {
+        Debug.WriteLine("CRITICAL WARNING: BaseUnit size is zero or negative. Aborting.");
+        return;
+      }
+
+      foreach (var widget in ViewModel.WidgetList)
+      {
+        // --- 核心修正：手动计算尺寸，不再依赖 ActualWidth/Height ---
+        double widgetWidth = widget.Config.UnitWidth * baseUnitSize;
+        double widgetHeight = widget.Config.UnitHeight * baseUnitSize;
+
+        // 诊断日志
+        Debug.WriteLine($"Processing widget: {widget.GetType().Name}");
+        Debug.WriteLine($"  - Config Position: ({widget.Config.PositionX}, {widget.Config.PositionY})");
+        Debug.WriteLine($"  - Calculated Size: ({widgetWidth}, {widgetHeight})");
+
+        // 只有当计算出的尺寸有效时，才添加矩形
+        if (widgetWidth > 0 && widgetHeight > 0)
+        {
+          var rect = new Rect(
+            widget.Config.PositionX* dpiScale,
+            widget.Config.PositionY * dpiScale,
+            widgetWidth * dpiScale,
+            widgetHeight * dpiScale
+          );
+          widgetRects.Add(rect);
+        }
+        else
+        {
+          Debug.WriteLine("  - WARNING: Calculated size is zero. This widget will be skipped.");
+        }
+      }
+
+      if (widgetRects.Count == 0)
+      {
+        Debug.WriteLine("CRITICAL WARNING: No widgets with valid size found. Window will be fully transparent.");
+        // 在这种情况下，我们可以选择完全不挖洞，以防出错
+        // WindowRegionUtil.RestoreWindowShape(...)
+        return;
+      }
+
+      // 获取窗口句柄
+      var childWindow = ((App)App.Current).childWindow;
+      HWND myHwnd = (HWND)WindowNative.GetWindowHandle(childWindow);
+
+      // 调用工具类，因为我们已经处理了坐标，所以不需要再传DPI
+      WindowRegionUtil.ApplySolidRegions(myHwnd, widgetRects);
+    }
     private void OnWidgetPositionUpdated(object sender, EventArgs e)
     {
       if (sender is WidgetBase widget && ViewModel.IsDragging && ViewModel.ActiveWidget == widget)

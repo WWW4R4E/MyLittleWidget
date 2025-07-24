@@ -34,5 +34,17 @@ namespace MyLittleWidget.Properties {
                 this["WindowSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsPreview {
+            get {
+                return ((bool)(this["IsPreview"]));
+            }
+            set {
+                this["IsPreview"] = value;
+            }
+        }
     }
 }

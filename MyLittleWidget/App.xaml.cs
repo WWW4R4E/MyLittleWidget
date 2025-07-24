@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
 using MyLittleWidget.Services;
+using MyLittleWidget.Utils;
 using MyLittleWidget.Views;
 
 namespace MyLittleWidget
@@ -14,6 +15,7 @@ namespace MyLittleWidget
 
     private const string AppKey = "c51f15b1-e8d6-4e1a-aca5-a0d63b14cc03";
     private AppInstance mainInstance;
+    
 
     public App()
     {
@@ -26,10 +28,12 @@ namespace MyLittleWidget
         {
           var activatedArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
           await mainInstance.RedirectActivationToAsync(activatedArgs);
+
         }).GetAwaiter().GetResult();
 
         Environment.Exit(0);
       }
+
     }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -38,7 +42,7 @@ namespace MyLittleWidget
       DispatcherQueue = DispatcherQueue.GetForCurrentThread();
       ComponentRegistryService.DiscoverWidgets();
       mainInstance.Activated += OnAppActivated;
-      childWindow = new ChildenWindow();
+      childWindow = new ChildenWindow(Properties.Settings.Default.IsPreview);
       SetupTrayIcon();
     }
 
@@ -52,7 +56,9 @@ namespace MyLittleWidget
         {
             DispatcherQueue.TryEnqueue(() =>
             {
-                ShowMainWindow();
+              WindowRegionUtil.RestoreWindowShape((HWND)WindowNative.GetWindowHandle(childWindow));
+
+              ShowMainWindow();
             });
         }
 

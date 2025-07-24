@@ -15,5 +15,4 @@
         <utils:TransparentBackdrop />
     </Window.SystemBackdrop>
 
-    <pages:DocklinePage />
 </Window>

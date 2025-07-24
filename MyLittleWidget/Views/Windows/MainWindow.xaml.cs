@@ -15,6 +15,7 @@ namespace MyLittleWidget
       args.Handled = true;
       var currentSize = AppWindow.Size;
       Properties.Settings.Default.WindowSize = new System.Drawing.Size(currentSize.Width, currentSize.Height);
+      Properties.Settings.Default.IsPreview = false; 
       Properties.Settings.Default.Save();
       AppInstance.Restart(string.Empty);
     }

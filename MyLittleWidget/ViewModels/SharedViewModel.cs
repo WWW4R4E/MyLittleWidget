@@ -1,8 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using MyLittleWidget.Contracts;
-using MyLittleWidget.Models;
-using MyLittleWidget.Services;
 
 namespace MyLittleWidget.ViewModels;
 

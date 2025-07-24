@@ -13,6 +13,9 @@ DwmSetWindowAttribute
 EnumDisplayMonitors
 EnumWindows
 FillRect
+SetWindowRgn
+CombineRgn
+REGION_COMBINE_MODE
 FileOpenDialog
 FileSaveDialog
 FindWindowExW
