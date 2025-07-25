@@ -1,8 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using Windows.Win32.Foundation;
-
-namespace MyLittleWidget.Utils.BackDrop
+﻿namespace MyLittleWidget.Utils.BackDrop
 {
   public struct Message
   {

@@ -9,5 +9,13 @@
     <AppxShowAllApps>False</AppxShowAllApps>
     <AppxBuildConfigurationSelection>x64</AppxBuildConfigurationSelection>
     <PackageOptionalProjectsInIdeBuilds>False</PackageOptionalProjectsInIdeBuilds>
+    <Source>C:\Users\123\Desktop\MyLittleWidget\MyLittleWidget %28Package%29\Images\图层 1.png</Source>
+    <SmallTileSource>C:\Users\123\Desktop\MyLittleWidget\MyLittleWidget %28Package%29\Images\图层 1.png</SmallTileSource>
+    <MediumTileSource>C:\Users\123\Desktop\MyLittleWidget\MyLittleWidget %28Package%29\Images\图层 1.png</MediumTileSource>
+    <WideTileSource>C:\Users\123\Desktop\MyLittleWidget\MyLittleWidget %28Package%29\Images\图层 1.png</WideTileSource>
+    <LargeTileSource>C:\Users\123\Desktop\MyLittleWidget\MyLittleWidget %28Package%29\Images\图层 1.png</LargeTileSource>
+    <AppIconSource>C:\Users\123\Desktop\MyLittleWidget\MyLittleWidget %28Package%29\Images\图层 1.png</AppIconSource>
+    <SplashScreenSource>C:\Users\123\Desktop\MyLittleWidget\MyLittleWidget %28Package%29\Images\图层 1.png</SplashScreenSource>
+    <PackageLogoSource>C:\Users\123\Desktop\MyLittleWidget\MyLittleWidget %28Package%29\Images\图层 1.png</PackageLogoSource>
   </PropertyGroup>
 </Project>

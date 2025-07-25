@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.Windows.AppLifecycle;
 using MyLittleWidget.Services;
 using MyLittleWidget.Views;
@@ -25,7 +26,7 @@ namespace MyLittleWidget
       {
         var activatedArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
         Task.Run(async () => await mainInstance.RedirectActivationToAsync(activatedArgs)).GetAwaiter().GetResult();
-        Environment.Exit(0); 
+        Environment.Exit(0);
       }
       else
       {
@@ -47,18 +48,13 @@ namespace MyLittleWidget
         LaunchMainWindow();
       }
 
-      SetupTrayIcon();
     }
-    private void SetupTrayIcon()
-    {
-      // TODO 托盘实现
 
-    }
     private void LaunchWidgetWindow()
     {
         WidgetWindow = new ChildenWindow();
     }
-    private void LaunchMainWindow()
+    internal void LaunchMainWindow()
     {
       Properties.Settings.Default.IsPreview = true;
       Properties.Settings.Default.Save();
@@ -82,32 +78,6 @@ namespace MyLittleWidget
             });
         }
 
-    // private void ShowMainWindow()
-    // {
-    //   if (MainWindow == null)
-    //   {
-    //     MainWindow = new MainWindow();
-    //     MainWindow.Closed += (sender, args) => { MainWindow = null; };
-    //     MainWindow.Activate();
-    //
-    //     DisplayArea displayArea = DisplayArea.GetFromWindowId(MainWindow.AppWindow.Id, DisplayAreaFallback.Primary);
-    //     int targetWidth = MainWindow.AppWindow.Size.Width - 300;
-    //     int targetHeight = MainWindow.AppWindow.Size.Height;
-    //     int centerX = displayArea.WorkArea.Width / 2 - targetWidth / 2 + displayArea.WorkArea.X;
-    //     int centerY = displayArea.WorkArea.Height / 2 - targetHeight / 2 + displayArea.WorkArea.Y;
-    //     RectInt32 rect = new RectInt32
-    //     {
-    //       X = centerX,
-    //       Y = centerY,
-    //       Width = targetWidth,
-    //       Height = targetHeight
-    //     };
-    //     MainWindow.AppWindow.MoveAndResize(rect, displayArea);
-    //   }
-    //   else
-    //   {
-    //     MainWindow.Activate();
-    //   }
-    // }
+    
+    }
   }
-}

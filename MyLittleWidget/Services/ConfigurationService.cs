@@ -12,6 +12,7 @@ namespace MyLittleWidget.Services
     public ConfigurationService()
     {
       string localFolder = ApplicationData.Current.LocalFolder.Path;
+      // string localFolder = "C:/123/Desktop/";
       _filePath = Path.Combine(localFolder, "app_settings.json");
     }
     public ApplicationSaveData? Load()

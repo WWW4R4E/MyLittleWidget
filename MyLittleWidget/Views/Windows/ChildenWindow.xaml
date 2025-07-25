@@ -8,10 +8,32 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pages="using:MyLittleWidget.Views.Pages"
     xmlns:utils="using:MyLittleWidget.Utils"
+    xmlns:notifyIcon="using:H.NotifyIcon"
     Title="ChildenWindow"
+    Closed="ChildenWindow_OnClosed"
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>
         <utils:TransparentBackdrop />
     </Window.SystemBackdrop>
+    <Grid>
+        <Grid.Resources>
+            <StandardUICommand x:Key="ShowWindowCommand" Kind="Open" ExecuteRequested="ShowWindowCommand_ExecuteRequested" />
+            <StandardUICommand x:Key="ExitCommand" Kind="Close" ExecuteRequested="ExitCommand_ExecuteRequested" />
+            <MenuFlyout x:Key="TrayContextFlyout">
+                <MenuFlyoutItem Text="显示窗口" Command="{StaticResource ShowWindowCommand}" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem Text="退出" Command="{StaticResource ExitCommand}" />
+            </MenuFlyout>
+        </Grid.Resources>
+
+        <notifyIcon:TaskbarIcon
+            x:Name="TrayIconView"
+            ToolTipText="MyLittleWidget"
+            IconSource="ms-appx:///Images/pmdg4-53lks-001.ico"
+            ContextFlyout="{StaticResource TrayContextFlyout}"
+            MenuActivation="LeftOrRightClick"
+            NoLeftClickDelay="True"/>
+        <pages:DocklinePage/>
+    </Grid>
 </Window>

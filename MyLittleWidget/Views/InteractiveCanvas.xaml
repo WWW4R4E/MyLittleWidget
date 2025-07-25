@@ -9,6 +9,7 @@
 
     <Grid>
         <Canvas
+            x:Name="InterCanvas"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Background="Transparent"
