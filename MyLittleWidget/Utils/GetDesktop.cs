@@ -28,6 +28,9 @@ namespace MyLittleWidget.Utils
     [DllImport("GetItemSpacing.dll")]
     internal static extern GridInfo GetDesktopGridInfo();
 
+    [DllImport("GetItemSpacing.dll")]
+    internal static extern bool sws_WindowHelpers_EnsureWallpaperHWND();
+
     public static float GetSystemDpiScale()
     {
       var hdc = PInvoke.GetDC(HWND.Null);

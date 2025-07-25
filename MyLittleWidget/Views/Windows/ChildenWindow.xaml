@@ -30,7 +30,7 @@
         <notifyIcon:TaskbarIcon
             x:Name="TrayIconView"
             ToolTipText="MyLittleWidget"
-            IconSource="ms-appx:///Images/pmdg4-53lks-001.ico"
+            IconSource="ms-appx:///Assets/tb.ico"
             ContextFlyout="{StaticResource TrayContextFlyout}"
             MenuActivation="LeftOrRightClick"
             NoLeftClickDelay="True"/>

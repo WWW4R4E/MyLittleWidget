@@ -1,4 +1,5 @@
-﻿using MyLittleWidget.Contracts;
+﻿using System.Diagnostics;
+using MyLittleWidget.Contracts;
 
 namespace MyLittleWidget.Services
 {
@@ -33,13 +34,13 @@ namespace MyLittleWidget.Services
           catch (Exception ex)
           {
             // 记录加载某个DLL失败的日志
-            System.Diagnostics.Debug.WriteLine($"Failed to load plugin assembly {dllFile}: {ex.Message}");
+            Debug.WriteLine($"Failed to load plugin assembly {dllFile}: {ex.Message}");
           }
         }
       }
 
       IsInitialized = true;
-      System.Diagnostics.Debug.WriteLine($"Widget discovery complete. Found {_registeredWidgets.Count} widgets.");
+      Debug.WriteLine($"Widget discovery complete. Found {_registeredWidgets.Count} widgets.");
     }
 
     // 辅助方法：在单个程序集中查找组件
@@ -64,13 +65,13 @@ namespace MyLittleWidget.Services
           if (!string.IsNullOrEmpty(typeName) && !_registeredWidgets.ContainsKey(typeName))
           {
             _registeredWidgets.Add(typeName, type);
-            System.Diagnostics.Debug.WriteLine($"Registered widget: {typeName}");
+            Debug.WriteLine($"Registered widget: {typeName}");
           }
         }
       }
       catch (ReflectionTypeLoadException ex)
       {
-        System.Diagnostics.Debug.WriteLine($"Could not inspect assembly {assembly.FullName}: {ex.Message}");
+        Debug.WriteLine($"Could not inspect assembly {assembly.FullName}: {ex.Message}");
         // 可以进一步记录 ex.LoaderExceptions 来获取更详细的失败信息
       }
     }

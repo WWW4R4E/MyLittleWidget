@@ -1,6 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ActiveDebugProfile>MyLittleWidget (Package)</ActiveDebugProfile>
+    <UapAppxPackageBuildMode>SideloadOnly</UapAppxPackageBuildMode>
+    <AppxShowAllApps>False</AppxShowAllApps>
+    <AppxBuildConfigurationSelection>x64</AppxBuildConfigurationSelection>
+    <PackageOptionalProjectsInIdeBuilds>False</PackageOptionalProjectsInIdeBuilds>
+    <Source>C:\Users\123\Desktop\Icon.png</Source>
+    <AppIconSource>C:\Users\123\Desktop\Icon.png</AppIconSource>
+    <SplashScreenSource>C:\Users\123\Desktop\Icon.png</SplashScreenSource>
+    <SmallTileSource>C:\Users\123\Desktop\图层 1.png</SmallTileSource>
+    <MediumTileSource>C:\Users\123\Desktop\Icon.png</MediumTileSource>
+    <WideTileSource>C:\Users\123\Desktop\图层 1.png</WideTileSource>
+    <LargeTileSource>C:\Users\123\Desktop\图层 1.png</LargeTileSource>
+    <BadgeLogoSource>C:\Users\123\Desktop\图层 1.png</BadgeLogoSource>
+    <PackageLogoSource>C:\Users\123\Desktop\图层 1.png</PackageLogoSource>
+  </PropertyGroup>
   <ItemGroup>
     <None Update="App.xaml">
       <SubType>Designer</SubType>

@@ -4,7 +4,7 @@ using MyLittleWidget.Services;
 using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
 using System.Diagnostics;
-
+using Windows.Win32.UI.WindowsAndMessaging;
 namespace MyLittleWidget.Views.Pages
 {
   public sealed partial class DocklinePage : Page
@@ -39,7 +39,7 @@ namespace MyLittleWidget.Views.Pages
       EmbedIntoTargetWindow();
     }
 
-    private void EmbedIntoTargetWindow()
+    private void  EmbedIntoTargetWindow()
     {
       var workArea = GetDesktop.GetDesktopGridInfo().rcWorkArea;
       var childWindow = ((App)App.Current).WidgetWindow;
@@ -70,8 +70,21 @@ namespace MyLittleWidget.Views.Pages
       {
         HWND progman = PInvoke.FindWindow("Progman", null);
         HWND workerw = PInvoke.FindWindowEx(progman, HWND.Null, "WorkerW", null);
+        if (workerw == HWND.Null)
+        {
+          if (GetDesktop.sws_WindowHelpers_EnsureWallpaperHWND())
+          {
+            workerw = PInvoke.FindWindowEx(progman, HWND.Null, "WorkerW", null);
+          }
+          else
+          {
+            App.Current.Exit();
+          }
+        }
         PInvoke.SetParent(myHwnd, workerw);
+
         childWindow.Activate();
+        // PInvoke.SetWindowPos(myHwnd, (HWND)(-1), 0, 0, 0, 0, (SET_WINDOW_POS_FLAGS.SWP_NOMOVE | SET_WINDOW_POS_FLAGS.SWP_NOSIZE));
       }
       else
       {
@@ -89,7 +102,6 @@ namespace MyLittleWidget.Views.Pages
       {
         foreach (WidgetBase newItem in e.NewItems)
         {
-          Debug.WriteLine(newItem.Content.GetType);
           RootCanvas.Children.Add(newItem);
           newItem.PositionUpdated += OnWidgetPositionUpdated;
         }
@@ -197,7 +209,6 @@ if (saveData != null)
         widget.PositionUpdated += OnWidgetPositionUpdated;
       }
     }
-    // 在 DocklinePage.cs 中，替换现有的 UpdateWindowShape 方法
 
     private void UpdateWindowShape()
     {
@@ -243,7 +254,6 @@ if (saveData != null)
       if (widgetRects.Count == 0)
       {
         Debug.WriteLine("CRITICAL WARNING: No widgets with valid size found. Window will be fully transparent.");
-        return;
       }
 
       // 获取窗口句柄

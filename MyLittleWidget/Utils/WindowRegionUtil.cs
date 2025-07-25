@@ -20,8 +20,8 @@ namespace MyLittleWidget.Utils
         {
           int left = (int)rect.X;
           int top = (int)rect.Y;
-          int right = (int)(rect.X + rect.Width);
-          int bottom = (int)(rect.Y + rect.Height);
+          int right = (int)(rect.X + rect.Width)+3;
+          int bottom = (int)(rect.Y + rect.Height)+3;
       
           var hRgnTemp = CreateRectRgn(left, top, right, bottom);
           if (hRgnTemp.IsNull) continue; 

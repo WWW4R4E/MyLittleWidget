@@ -1,8 +1,4 @@
-
-using H.NotifyIcon;
 using Microsoft.UI.Xaml.Input;
-using MyLittleWidget.Views.Pages;
-
 namespace MyLittleWidget.Views
 {
   public sealed partial class ChildenWindow : Window

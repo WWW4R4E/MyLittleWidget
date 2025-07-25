@@ -10,12 +10,12 @@ DwmEnableBlurBehindWindow
 DwmExtendFrameIntoClientArea
 DwmGetWindowAttribute
 DwmSetWindowAttribute
-EnumDisplayMonitors
+EnumDi
+yMonitors
 EnumWindows
 FillRect
 SetWindowRgn
 CombineRgn
-REGION_COMBINE_MODE
 FileOpenDialog
 FileSaveDialog
 FindWindowExW
@@ -74,6 +74,7 @@ DeleteObject
 DeleteDC
 GetDIBits
 GetClientRect
-GetLastError
 SystemParametersInfo
 GetWindowDC
+SendMessageTimeout
+SMTO_NORMAL

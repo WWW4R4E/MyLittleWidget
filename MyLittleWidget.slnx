@@ -8,13 +8,11 @@
   <Project Path="GetItemSpacing/GetItemSpacing.vcxproj" Id="d67bff17-35b9-4f76-9b02-e8791d13d4b4">
     <Platform Solution="*|ARM64" Project="x64" />
   </Project>
-  <Project Path="MyLittleWidget (Package)/MyLittleWidget (Package).wapproj" Type="c7167f0d-bc9f-4e6e-afe1-012c56b48db5">
-    <Deploy />
-  </Project>
   <Project Path="MyLittleWidget.Contracts/MyLittleWidget.Contracts.csproj" Id="fc22927e-f6bc-446a-9982-3a003fcc5028" />
   <Project Path="MyLittleWidget/MyLittleWidget.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="*|x64" Project="x64" />
     <Platform Solution="*|x86" Project="x86" />
+    <Deploy Solution="*|x64" />
   </Project>
 </Solution>
