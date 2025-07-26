@@ -3,9 +3,12 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Diagnostics;
 using Windows.Storage;
-using Windows.Storage.Pickers;
 using Windows.System;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Input;
+using Windows.ApplicationModel.DataTransfer;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace MyLittleWidget.Contracts.AppShortcut
 {
@@ -14,12 +17,7 @@ namespace MyLittleWidget.Contracts.AppShortcut
     // 应用路径属性
     public string ApplicationPath { get; set; } = "";
     public string ApplicationArguments { get; set; } = "";
-    public string IconPath { get; set; } = "";
-
-    // 添加事件用于通知父组件
-    public event EventHandler<AppShortcutEventArgs> SettingsRequested;
-    public event EventHandler DeleteRequested;
-    public event EventHandler EditRequested;
+    private string AppDisplayName { get; set; } = ""; 
 
     public AppShortcutContent()
     {
@@ -27,12 +25,17 @@ namespace MyLittleWidget.Contracts.AppShortcut
       LoadDefaultIcon();
     }
 
-    // 启动应用
-    private async void LaunchButton_Click(object sender, RoutedEventArgs e)
+    private async void AppShortcutContent_PointerReleased(object sender, PointerRoutedEventArgs e)
     {
       if (string.IsNullOrEmpty(ApplicationPath))
         return;
 
+      await LaunchApplication();
+    }
+
+
+    private async Task LaunchApplication()
+    {
       try
       {
         if (ApplicationPath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
@@ -57,72 +60,19 @@ namespace MyLittleWidget.Contracts.AppShortcut
         Debug.WriteLine($"启动应用失败: {ex.Message}");
       }
     }
-
-    // 设置菜单项点击
-    private void SettingsMenuItem_Click(object sender, RoutedEventArgs e)
+    public void SetAppIcon(BitmapImage icon)
     {
-      SettingsRequested?.Invoke(this, new AppShortcutEventArgs
-      {
-        ApplicationPath = ApplicationPath,
-        Arguments = ApplicationArguments,
-        IconPath = IconPath
-      });
-    }
 
-    // 选择图标菜单项点击
-    private async void SelectIconMenuItem_Click(object sender, RoutedEventArgs e)
-    {
-      // var picker = new FileOpenPicker();
-      // var hwnd = WinRT.Interop.WindowNative.GetWindowHandle();
-      // WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-      //
-      // picker.ViewMode = PickerViewMode.Thumbnail;
-      // picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-      // picker.FileTypeFilter.Add(".png");
-      // picker.FileTypeFilter.Add(".jpg");
-      // picker.FileTypeFilter.Add(".jpeg");
-      // picker.FileTypeFilter.Add(".ico");
-      // picker.FileTypeFilter.Add(".bmp");
-      //
-      // var file = await picker.PickSingleFileAsync();
-      // if (file != null)
-      // {
-      //   IconPath = file.Path;
-      //   SetAppIcon(IconPath);
-      // }
-    }
-
-    // 编辑菜单项点击
-    private void EditMenuItem_Click(object sender, RoutedEventArgs e)
-    {
-      EditRequested?.Invoke(this, EventArgs.Empty);
-    }
-
-    // 删除菜单项点击
-    private void DeleteMenuItem_Click(object sender, RoutedEventArgs e)
-    {
-      DeleteRequested?.Invoke(this, EventArgs.Empty);
-    }
-
-    // 设置应用图标
-    public void SetAppIcon(string iconPath)
-    {
-      if (!string.IsNullOrEmpty(iconPath) && System.IO.File.Exists(iconPath))
-      {
         try
         {
-          AppIconImage.Source = new BitmapImage(new Uri(iconPath));
-          IconPath = iconPath;
+          AppIconImage.Source = icon;
+
         }
-        catch
+        catch (Exception ex)
         {
+          Debug.WriteLine($"加载图标失败: {ex.Message}");
           LoadDefaultIcon();
         }
-      }
-      else
-      {
-        LoadDefaultIcon();
-      }
     }
 
     // 加载默认图标
@@ -130,22 +80,87 @@ namespace MyLittleWidget.Contracts.AppShortcut
     {
       // 设置默认图标，或者使用系统默认应用图标
       AppIconImage.Source = new BitmapImage(
-          new Uri("ms-appx:///Assets/AppIcon.png")); // 确保你有这个资源
+          new Uri("ms-appx:///Assets/StoreLogo.png")); 
     }
-
-    // 设置应用路径
-    public void SetApplicationPath(string path, string arguments = "")
+    private void UpdateDisplayName()
     {
-      ApplicationPath = path;
-      ApplicationArguments = arguments;
-    }
-  }
 
-  // 事件参数类
-  public class AppShortcutEventArgs : EventArgs
-  {
-    public string ApplicationPath { get; set; }
-    public string Arguments { get; set; }
-    public string IconPath { get; set; }
+        if (!string.IsNullOrEmpty(ApplicationPath))
+        {
+          AppDisplayName = Path.GetFileNameWithoutExtension(ApplicationPath);
+          AppDisplayNameTextBlock.Text = AppDisplayName; 
+        }
+        else
+        {
+          AppDisplayName = "";
+          AppDisplayNameTextBlock.Text = "";
+        }
+    }
+
+    // 处理文件拖放
+    private async void AppShortcutContent_Drop(object sender, DragEventArgs e)
+    {
+      if (e.DataView.Contains(StandardDataFormats.StorageItems))
+      {
+        var items = await e.DataView.GetStorageItemsAsync();
+        if (items.Count > 0)
+        {
+          if (items[0] is StorageFile file)
+          {
+            ApplicationPath = file.Path;
+            SetAppIconFromPath(ApplicationPath);
+            UpdateDisplayName(); // 更新显示名称
+          }
+        }
+      }
+      e.Handled = true;
+    }
+
+    // 允许拖放
+    private void AppShortcutContent_DragOver(object sender, DragEventArgs e)
+    {
+      e.AcceptedOperation = DataPackageOperation.Copy;
+      e.Handled = true;
+    }
+
+    // 从文件路径设置图标
+    private void SetAppIconFromPath(string filePath)
+    {
+        if (filePath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+        {
+          // 获取exe图标
+BitmapImage Icon = ExtractIconFromExe(filePath); // 提取图标
+          if (Icon != null)
+          {
+            SetAppIcon(Icon);
+          }
+          else
+          {
+            LoadDefaultIcon();
+          }
+        }
+    }
+
+    private BitmapImage ExtractIconFromExe(string exePath)
+    {
+        using (System.Drawing.Icon icon = System.Drawing.Icon.ExtractAssociatedIcon(exePath))
+        {
+          if (icon != null)
+          {
+            using (var bmp = icon.ToBitmap())
+            {
+              using (var ms = new MemoryStream())
+              {
+                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                ms.Seek(0, SeekOrigin.Begin);
+                var bitmapImage = new BitmapImage();
+                bitmapImage.SetSource(ms.AsRandomAccessStream());
+                return bitmapImage;
+              }
+            }
+          }
+        }
+      return null;
+    }
   }
 }

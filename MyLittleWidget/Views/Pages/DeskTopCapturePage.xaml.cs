@@ -44,29 +44,23 @@ namespace MyLittleWidget.Views.Pages
 
     private void AdjustWindowSizeToContent()
     {
-      RECT desktopBitmapSize = GetDesktop.GetDesktopGridInfo().rcWorkArea;
-      double maxPreviewHeight = desktopBitmapSize.Height / 7 * 4;
-      double desktopAspectRatio = desktopBitmapSize.Width / desktopBitmapSize.Height;
-      double previewHeight = maxPreviewHeight;
-      double previewWidth = previewHeight * desktopAspectRatio;
-      int targetWidth = (int)previewWidth;
-      const double bottomControlsHeight = 200.0;
-      int targetHeight = (int)previewHeight + (int)(bottomControlsHeight * viewModel.Dpiscale);
-
       var window = ((App)Application.Current).MainWindow;
       DisplayArea displayArea = DisplayArea.GetFromWindowId(window.AppWindow.Id, DisplayAreaFallback.Primary);
+      double scale = 5.0 / 7.0;
+      int width = (int)(displayArea.WorkArea.Width * scale);
+      int height = (int)(displayArea.WorkArea.Height * scale);
+      
 
-      int centerX = displayArea.WorkArea.Width / 2 - targetWidth / 2 + displayArea.WorkArea.X;
-      int centerY = displayArea.WorkArea.Height / 2 - targetHeight / 2 + displayArea.WorkArea.Y;
+      int centerX = displayArea.WorkArea.Width / 2 - width / 2 + displayArea.WorkArea.X;
+      int centerY = displayArea.WorkArea.Height / 2 - height / 2 + displayArea.WorkArea.Y;
 
       RectInt32 rect = new RectInt32
       {
         X = centerX,
         Y = centerY,
-        Width = targetWidth,
-        Height = targetHeight
+        Width = width,
+        Height = height
       };
-
       window.AppWindow.MoveAndResize(rect, displayArea);
     }
     private void OnPreviewFrameReady()

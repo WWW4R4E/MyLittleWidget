@@ -6,23 +6,28 @@
     xmlns:local="using:MyLittleWidget.Contracts.AppShortcut"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
-        <Grid Background="White" Opacity="0.5">
-            <Grid.ContextFlyout>
-                <MenuFlyout>
-                    <MenuFlyoutItem Text="设置应用" Click="SettingsMenuItem_Click" />
-                    <MenuFlyoutItem Text="选择图标" Click="SelectIconMenuItem_Click" />
-                    <!-- <MenuFlyoutSeparator /> -->
-                    <!-- <MenuFlyoutItem Text="编辑" Click="EditMenuItem_Click" /> -->
-                    <!-- <MenuFlyoutItem Text="删除" Click="DeleteMenuItem_Click" /> -->
-                </MenuFlyout>
-
-            </Grid.ContextFlyout>
+    mc:Ignorable="d"
+    AllowDrop="True"
+    Drop="AppShortcutContent_Drop"
+    DragOver="AppShortcutContent_DragOver"
+    PointerReleased="AppShortcutContent_PointerReleased">
+        <Grid Background="Transparent">
+            <!-- <Grid.ContextFlyout> -->
+            <!--     <MenuFlyout> -->
+            <!--         <MenuFlyoutItem Text="设置应用" Click="SettingsMenuItem_Click" /> -->
+            <!--         <MenuFlyoutItem Text="选择图标" Click="SelectIconMenuItem_Click" /> -->
+            <!--         <MenuFlyoutSeparator /> -->
+            <!--         <MenuFlyoutItem Text="编辑" Click="EditMenuItem_Click" /> -->
+            <!--         <MenuFlyoutItem Text="删除" Click="DeleteMenuItem_Click" /> -->
+            <!--     </MenuFlyout> -->
+            <!-- -->
+            <!-- </Grid.ContextFlyout> -->
 
             <Image x:Name="AppIconImage"
-                       Stretch="UniformToFill"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch" />
-        </Grid>
+                   Stretch="Uniform"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch" />
+            <TextBlock x:Name="AppDisplayNameTextBlock" Text="" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,5" />
 
+        </Grid>
 </UserControl>

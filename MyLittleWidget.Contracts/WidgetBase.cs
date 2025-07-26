@@ -69,6 +69,7 @@ public partial class WidgetBase : ContentControl
       HorizontalAlignment = HorizontalAlignment.Stretch,
       VerticalAlignment = VerticalAlignment.Stretch,
       CornerRadius = new CornerRadius(8)
+
     };
     Config = config ?? throw new ArgumentNullException(nameof(config));
     // 子类通过这个配置Config对象

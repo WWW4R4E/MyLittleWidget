@@ -62,7 +62,6 @@ public sealed partial class PomodoroClock : WidgetBase
     var presetButtonsPanel = new Grid();
     presetButtonsPanel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
     presetButtonsPanel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-    presetButtonsPanel.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); 
     presetButtonsPanel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
 
     // 10分钟按钮（左上）
