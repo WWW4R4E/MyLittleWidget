@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36310.24
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Community.Widget", "Community.Widget.csproj", "{03695A44-302E-4CAD-964F-05455FEE5306}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLittleWidget.Contracts", "..\MyLittleWidget.Contracts\MyLittleWidget.Contracts.csproj", "{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Debug|ARM64.Build.0 = Debug|ARM64
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Debug|x64.ActiveCfg = Debug|x64
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Debug|x64.Build.0 = Debug|x64
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Debug|x64.Deploy.0 = Debug|x64
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Debug|x86.ActiveCfg = Debug|x86
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Debug|x86.Build.0 = Debug|x86
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Debug|x86.Deploy.0 = Debug|x86
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Release|ARM64.ActiveCfg = Release|ARM64
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Release|ARM64.Build.0 = Release|ARM64
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Release|ARM64.Deploy.0 = Release|ARM64
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Release|x64.ActiveCfg = Release|x64
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Release|x64.Build.0 = Release|x64
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Release|x64.Deploy.0 = Release|x64
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Release|x86.ActiveCfg = Release|x86
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Release|x86.Build.0 = Release|x86
+		{03695A44-302E-4CAD-964F-05455FEE5306}.Release|x86.Deploy.0 = Release|x86
+		{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}.Debug|x64.Build.0 = Debug|Any CPU
+		{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}.Debug|x86.Build.0 = Debug|Any CPU
+		{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}.Release|ARM64.Build.0 = Release|Any CPU
+		{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}.Release|x64.ActiveCfg = Release|Any CPU
+		{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}.Release|x64.Build.0 = Release|Any CPU
+		{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}.Release|x86.ActiveCfg = Release|Any CPU
+		{FF00E098-E47E-8684-4F02-71D5CD0A8C1B}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EF91A382-E3BE-47D8-A326-B6776F10C148}
+	EndGlobalSection
+EndGlobal

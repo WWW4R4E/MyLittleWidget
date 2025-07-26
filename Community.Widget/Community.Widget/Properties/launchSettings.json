@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Community.Widget (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Community.Widget (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
