@@ -4,7 +4,7 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="Community.Widget/Community.Widget.csproj" Id="d3df398d-298b-4a53-9b27-0f6ae4e61444">
+  <Project Path="Community.Widget/Community.Widget/Community.Widget.csproj" Id="d3df398d-298b-4a53-9b27-0f6ae4e61444">
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="*|x64" Project="x64" />
     <Platform Solution="*|x86" Project="x86" />
@@ -13,7 +13,7 @@
   <Project Path="GetItemSpacing/GetItemSpacing.vcxproj" Id="d67bff17-35b9-4f76-9b02-e8791d13d4b4">
     <Platform Solution="*|ARM64" Project="x64" />
   </Project>
-  <Project Path="MyLittleWidget.Contracts/MyLittleWidget.Contracts.csproj" Id="fc22927e-f6bc-446a-9982-3a003fcc5028" />
+  <Project Path="Community.Widget/MyLittleWidget.Contracts/MyLittleWidget.Contracts.csproj" Id="fc22927e-f6bc-446a-9982-3a003fcc5028" />
   <Project Path="MyLittleWidget/MyLittleWidget.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="*|x64" Project="x64" />

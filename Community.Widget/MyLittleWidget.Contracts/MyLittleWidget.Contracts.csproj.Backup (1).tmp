@@ -7,14 +7,6 @@
     <UseWinUI>true</UseWinUI>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="新文件夹\**" />
-    <Content Remove="新文件夹\**" />
-    <EmbeddedResource Remove="新文件夹\**" />
-    <None Remove="新文件夹\**" />
-    <Page Remove="新文件夹\**" />
-    <PRIResource Remove="新文件夹\**" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="AppShortcut\AppShortcutContent.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -26,7 +18,7 @@
   <ItemGroup>
     <Folder Include="Calendar\" />
     <Folder Include="Utils\" />
-    <Folder Include="Utils\" />
+    <Folder Include="Calendar\" />
   </ItemGroup>
   <ItemGroup>
     <Page Update="AppShortcut\AppShortcutContent.xaml">
