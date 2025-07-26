@@ -5,9 +5,9 @@ using Microsoft.UI.Xaml.Media;
 
 namespace MyLittleWidget.Contracts;
 
-public sealed partial class CustomControl1 : WidgetBase
+public sealed partial class CustomWidget : WidgetBase
 {
-  public CustomControl1(WidgetConfig config, IApplicationSettings settings) : base(config, settings)
+  public CustomWidget(WidgetConfig config, IApplicationSettings settings) : base(config, settings)
   {
     // 创建你自己的内容(也可以使用xaml创建然后这里new出来)
     var myContentGrid = new Grid

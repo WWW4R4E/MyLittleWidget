@@ -6,13 +6,12 @@ using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
 using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
-using Microsoft.UI.Xaml.Input;
 
 namespace MyLittleWidget.Views.Pages
 {
   public sealed partial class DeskTopCapturePage : Page
   {
-    private DeskTopCaptureViewModel viewModel = new();
+    internal DeskTopCaptureViewModel viewModel = new();
     private static Type _draggedElementType;
     public DeskTopCapturePage()
     {
@@ -26,6 +25,7 @@ namespace MyLittleWidget.Views.Pages
     {
       viewModel.PreviewFrameReady += OnPreviewFrameReady;
       LoadAndApplyWindowSize();
+      ((App)App.Current).MainWindow.VisibilityChanged +=viewModel.ChildenWindow_VisibilityChanged;
     }
 
     private async Task RefreshCaptureAsync()
@@ -40,6 +40,7 @@ namespace MyLittleWidget.Views.Pages
         }
       }
     }
+
 
     private void AdjustWindowSizeToContent()
     {
@@ -86,15 +87,12 @@ namespace MyLittleWidget.Views.Pages
         args.DrawingSession.DrawImage(viewModel.LatestBitmap, new Rect(x, y, scaledWidth, scaledHeight));
         DropInteractiveCanvas.Width = scaledWidth;
         DropInteractiveCanvas.Height = scaledHeight;
-        DropInteractiveCanvas.Margin = new Thickness(x, y, 0, 0);
-        DropInteractiveCanvas.Margin = new Thickness(x, y, 0, 0);
 
         SharedViewModel.Instance.Scale = scale * viewModel.Dpiscale;
       }
       else
       {
-        // 如果 LatestBitmap 为 null，清除画布
-        args.DrawingSession.Clear(Windows.UI.Color.FromArgb(0, 0, 0, 0));
+        args.DrawingSession.Clear(Color.FromArgb(0, 0, 0, 0));
       }
     }
 
@@ -105,37 +103,12 @@ namespace MyLittleWidget.Views.Pages
           windowSize.Height > 200)
       {
         var window = ((App)Application.Current).MainWindow;
-        window.AppWindow.Resize(new SizeInt32((int)windowSize.Width, (int)windowSize.Height));
+        window.AppWindow.Resize(new SizeInt32(windowSize.Width, windowSize.Height));
       }
       else
       {
         AdjustWindowSizeToContent();
       }
-    }
-    private void CaptureDesktopButton_Click(object sender, RoutedEventArgs e)
-    {
-      if (viewModel.timer.IsEnabled)
-      {
-        viewModel.timer.Stop();
-        CaptureDesktopButton.Content = "开始预览";
-        if (viewModel.LatestBitmap != null)
-        {
-          viewModel.LatestBitmap.Dispose();
-          viewModel.LatestBitmap = null;
-        }
-        DesktopCanvas.Draw -= DesktopCanvas_Draw;
-        DesktopCanvas.Invalidate();
-        CanvasDevice.GetSharedDevice().Trim();
-
-      }
-      else
-      {
-        DesktopCanvas.Draw += DesktopCanvas_Draw;
-        viewModel.timer.Start();
-        CaptureDesktopButton.Content = "停止预览";
-        
-      }
-
     }
     private void InteractiveCanvas_DragEnter(object sender, DragEventArgs e)
     {
@@ -195,20 +168,6 @@ namespace MyLittleWidget.Views.Pages
     private void InteractiveCanvas_DragOver(object sender, DragEventArgs e)
     {
       e.AcceptedOperation = DataPackageOperation.Move;
-    }
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-      Application.Current.Exit();
-    }
-
-    private void InteractiveCanvas_OnPointerEntered(object sender, PointerRoutedEventArgs e)
-    {
-      viewModel.IsPreviewing = true;
-    }
-
-    private void InteractiveCanvas_OnPointerExited(object sender, PointerRoutedEventArgs e)
-    {
-      viewModel.IsPreviewing = false;
     }
   }
 }

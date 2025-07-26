@@ -10,7 +10,7 @@ public partial class AppSettings : ObservableObject, Contracts.IApplicationSetti
   public AppSettings(){ }
 
   [ObservableProperty]
-  private double _baseUnit = 100.0;
+  private double _baseUnit = 50.0;
 
   [ObservableProperty]
   private bool _isDarkTheme = true;

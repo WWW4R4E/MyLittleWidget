@@ -16,6 +16,15 @@
             PointerMoved="PreviewCanvas_PointerMoved"
             PointerPressed="PreviewCanvas_PointerPressed"
             PointerReleased="PreviewCanvas_PointerReleased">
+            <Canvas.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Text="设置应用"  />
+                    <MenuFlyoutItem Text="选择图标"  Visibility="Collapsed"/>
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Text="编辑" Visibility="Collapsed"/>
+                    <MenuFlyoutItem Text="删除" Click="DeleteMenuItem_Click" />
+                </MenuFlyout>
+            </Canvas.ContextFlyout>
             <Rectangle
                 x:Name="SelectionBox"
                 Stroke="Cyan"

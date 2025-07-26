@@ -24,6 +24,7 @@
         <None Remove="DeskTopCapturePage.xaml" />
         <None Remove="Views\ChildenWindow.xaml" />
         <None Remove="Views\Pages\DocklinePage.xaml" />
+        <None Remove="Views\Pages\SettingPage.xaml" />
     </ItemGroup> 
     
     <ItemGroup>
@@ -69,6 +70,9 @@
           <Generator>SettingsSingleFileGenerator</Generator>
           <LastGenOutput>Settings.Designer.cs</LastGenOutput>
         </None>
+        <Page Update="Views\Pages\SettingPage.xaml">
+          <Generator>MSBuild:Compile</Generator>
+        </Page>
         <Page Update="Views\Pages\PreviewPage.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>

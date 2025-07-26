@@ -101,10 +101,10 @@ namespace MyLittleWidget.Utils
       }
       finally
       {
-        PInvoke.SelectObject((HDC)hdcMem, (HGDIOBJ)hOldBitmap);
-        PInvoke.DeleteObject((HGDIOBJ)hBitmap);
-        PInvoke.DeleteDC((HDC)hdcMem);
-        PInvoke.ReleaseDC(hwnd, (HDC)hdcScreen);
+        PInvoke.SelectObject(hdcMem, hOldBitmap);
+        PInvoke.DeleteObject(hBitmap);
+        PInvoke.DeleteDC(hdcMem);
+        PInvoke.ReleaseDC(hwnd, hdcScreen);
       }
     }
 

@@ -19,10 +19,16 @@
     <BadgeLogoSource>C:\Users\123\Desktop\图层 1.png</BadgeLogoSource>
     <PackageLogoSource>C:\Users\123\Desktop\图层 1.png</PackageLogoSource>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
+  </PropertyGroup>
   <ItemGroup>
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\Pages\SettingPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Pages\DocklinePage.xaml">
       <SubType>Designer</SubType>
     </Page>

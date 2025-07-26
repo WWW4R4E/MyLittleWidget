@@ -10,8 +10,6 @@ DwmEnableBlurBehindWindow
 DwmExtendFrameIntoClientArea
 DwmGetWindowAttribute
 DwmSetWindowAttribute
-EnumDi
-yMonitors
 EnumWindows
 FillRect
 SetWindowRgn

@@ -121,9 +121,8 @@ public partial class WidgetBase : ContentControl
   }
 
   // 更新主题的逻辑
-  private void UpdateTheme(bool isDark)
+  protected virtual void UpdateTheme(bool isDark)
   {
-    // TODO : 完善更新逻辑
     if (Content is Border border)
       border.Background = new SolidColorBrush(isDark ? Colors.DarkSlateGray : Colors.LightGray);
   }
@@ -188,7 +187,7 @@ public partial class WidgetBase : ContentControl
   {
   }
 
-  private void SetupContextMenu()
+  protected virtual void SetupContextMenu()
   {
   }
 }
