@@ -1,0 +1,9 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/Community.Widget/.vs
+/MyLittleWidget.Contracts/bin
+/MyLittleWidget.Contracts/obj
+/Community.Widget/bin/x64
+/Community.Widget/obj
