@@ -14,5 +14,5 @@
     <Window.SystemBackdrop>
         <MicaBackdrop />
     </Window.SystemBackdrop>
-    <pages:DeskTopCapturePage/>
+    <pages:DeskTopCapturePage  Background="{ThemeResource SystemChromeBlackLowColor}"/>
 </Window>

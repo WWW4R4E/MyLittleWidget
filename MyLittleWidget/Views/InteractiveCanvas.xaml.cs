@@ -28,12 +28,6 @@ namespace MyLittleWidget.Views
         _configService.Save();
       }
     }
-    //private void SettingsMenuItem_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    //{
-    //  // TODO:  实现设置逻辑
-    //  Debug.WriteLine("Settings menu item clicked");
-    //}
-    // 在 InteractiveCanvas.cs 中
 
     private void PreviewCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
     {

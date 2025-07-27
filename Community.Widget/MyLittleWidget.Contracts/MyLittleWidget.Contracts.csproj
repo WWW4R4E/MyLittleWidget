@@ -25,8 +25,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Calendar\" />
-    <Folder Include="Utils\" />
-    <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <Page Update="AppShortcut\AppShortcutContent.xaml">

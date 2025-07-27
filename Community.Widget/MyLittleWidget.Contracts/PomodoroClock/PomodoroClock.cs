@@ -41,7 +41,7 @@ public sealed partial class PomodoroClock : WidgetBase
       Text = "选择专注时间",
       FontSize = 20,
       HorizontalAlignment = HorizontalAlignment.Center,
-      FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+      FontWeight = Microsoft.UI.Text.FontWeights.Bold,
       Margin = new Thickness(0, 0, 0, 20)
     };
     Grid.SetRow(selectTitleTextBlock, 0);
@@ -52,7 +52,7 @@ public sealed partial class PomodoroClock : WidgetBase
       Text = "专注时间",
       FontSize = 20,
       HorizontalAlignment = HorizontalAlignment.Center,
-      FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+      FontWeight = Microsoft.UI.Text.FontWeights.Bold,
       Visibility = Visibility.Collapsed
     };
     Grid.SetRow(timerTitleTextBlock, 0);
@@ -79,10 +79,11 @@ public sealed partial class PomodoroClock : WidgetBase
 
     // 30分钟按钮（下排）
     var button30 = CreatePresetButton(30, 65);
-    Grid.SetRow(button30, 1);
+    Grid.SetRow(button30, 0);
     Grid.SetRowSpan(button30,2);
     Grid.SetColumn(button30, 0);
     Grid.SetColumnSpan(button30, 2);
+    button30.VerticalAlignment = VerticalAlignment.Bottom;
     presetButtonsPanel.Children.Add(button30);
 
     var timeDisplayPanel = new StackPanel
@@ -216,7 +217,7 @@ public sealed partial class PomodoroClock : WidgetBase
       CornerRadius = new CornerRadius(size),
       FontWeight = Microsoft.UI.Text.FontWeights.Bold,
       HorizontalAlignment = HorizontalAlignment.Center,
-      VerticalAlignment = VerticalAlignment.Center
+      VerticalAlignment = VerticalAlignment.Top
     };
 
     var contentPanel = new StackPanel

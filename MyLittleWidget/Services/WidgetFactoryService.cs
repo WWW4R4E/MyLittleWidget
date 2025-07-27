@@ -29,9 +29,6 @@ public class WidgetFactoryService
   /// <returns>创建的 WidgetBase 实例或 null</returns>
   public WidgetBase? CreateWidgetFromType(WidgetConfig config, Type? widgetType = null)
   {
-    if (config == null) throw new ArgumentNullException(nameof(config));
-
-    // 优化类型查找，支持多个程序集
     Type? targetType = widgetType;
     if (targetType == null && !string.IsNullOrEmpty(config.WidgetType))
     {

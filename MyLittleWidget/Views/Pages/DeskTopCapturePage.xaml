@@ -39,7 +39,7 @@
     </Page.Resources>
 
 
-    <Grid Margin="32,32,32,0">
+    <Grid Margin="32,0,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="7*" />
             <ColumnDefinition Width="2*" />
@@ -49,7 +49,7 @@
             <RowDefinition Height="4" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <Grid  VerticalAlignment="Stretch">
+        <Grid  VerticalAlignment="Stretch" Margin="0,32,32,0">
             <canvas:CanvasControl 
             x:Name="DesktopCanvas"
 
@@ -78,18 +78,149 @@
                 CanDragItems="True"
                 CanReorderItems="True"
                 DragItemsStarting="GridView_DragItemsStarting"
+                SelectedItem="{x:Bind viewModel.SelectedWidget}"
                 ItemTemplate="{StaticResource ImageOverlayTemplate}"
                 ItemsSource="{x:Bind viewModel.littleWidgets}"
                 SelectionMode="Extended" />
         </StackPanel>
 
-        <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Padding="16">
-            <!-- 设置项 -->
-            <TextBlock Text="设置 1" Margin="0,0,0,8"/>
-            <TextBox Margin="0,0,0,16"/>
-            <TextBlock Text="设置 2" Margin="0,0,0,8"/>
-            <CheckBox Content="启用" Margin="0,0,0,16"/>
-            <Button Content="保存设置"/>
-        </StackPanel>
+        <Grid Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- 全局设置 -->
+            <Grid Grid.Row="0" Padding="36,40,16,0" Background="{ThemeResource ListViewItemRevealBackgroundSelectedPointerOver}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel>
+                    <TextBlock Text="全局设置" 
+                       FontWeight="Bold" 
+                       Style="{StaticResource TitleTextBlockStyle}" />
+                    <StackPanel Margin="0,36,0,0" Padding="16,0">
+                        <StackPanel Orientation="Horizontal"  Margin="0,0,0,8">
+                            <TextBlock Text="背景材质:" 
+                               Width="120" />
+                            <ComboBox SelectedIndex="{x:Bind viewModel.SelectedBackdropMaterial, Mode=TwoWay}" MinWidth="160">
+                                <ComboBoxItem Content="Mica"/>
+                                <ComboBoxItem Content="薄亚克力 (Thin Acrylic)"/>
+                                <ComboBoxItem Content="亚克力 (Acrylic)"/>
+                                <ComboBoxItem Content="Mica Alt"/>
+                            </ComboBox>
+                        </StackPanel>
+                        <CheckBox Content="启用深色模式" 
+                                  IsChecked="{x:Bind viewModel.IsDarkTheme, Mode=TwoWay}"
+                          Margin="0,8,0,8" />
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,8,0,0">
+                            <TextBlock Text="组件标准大小:" 
+                               VerticalAlignment="Center" 
+                               Width="120" />
+                            <Slider x:Name="SizeSlider" 
+                                    Minimum="50" 
+                                    Maximum="100" 
+                                    Value="{x:Bind viewModel.BaseUnit, Mode=TwoWay}" 
+                            Width="160" 
+                            TickFrequency="1" />
+                            <TextBlock Text="{x:Bind SizeSlider.Value, Mode=OneWay}" 
+                               Margin="8,0,0,0" 
+                               VerticalAlignment="Center" 
+                               FontStyle="Italic" />
+                        </StackPanel>
+
+                    </StackPanel>
+
+
+                </StackPanel>
+                <Grid  Grid.Row="1" ColumnSpacing="8"  Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Viewbox Stretch="Uniform" Margin="0,16,0,0">
+                        <Grid x:Name="SquareContainer" Background="{ThemeResource SystemChromeBlackLowColor}" 
+                          HorizontalAlignment="Left" 
+                          Width="200"
+                          Height="200">
+                            <Rectangle
+                                Stroke="Cyan"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Width="{x:Bind viewModel.BaseUnit, Mode=OneWay}"
+                                Height="{x:Bind viewModel.BaseUnit, Mode=OneWay}"
+                                StrokeDashArray="4 2"
+                                StrokeThickness="2"
+                                />
+                        </Grid>
+                    </Viewbox>
+                    <!-- 保存按钮 -->
+                <Button Grid.Column="1" Content="保存设置" 
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Bottom"
+                        Click="SaveButton_OnClick"
+                       />
+                </Grid>
+            </Grid>
+
+            <!-- 组件设置 -->
+            <Border Grid.Row="1" Padding="36,20,16,0" Background="{ThemeResource ListViewItemRevealBackgroundSelectedPointerOver}">
+                <StackPanel>
+                    <TextBlock Text="组件信息" 
+                       FontWeight="Bold" 
+                       Style="{StaticResource TitleTextBlockStyle}" />
+                    <StackPanel Margin="0,64" Padding="16,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,8">
+                            <TextBlock Text="组件名字:" 
+                               VerticalAlignment="Center" 
+                               Width="120" />
+                            <TextBlock Text="{x:Bind viewModel.SelectedWidget.Title, Mode=OneWay}"
+                                       MinWidth="400" 
+                                       Padding="4,0" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,8,0,8">
+                            <TextBlock Text="大小规格:" 
+                               VerticalAlignment="Center" 
+                               Width="120" />
+                            <ComboBox 
+                              SelectedIndex="0" 
+                              MinWidth="160"
+                            />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,8">
+                            <TextBlock Text="简介:" 
+                               VerticalAlignment="Top" 
+                               Width="120" />
+                            <TextBlock 
+                                Text="{x:Bind viewModel.SelectedWidget.widget.Config.Name, Mode=OneWay}"
+                               TextWrapping="Wrap" 
+                               Height="60" 
+                               MinWidth="160" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,8,0,8">
+                            <TextBlock Text="开发者:" 
+                               VerticalAlignment="Center" 
+                               Width="120" />
+                            <TextBlock 
+                                Text="{x:Bind viewModel.SelectedWidget.widget.Config.Name, Mode=OneWay}"
+                               MinWidth="160" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <TextBlock Text="提示:" 
+                               VerticalAlignment="Top" 
+                               Width="120" />
+                            <TextBlock 
+                               Foreground="#666" 
+                               TextWrapping="Wrap" 
+                               Text="{x:Bind viewModel.SelectedWidget.widget.Config.Name, Mode=OneWay}"
+                               Height="40" 
+                               MinWidth="160"
+                               Padding="4"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Page>

@@ -123,66 +123,6 @@ namespace MyLittleWidget.Views.Pages
       ViewModel.ConfigureWidget(widgets);
     }
 
-    // private WidgetBase CreateWidgetFromType(WidgetConfig config)
-    // {
-    //   var widgetHwnd = WindowNative.GetWindowHandle((App.Current as App).WidgetWindow);
-    //
-    //
-    //   if (config != null && !string.IsNullOrEmpty(config.WidgetType))
-    //   {
-    //     if (config.WidgetType == typeof(OneLineOfWisdom).FullName)
-    //     {
-    //       return new OneLineOfWisdom(config, AppSettings.Instance);
-    //     }
-    //     if (config.WidgetType == typeof(PomodoroClock).FullName)
-    //     {
-    //       return new PomodoroClock(config, AppSettings.Instance, new WidgetToolService(widgetHwnd));
-    //     }
-    //     if (config.WidgetType == typeof(AppShortcut).FullName)
-    //     {
-    //       return new AppShortcut(config, AppSettings.Instance);
-    //     }
-    //   }
-    //
-    //   return null;
-    // }
-
-    //private WidgetBase CreateWidgetFromType(WidgetConfig loadedConfig)
-    //{
-    //  if (loadedConfig == null || string.IsNullOrEmpty(loadedConfig.WidgetType))
-    //  {
-    //    return null;
-    //  }
-
-    //  // 1. 从我们的注册服务中，根据名字查找类型
-    //  Type widgetType = ComponentRegistryService.GetWidgetType(loadedConfig.WidgetType);
-
-    //  if (widgetType == null)
-    //  {
-    //    // 在注册表中找不到这个类型，可能插件被删除了
-    //    System.Diagnostics.Debug.WriteLine($"Widget type '{loadedConfig.WidgetType}' not found in registry.");
-    //    return null;
-    //  }
-
-    //  try
-    //  {
-    //    // 2. 使用反射 (Activator.CreateInstance) 来创建实例
-    //    //    这个方法会自动查找并调用匹配的构造函数。
-    //    //    我们告诉它，我们要调用那个接收一个 WidgetConfig 的构造函数。
-    //    object[] constructorArgs = { loadedConfig };
-    //    var widgetInstance = Activator.CreateInstance(widgetType, constructorArgs);
-
-    //    // 3. 将返回的 object 转换为我们需要的 WidgetBase 类型
-    //    return widgetInstance as WidgetBase;
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    // 创建实例时可能失败（比如构造函数抛出异常）
-    //    System.Diagnostics.Debug.WriteLine($"Failed to create instance of '{widgetType.FullName}': {ex.Message}");
-    //    return null;
-    //  }
-    //}
-
     private void LoadAndApplyConfiguration()
     {
       var WidgetFactory = new WidgetFactoryService(new AppSettings(), new WidgetToolService(_WidgetHandle));

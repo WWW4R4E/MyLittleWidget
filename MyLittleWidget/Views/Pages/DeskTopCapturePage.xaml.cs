@@ -5,7 +5,6 @@ using MyLittleWidget.Models;
 using MyLittleWidget.Services;
 using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
-using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
 
 namespace MyLittleWidget.Views.Pages
@@ -158,6 +157,11 @@ namespace MyLittleWidget.Views.Pages
     private void InteractiveCanvas_DragOver(object sender, DragEventArgs e)
     {
       e.AcceptedOperation = DataPackageOperation.Move;
+    }
+
+    private void SaveButton_OnClick(object sender, RoutedEventArgs e)
+    {
+      // TODO : 保存当前配置到AppSettings
     }
   }
 }

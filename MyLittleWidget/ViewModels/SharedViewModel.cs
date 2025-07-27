@@ -5,7 +5,7 @@ namespace MyLittleWidget.ViewModels;
 
 public partial class SharedViewModel : ObservableObject
 {
-  private static readonly SharedViewModel _instance = new SharedViewModel();
+  private static readonly SharedViewModel _instance = new();
   public static SharedViewModel Instance => _instance;
 
   [ObservableProperty]

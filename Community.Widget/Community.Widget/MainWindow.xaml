@@ -13,7 +13,85 @@
     <Window.SystemBackdrop>
         <MicaBackdrop />
     </Window.SystemBackdrop>
-    <Grid x:Name="Pad" HorizontalAlignment="Center" VerticalAlignment="Center" >
+    <!-- <Grid x:Name="Pad" HorizontalAlignment="Center" VerticalAlignment="Center" > -->
+    <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Padding="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!-- 全局设置 -->
+        <Grid BorderBrush="#CCCCCC" BorderThickness="1" Padding="12" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="全局设置"  FontWeight="Bold" Style="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,32"/>
 
+                <!-- 背景材质 -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,8">
+                    <TextBlock Text="背景材质:" VerticalAlignment="Center" Width="120"/>
+                    <ComboBox SelectedIndex="0" MinWidth="160">
+                        <ComboBoxItem Content="Mica"/>
+                        <ComboBoxItem Content="薄亚克力 (Thin Acrylic)"/>
+                        <ComboBoxItem Content="亚克力 (Acrylic)"/>
+                        <ComboBoxItem Content="Mica Alt"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- 深色模式 -->
+                <CheckBox Content="启用深色模式" Margin="0,8,0,8"/>
+
+                <!-- 组件标准大小单位 -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,8,0,0">
+                    <TextBlock Text="组件标准大小:" VerticalAlignment="Center" Width="120"/>
+                    <!-- <Slider x:Name="SizeSlider" Minimum="10" Maximum="50" Value="24" Width="160" TickFrequency="1" IsSnapToTickEnabled="True"/> -->
+                    <!-- <TextBlock Text="{x:Bind SizeSlider.Value, Mode=OneWay, StringFormat='{}{0:F0} px'}" Margin="8,0,0,0" VerticalAlignment="Center" FontStyle="Italic" Foreground="#666"/> -->
+                </StackPanel>
+                <!-- 保存按钮 -->
+
+            </StackPanel>
+            <Button VerticalAlignment="Bottom" Content="保存设置" HorizontalAlignment="Right" Padding="16,8" Margin="0,12,0,0"/>
+        </Grid>
+
+        <!-- 组件设置 -->
+        <Grid Grid.Row="1" BorderBrush="#CCCCCC" BorderThickness="1" Padding="12" Margin="0,0,0,16">
+            <StackPanel>
+                <!-- 标题 -->
+                <TextBlock Text="组件设置" FontWeight="Bold" Style="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,32"/>
+
+                <!-- 组件名字 -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,8">
+                    <TextBlock Text="组件名字:" VerticalAlignment="Center" Width="120"/>
+                    <TextBlock x:Name="ComponentNameText" MinWidth="400" Padding="4,0"/>
+                </StackPanel>
+
+                <!-- 组件大小规格 -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,8,0,8">
+                    <TextBlock Text="大小规格:" VerticalAlignment="Center" Width="120"/>
+                    <ComboBox x:Name="SizeSpecificationComboBox" SelectedIndex="0" MinWidth="160">
+                        <ComboBoxItem Content="小型"/>
+                        <ComboBoxItem Content="中型 (默认)"/>
+                        <ComboBoxItem Content="大型"/>
+                        <ComboBoxItem Content="自定义..."/>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- 简介 -->
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,8">
+                    <TextBlock Text="简介:" VerticalAlignment="Top" Width="120"/>
+                    <TextBlock x:Name="DescriptionText" TextWrapping="Wrap" Height="60" MinWidth="160"/>
+                </StackPanel>
+
+                <!-- 开发者 -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,8,0,8">
+                    <TextBlock Text="开发者:" VerticalAlignment="Center" Width="120"/>
+                    <TextBlock x:Name="DeveloperText" MinWidth="160"/>
+                </StackPanel>
+
+                <!-- 提示 -->
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <TextBlock Text="提示:" VerticalAlignment="Top" Width="120"/>
+                    <TextBlock x:Name="HintText" Text="这是一个提示信息示例。" Foreground="#666" TextWrapping="Wrap" Height="40" MinWidth="160"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
     </Grid>
+    <!-- </Grid> -->
 </Window>

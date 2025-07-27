@@ -11,11 +11,10 @@ namespace MyLittleWidget.ViewModels
 {
   internal partial class DeskTopCaptureViewModel : ObservableObject
   {
+    // TODO 动态扫描加载小组件
     internal List<LittleWidget> littleWidgets = new() {
         new() { Title = "小组件1",widget = new OneLineOfWisdom(new WidgetConfig(),AppSettings.Instance)},
         new() { Title = "小组件2",widget = new PomodoroClock(new WidgetConfig(),AppSettings.Instance, new WidgetToolService((nint)null))},
-        // new() { Title = "小组件2",widget = new PomodoroClock(new WidgetConfig(),AppSettings.Instance, new WidgetToolService(
-        //   WindowNative.GetWindowHandle((App.Current as App).WidgetWindow)))},
         new() { Title = "小组件3",widget = new AppShortcut(new WidgetConfig(),AppSettings.Instance)},
         };
 
@@ -25,6 +24,15 @@ namespace MyLittleWidget.ViewModels
 
     [ObservableProperty]
     internal CanvasBitmap? _latestBitmap;
+
+    // TODO: 完成和appsetting绑定
+    [ObservableProperty] private int _selectedBackdropMaterial = 0;
+    [ObservableProperty] private bool _isDarkTheme;
+
+    [ObservableProperty] private double _baseUnit =50;
+
+    [ObservableProperty]
+    private LittleWidget _selectedWidget;
 
     public string PreviewButtonText => IsPreviewing ? "停止预览" : "开始预览";
     private readonly DispatcherTimer _previewTimer;
@@ -59,7 +67,7 @@ namespace MyLittleWidget.ViewModels
       }
     }
 
-     partial void OnIsPreviewingChanged(bool value)
+    partial void OnIsPreviewingChanged(bool value)
     {
       if (value)
       {
