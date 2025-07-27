@@ -1,13 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
+using MyLittleWidget.Contracts;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace PomodoroWidget
 {
   public partial class PomodoroClockViewModel : ObservableObject
   {
+    private readonly IWidgetToolService _toolService;
     private DispatcherTimer _timer;
 
     [ObservableProperty]
@@ -20,22 +23,24 @@ namespace PomodoroWidget
     private bool _isTimerRunning = false;
 
     [ObservableProperty]
-    private bool _isTimerStarted = false; // 标记是否已选择时间并开始计时
+    private bool _isTimerStarted = false; 
 
     // --- 命令 ---
     public ICommand SelectTimeCommand { get; }
     public ICommand StartStopCommand { get; }
     public ICommand ExitCommand { get; }
 
-    public PomodoroClockViewModel()
+    public PomodoroClockViewModel(IWidgetToolService toolService)
     {
+      _toolService = toolService;
       SelectTimeCommand = new RelayCommand<TimeSpan>(ExecuteSelectTime);
       StartStopCommand = new RelayCommand(ExecuteStartStop);
       ExitCommand = new RelayCommand(ExecuteExit);
 
       _timer = new DispatcherTimer();
       _timer.Interval = TimeSpan.FromSeconds(1);
-      _timer.Tick += Timer_Tick;
+      _timer.Tick += Timer_TickAsync;
+
     }
 
     private void ExecuteSelectTime(TimeSpan selectedTime)
@@ -68,8 +73,7 @@ namespace PomodoroWidget
       RemainingTime = TimeSpan.Zero;
       UpdateTimeDisplay();
     }
-
-    private void Timer_Tick(object sender, object e)
+    private void Timer_TickAsync(object sender, object e)
     {
       if (RemainingTime > TimeSpan.Zero)
       {
@@ -80,6 +84,7 @@ namespace PomodoroWidget
       {
         _timer.Stop();
         IsTimerRunning = false;
+        _= _toolService.ShowNotificationAsync("计时完成", "您的专注时间已结束！");
       }
     }
 

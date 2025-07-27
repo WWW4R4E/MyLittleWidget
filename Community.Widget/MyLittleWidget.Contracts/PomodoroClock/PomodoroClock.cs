@@ -10,10 +10,11 @@ using Windows.Foundation;
 namespace MyLittleWidget.Contracts;
 public sealed partial class PomodoroClock : WidgetBase
 {
-  private readonly PomodoroClockViewModel _viewModel = new ();
+  private readonly PomodoroClockViewModel _viewModel;
 
-  public PomodoroClock(WidgetConfig config, IApplicationSettings settings) : base(config, settings)
+  public PomodoroClock(WidgetConfig config, IApplicationSettings settings, IWidgetToolService toolService) : base(config, settings,toolService)
   {
+    _viewModel = new PomodoroClockViewModel(toolService);
     var contentGrid = new Grid
     {
       Background = new LinearGradientBrush
@@ -38,7 +39,7 @@ public sealed partial class PomodoroClock : WidgetBase
     var selectTitleTextBlock = new TextBlock
     {
       Text = "选择专注时间",
-      FontSize = 16,
+      FontSize = 20,
       HorizontalAlignment = HorizontalAlignment.Center,
       FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
       Margin = new Thickness(0, 0, 0, 20)
@@ -49,7 +50,7 @@ public sealed partial class PomodoroClock : WidgetBase
     var timerTitleTextBlock = new TextBlock
     {
       Text = "专注时间",
-      FontSize = 16,
+      FontSize = 20,
       HorizontalAlignment = HorizontalAlignment.Center,
       FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
       Visibility = Visibility.Collapsed
@@ -227,7 +228,7 @@ public sealed partial class PomodoroClock : WidgetBase
     var timeTextBlock = new TextBlock
     {
       Text = minutes.ToString(),
-      FontSize =14,
+      FontSize =16,
       HorizontalAlignment = HorizontalAlignment.Center,
       FontWeight = Microsoft.UI.Text.FontWeights.Bold
     };

@@ -1,12 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Graphics.Canvas;
-using Microsoft.UI.Xaml;
 using MyLittleWidget.Contracts;
 using MyLittleWidget.Models;
 using MyLittleWidget.Utils;
-using MyLittleWidget.Views;
-using System.Diagnostics;
+using MyLittleWidget.Contracts.AppShortcut;
+using MyLittleWidget.Services;
 
 namespace MyLittleWidget.ViewModels
 {
@@ -14,7 +13,10 @@ namespace MyLittleWidget.ViewModels
   {
     internal List<LittleWidget> littleWidgets = new() {
         new() { Title = "小组件1",widget = new OneLineOfWisdom(new WidgetConfig(),AppSettings.Instance)},
-        new() { Title = "小组件2",widget = new PomodoroClock(new WidgetConfig(),AppSettings.Instance)},
+        new() { Title = "小组件2",widget = new PomodoroClock(new WidgetConfig(),AppSettings.Instance, new WidgetToolService((nint)null))},
+        // new() { Title = "小组件2",widget = new PomodoroClock(new WidgetConfig(),AppSettings.Instance, new WidgetToolService(
+        //   WindowNative.GetWindowHandle((App.Current as App).WidgetWindow)))},
+        new() { Title = "小组件3",widget = new AppShortcut(new WidgetConfig(),AppSettings.Instance)},
         };
 
     [ObservableProperty]

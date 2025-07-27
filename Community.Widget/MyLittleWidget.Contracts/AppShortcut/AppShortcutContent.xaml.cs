@@ -128,8 +128,7 @@ namespace MyLittleWidget.Contracts.AppShortcut
     {
         if (filePath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
         {
-          // 获取exe图标
-BitmapImage Icon = ExtractIconFromExe(filePath); // 提取图标
+BitmapImage Icon = ExtractIconFromExe(filePath); 
           if (Icon != null)
           {
             SetAppIcon(Icon);

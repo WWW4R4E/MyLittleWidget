@@ -34,30 +34,6 @@ public partial class WidgetBase : ContentControl
 
   #endregion Configuration and Initialization
 
-  private void OnConfigPropertyChanged(object? sender, PropertyChangedEventArgs e)
-  {
-    // 在 UI 线程上更新
-    DispatcherQueue.TryEnqueue(() =>
-    {
-      if (e.PropertyName == nameof(WidgetConfig.PositionX) ||
-          e.PropertyName == nameof(WidgetConfig.PositionY))
-        UpdatePositionFromConfig();
-    });
-  }
-
-  private void UpdatePositionFromConfig()
-  {
-    if (Config == null) return;
-
-    Canvas.SetLeft(this, Config.PositionX);
-    Canvas.SetTop(this, Config.PositionY);
-    PositionUpdated?.Invoke(this, EventArgs.Empty);
-  }
-
-  // 提供给子类重写的配置方法
-  protected virtual void ConfigureWidget()
-  {
-  }
 
   public WidgetBase(WidgetConfig config, IApplicationSettings settings)
   {
@@ -69,7 +45,6 @@ public partial class WidgetBase : ContentControl
       HorizontalAlignment = HorizontalAlignment.Stretch,
       VerticalAlignment = VerticalAlignment.Stretch,
       CornerRadius = new CornerRadius(8)
-
     };
     Config = config ?? throw new ArgumentNullException(nameof(config));
     // 子类通过这个配置Config对象
@@ -85,6 +60,49 @@ public partial class WidgetBase : ContentControl
     //this.PointerCaptureLost += OnWidgetPointerReleased;
     Unloaded += OnWidgetUnloaded;
     SetupContextMenu();
+  }
+
+  public WidgetBase(WidgetConfig config, IApplicationSettings settings, IWidgetToolService toolService)
+  {
+    DefaultStyleKey = typeof(WidgetBase);
+    AppSettings = settings ?? throw new ArgumentNullException(nameof(settings));
+    // 默认样式
+    Content = new Border
+    {
+      HorizontalAlignment = HorizontalAlignment.Stretch,
+      VerticalAlignment = VerticalAlignment.Stretch,
+      CornerRadius = new CornerRadius(8)
+    };
+    Config = config ?? throw new ArgumentNullException(nameof(config));
+    // 子类通过这个配置Config对象
+    ConfigureWidget();
+    Config.PropertyChanged += OnConfigPropertyChanged;
+    UpdatePositionFromConfig();
+    // 绑定事件 
+    Loaded += OnWidgetLoaded;
+    //this.PointerPressed += OnWidgetPointerPressed;
+    //this.PointerMoved += OnWidgetPointerMoved;
+    //this.PointerReleased += OnWidgetPointerReleased;
+    //this.PointerCanceled += OnWidgetPointerReleased;
+    //this.PointerCaptureLost += OnWidgetPointerReleased;
+    Unloaded += OnWidgetUnloaded;
+    SetupContextMenu();
+  }
+
+
+
+  private void UpdatePositionFromConfig()
+  {
+    if (Config == null) return;
+
+    Canvas.SetLeft(this, Config.PositionX);
+    Canvas.SetTop(this, Config.PositionY);
+    PositionUpdated?.Invoke(this, EventArgs.Empty);
+  }
+
+  // 提供给子类重写的配置方法
+  protected virtual void ConfigureWidget()
+  {
   }
 
   private void OnWidgetLoaded(object sender, RoutedEventArgs e)
@@ -124,8 +142,6 @@ public partial class WidgetBase : ContentControl
   // 更新主题的逻辑
   protected virtual void UpdateTheme(bool isDark)
   {
-    if (Content is Border border)
-      border.Background = new SolidColorBrush(isDark ? Colors.DarkSlateGray : Colors.LightGray);
   }
 
   //private void OnWidgetPointerPressed(object sender, PointerRoutedEventArgs e)
@@ -190,5 +206,21 @@ public partial class WidgetBase : ContentControl
 
   protected virtual void SetupContextMenu()
   {
+  }
+
+
+
+
+
+
+  private void OnConfigPropertyChanged(object? sender, PropertyChangedEventArgs e)
+  {
+    // 在 UI 线程上更新
+    DispatcherQueue.TryEnqueue(() =>
+    {
+      if (e.PropertyName == nameof(WidgetConfig.PositionX) ||
+          e.PropertyName == nameof(WidgetConfig.PositionY))
+        UpdatePositionFromConfig();
+    });
   }
 }

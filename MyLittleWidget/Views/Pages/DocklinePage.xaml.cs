@@ -4,31 +4,33 @@ using MyLittleWidget.Services;
 using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
 using System.Diagnostics;
-using Windows.Win32.UI.WindowsAndMessaging;
+
 namespace MyLittleWidget.Views.Pages
 {
   public sealed partial class DocklinePage : Page
   {
     private ConfigurationService _configService;
     public SharedViewModel ViewModel { get; } = SharedViewModel.Instance;
+    private IntPtr _WidgetHandle;
     private double dpiScale;
 
     // 垂直和水平辅助线
-    private readonly List<double> _vGuideCoordinates = new List<double>();
+    private readonly List<double> _vGuideCoordinates = new ();
 
-    private readonly List<double> _hGuideCoordinates = new List<double>();
-    private readonly List<Line> _vGuideLines = new List<Line>();
-    private readonly List<Line> _hGuideLines = new List<Line>();
+    private readonly List<double> _hGuideCoordinates = new ();
+    private readonly List<Line> _vGuideLines = new ();
+    private readonly List<Line> _hGuideLines = new ();
 
     public DocklinePage()
     {
       InitializeComponent();
       _configService = new ConfigurationService();
-      this.Loaded += OnPageLoaded;
+      Loaded += OnPageLoaded;
     }
-
+  
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
+      _WidgetHandle = WindowNative.GetWindowHandle((App.Current as App).WidgetWindow);
       LoadAndApplyConfiguration();
       var LineInfo = GetDesktop.GetDesktopGridInfo();
       dpiScale = XamlRoot.RasterizationScale;
@@ -84,7 +86,6 @@ namespace MyLittleWidget.Views.Pages
         PInvoke.SetParent(myHwnd, workerw);
 
         childWindow.Activate();
-        // PInvoke.SetWindowPos(myHwnd, (HWND)(-1), 0, 0, 0, 0, (SET_WINDOW_POS_FLAGS.SWP_NOMOVE | SET_WINDOW_POS_FLAGS.SWP_NOSIZE));
       }
       else
       {
@@ -122,23 +123,29 @@ namespace MyLittleWidget.Views.Pages
       ViewModel.ConfigureWidget(widgets);
     }
 
-    private WidgetBase CreateWidgetFromType(WidgetConfig config)
-    {
-      
-      if (config != null && !string.IsNullOrEmpty(config.WidgetType))
-      {
-        if (config.WidgetType == typeof(OneLineOfWisdom).FullName)
-        {
-          return new OneLineOfWisdom(config, AppSettings.Instance);
-        }
-        if (config.WidgetType == typeof(PomodoroClock).FullName)
-        {
-          return new PomodoroClock(config, AppSettings.Instance);
-        }
-      }
-
-      return null;
-    }
+    // private WidgetBase CreateWidgetFromType(WidgetConfig config)
+    // {
+    //   var widgetHwnd = WindowNative.GetWindowHandle((App.Current as App).WidgetWindow);
+    //
+    //
+    //   if (config != null && !string.IsNullOrEmpty(config.WidgetType))
+    //   {
+    //     if (config.WidgetType == typeof(OneLineOfWisdom).FullName)
+    //     {
+    //       return new OneLineOfWisdom(config, AppSettings.Instance);
+    //     }
+    //     if (config.WidgetType == typeof(PomodoroClock).FullName)
+    //     {
+    //       return new PomodoroClock(config, AppSettings.Instance, new WidgetToolService(widgetHwnd));
+    //     }
+    //     if (config.WidgetType == typeof(AppShortcut).FullName)
+    //     {
+    //       return new AppShortcut(config, AppSettings.Instance);
+    //     }
+    //   }
+    //
+    //   return null;
+    // }
 
     //private WidgetBase CreateWidgetFromType(WidgetConfig loadedConfig)
     //{
@@ -178,6 +185,7 @@ namespace MyLittleWidget.Views.Pages
 
     private void LoadAndApplyConfiguration()
     {
+      var WidgetFactory = new WidgetFactoryService(new AppSettings(), new WidgetToolService(_WidgetHandle));
       var saveData = _configService.Load();
 if (saveData != null)
       {
@@ -189,7 +197,7 @@ if (saveData != null)
         {
           foreach (var config_from_file in saveData.WidgetConfigs)
           {
-            WidgetBase widget = CreateWidgetFromType(config_from_file);
+            WidgetBase widget= WidgetFactory.CreateWidgetFromType(config_from_file);
             if (widget != null)
             {
               widgets.Add(widget);
@@ -215,7 +223,6 @@ if (saveData != null)
       Debug.WriteLine("--- Running FINAL version of UpdateWindowShape ---");
       var widgetRects = new List<Rect>();
 
-      // 获取每个单位格的尺寸，这是我们计算尺寸的基准
       double baseUnitSize = AppSettings.Instance.BaseUnit;
       if (baseUnitSize <= 0)
       {
@@ -225,14 +232,8 @@ if (saveData != null)
 
       foreach (var widget in ViewModel.WidgetList)
       {
-        // --- 核心修正：手动计算尺寸，不再依赖 ActualWidth/Height ---
         double widgetWidth = widget.Config.UnitWidth * baseUnitSize;
         double widgetHeight = widget.Config.UnitHeight * baseUnitSize;
-
-        // 诊断日志
-        Debug.WriteLine($"Processing widget: {widget.GetType().Name}");
-        Debug.WriteLine($"  - Config Position: ({widget.Config.PositionX}, {widget.Config.PositionY})");
-        Debug.WriteLine($"  - Calculated Size: ({widgetWidth}, {widgetHeight})");
 
         // 只有当计算出的尺寸有效时，才添加矩形
         if (widgetWidth > 0 && widgetHeight > 0)
@@ -256,11 +257,10 @@ if (saveData != null)
         Debug.WriteLine("CRITICAL WARNING: No widgets with valid size found. Window will be fully transparent.");
       }
 
-      // 获取窗口句柄
       var childWindow = ((App)App.Current).WidgetWindow;
-      HWND myHwnd = (HWND)WindowNative.GetWindowHandle(childWindow);
 
-      WindowRegionUtil.ApplySolidRegions(myHwnd, widgetRects);
+
+      WindowRegionUtil.ApplySolidRegions((HWND)_WidgetHandle, widgetRects);
     }
     private void OnWidgetPositionUpdated(object sender, EventArgs e)
     {

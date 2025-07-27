@@ -2,6 +2,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using MyLittleWidget.Contracts;
 using MyLittleWidget.Models;
+using MyLittleWidget.Services;
 using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
 using System.Diagnostics;
@@ -127,22 +128,17 @@ namespace MyLittleWidget.Views.Pages
 
       if (_draggedElementType != null)
       {
+        
         try
         {
-
-          object[] constructorArgs = new object[] { new WidgetConfig(), AppSettings.Instance };
-          if (Activator.CreateInstance(_draggedElementType, constructorArgs) is WidgetBase newWidget)
+          //TODO ¸Ä³Éµ¥Àý
+          var WidgetFactory = new WidgetFactoryService(new AppSettings(), new WidgetToolService(WindowNative.GetWindowHandle((App.Current as App).WidgetWindow)));
+          var newWidget = WidgetFactory.CreateWidgetFromType(new WidgetConfig(), _draggedElementType);
+          if (newWidget != null && sender is FrameworkElement canvas)
           {
-            if (sender is FrameworkElement canvas)
-            {
-              Point dropPosition = e.GetPosition(canvas);
-              AddWidgetToCanvas(newWidget, dropPosition);
-            }
+            Point dropPosition = e.GetPosition(canvas);
+            AddWidgetToCanvas(newWidget, dropPosition);
           }
-        }
-        catch (Exception ex)
-        {
-          Debug.WriteLine($"Error during Drop: {ex.Message}");
         }
         finally
         {

@@ -2,7 +2,6 @@ using Microsoft.UI.Xaml.Input;
 using MyLittleWidget.Contracts;
 using MyLittleWidget.Services;
 using MyLittleWidget.ViewModels;
-using MyLittleWidget.Views.Pages;
 
 namespace MyLittleWidget.Views
 {

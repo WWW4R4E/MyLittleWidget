@@ -12,17 +12,6 @@
     DragOver="AppShortcutContent_DragOver"
     PointerReleased="AppShortcutContent_PointerReleased">
         <Grid Background="Transparent">
-            <!-- <Grid.ContextFlyout> -->
-            <!--     <MenuFlyout> -->
-            <!--         <MenuFlyoutItem Text="设置应用" Click="SettingsMenuItem_Click" /> -->
-            <!--         <MenuFlyoutItem Text="选择图标" Click="SelectIconMenuItem_Click" /> -->
-            <!--         <MenuFlyoutSeparator /> -->
-            <!--         <MenuFlyoutItem Text="编辑" Click="EditMenuItem_Click" /> -->
-            <!--         <MenuFlyoutItem Text="删除" Click="DeleteMenuItem_Click" /> -->
-            <!--     </MenuFlyout> -->
-            <!-- -->
-            <!-- </Grid.ContextFlyout> -->
-
             <Image x:Name="AppIconImage"
                    Stretch="Uniform"
                    HorizontalAlignment="Stretch"
