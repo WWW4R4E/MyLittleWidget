@@ -43,4 +43,19 @@ public interface IWidgetToolService
     string? textBoxPlaceholder ,
     string? buttonLabel,
     (string Key, string Value)? buttonAction);
+
+
+  /// <summary>
+  /// 保存小组件相关的文件（如 png、json 等）。
+  /// </summary>
+  /// <param name="fileName">文件名（包含扩展名）。</param>
+  /// <param name="widgetType">小组件类型标识符(作为文件夹)。</param>
+  /// <param name="content">文件内容字节流。</param>
+  /// <returns>Task</returns>
+ string SaveWidgetFileAsync(string widgetType, string fileName, byte[] content);
+
+  /// <summary>
+  /// 保存一次WidgetConfig。
+  /// <returns>Task</returns>
+  void SaveWidegtDataAsync();
 }

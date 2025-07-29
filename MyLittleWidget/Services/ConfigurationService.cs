@@ -39,7 +39,6 @@ namespace MyLittleWidget.Services
         var dataToSave = new ApplicationSaveData
         {
           GlobalSettings = AppSettings.Instance,
-
           WidgetConfigs = SharedViewModel.Instance.WidgetList
             .Select(widget => widget.Config)
             .ToList()

@@ -1,6 +1,9 @@
 ﻿using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using MyLittleWidget.Contracts;
+using MyLittleWidget.Models;
+using MyLittleWidget.ViewModels;
+using System.Text.Json;
 using Windows.Storage.Pickers;
 
 namespace MyLittleWidget.Services;
@@ -139,4 +142,26 @@ public class WidgetToolService : IWidgetToolService
     await Task.CompletedTask; 
 }
 
+  public string SaveWidgetFileAsync(string widgetType, string fileName, byte[] content)
+  {
+    string localFolder = ApplicationData.Current.LocalFolder.Path;
+    var dirPath = Path.Combine(localFolder, widgetType);
+    var filePath = Path.Combine(dirPath, fileName);
+
+    // 确保目标文件夹存在
+    if (!Directory.Exists(dirPath))
+    {
+      Directory.CreateDirectory(dirPath);
+    }
+
+    System.Diagnostics.Debug.WriteLine(filePath);
+    File.WriteAllBytes(filePath, content);
+    return filePath;
+  }
+
+  public void SaveWidegtDataAsync()
+  {
+   var configurationService = new ConfigurationService();
+    configurationService.Save();
+  }
 }

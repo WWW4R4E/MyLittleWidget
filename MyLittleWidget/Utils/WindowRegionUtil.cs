@@ -5,7 +5,7 @@ namespace MyLittleWidget.Utils
 {
   public static class WindowRegionUtil
   {
-
+    // TODO: 适配圆角
     internal static void ApplySolidRegions(HWND windowHandle, IEnumerable<Rect> solidRects)
     {
       var hRgnMaster = CreateRectRgn(0, 0, 0, 0);
@@ -18,10 +18,10 @@ namespace MyLittleWidget.Utils
       {
         foreach (var rect in solidRects)
         {
-          int left = (int)rect.X;
-          int top = (int)rect.Y;
-          int right = (int)(rect.X + rect.Width)+3;
-          int bottom = (int)(rect.Y + rect.Height)+3;
+          int left = (int)rect.X+3;
+          int top = (int)rect.Y+3;
+          int right = (int)(rect.X + rect.Width) + 3;
+          int bottom = (int)(rect.Y + rect.Height) + 3;
       
           var hRgnTemp = CreateRectRgn(left, top, right, bottom);
           if (hRgnTemp.IsNull) continue; 

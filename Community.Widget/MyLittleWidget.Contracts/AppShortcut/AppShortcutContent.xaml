@@ -11,12 +11,12 @@
     Drop="AppShortcutContent_Drop"
     DragOver="AppShortcutContent_DragOver"
     PointerReleased="AppShortcutContent_PointerReleased">
-        <Grid Background="Transparent">
-            <Image x:Name="AppIconImage"
+    <Grid Background="Transparent"       HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
+        <Image x:Name="AppIconImage"
                    Stretch="Uniform"
-                   HorizontalAlignment="Stretch"
+                   Source="{x:Bind AppData.AppDisplayIcon}"
+          HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch" />
-            <TextBlock x:Name="AppDisplayNameTextBlock" Text="" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,5" />
-
-        </Grid>
+    </Grid>
 </UserControl>

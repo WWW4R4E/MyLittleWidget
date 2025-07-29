@@ -7,7 +7,6 @@ namespace Community.Widget
     {
       ExtendsContentIntoTitleBar = true;
       InitializeComponent();
-      // Pad.Children.Add(new AppShortcut(new WidgetConfig(), new CommunityApplicationSettings()));
     }
   }
 }

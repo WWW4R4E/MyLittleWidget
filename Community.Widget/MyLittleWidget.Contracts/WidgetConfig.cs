@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.Generic;
+using System.Text.Json;
 
 namespace MyLittleWidget.Contracts
 {
@@ -18,7 +19,7 @@ namespace MyLittleWidget.Contracts
     /// <summary>
     /// 开发者名称
     /// </summary>
-public string Developer { get; set; }
+    public string Developer { get; set; }
     /// <summary>
     /// 当前小部件的宽度（单位）。
     /// </summary>
@@ -30,7 +31,7 @@ public string Developer { get; set; }
     public int UnitHeight { get; set; } = 2;
 
     /// <summary>
-    /// 支持的单位尺寸规格（如：1x2、2x2等），最多4种。
+    /// 支持的单位尺寸规格，最多4种。
     /// </summary>
     public List<(int Width, int Height)> SupportedUnitSizes { get; set; } = new()
       {
@@ -45,5 +46,11 @@ public string Developer { get; set; }
 
     [ObservableProperty]
     private string _widgetType;
+
+
+    /// <summary>
+    /// 保存原始 JSON 数据，延迟解析。
+    /// </summary>
+    public JsonElement? CustomSettings { get; set; }
   }
 }

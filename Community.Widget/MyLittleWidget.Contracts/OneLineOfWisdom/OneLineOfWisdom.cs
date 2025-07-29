@@ -22,9 +22,9 @@ public sealed partial class OneLineOfWisdom : WidgetBase
     _httpClient = new HttpClient();
     var contentGrid = new Grid()
     {
-      CornerRadius = new CornerRadius(12),
       Background =new SolidColorBrush(Colors.Transparent),
-      
+      HorizontalAlignment = HorizontalAlignment.Stretch,
+      VerticalAlignment = VerticalAlignment.Stretch,
     };
 
     contentGrid.Tapped += async (s, e) => await LoadQuoteAsync();
@@ -35,7 +35,7 @@ public sealed partial class OneLineOfWisdom : WidgetBase
       VerticalAlignment = VerticalAlignment.Center,
       TextAlignment = TextAlignment.Center,
       TextWrapping = TextWrapping.Wrap,
-      Margin = new Thickness(8) // 增加边距
+      Margin = new Thickness(8) 
     };
 
     contentGrid.Children.Add(_quoteTextBlock);

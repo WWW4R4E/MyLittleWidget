@@ -8,34 +8,41 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:MyLittleWidget"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:MyLittleWidget.Models"
-    xmlns:views="using:MyLittleWidget.Views"
+    xmlns:views="using:MyLittleWidget.Views" xmlns:contracts="using:MyLittleWidget.Contracts"
     mc:Ignorable="d">
     <Page.Resources>
         <converters:UnitToPixelConverter x:Key="UnitToPixelConverter" />
-        <DataTemplate x:Name="ImageOverlayTemplate" x:DataType="models:LittleWidget">
-            <Grid Width="180" Height="200">
-                <StackPanel>
+        <DataTemplate x:Name="WidgetOverlayTemplate" x:DataType="contracts:WidgetBase">
+            <Grid Width="180" Height="200" Margin="4">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
                     <TextBlock
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Text="{x:Bind Title}" />
+                        Margin="0,4"
+                        Text="{x:Bind Config.Name }" />
                     <Viewbox
-                        Margin="8"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
+                        Grid.Row="1"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
                         Stretch="Uniform"
                         StretchDirection="Both">
                         <ContentPresenter
+                            IsHitTestVisible="False"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Content="{x:Bind widget}" />
+                            VerticalContentAlignment="Center"
+                            Content="{x:Bind}" />
                     </Viewbox>
-                </StackPanel>
+                </Grid>
             </Grid>
         </DataTemplate>
-
         <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+        
+
     </Page.Resources>
 
 
@@ -79,9 +86,10 @@
                 CanReorderItems="True"
                 DragItemsStarting="GridView_DragItemsStarting"
                 SelectedItem="{x:Bind viewModel.SelectedWidget}"
-                ItemTemplate="{StaticResource ImageOverlayTemplate}"
-                ItemsSource="{x:Bind viewModel.littleWidgets}"
-                SelectionMode="Extended" />
+                ItemTemplate="{StaticResource WidgetOverlayTemplate}"
+                ItemsSource="{x:Bind viewModel.Widgets}"
+                SelectionMode="Extended" >
+            </GridView>
         </StackPanel>
 
         <Grid Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" >
@@ -175,7 +183,7 @@
                             <TextBlock Text="组件名字:" 
                                VerticalAlignment="Center" 
                                Width="120" />
-                            <TextBlock Text="{x:Bind viewModel.SelectedWidget.Title, Mode=OneWay}"
+                            <TextBlock Text="{x:Bind viewModel.SelectedWidget, Mode=OneWay}"
                                        MinWidth="400" 
                                        Padding="4,0" />
                         </StackPanel>
@@ -193,7 +201,7 @@
                                VerticalAlignment="Top" 
                                Width="120" />
                             <TextBlock 
-                                Text="{x:Bind viewModel.SelectedWidget.widget.Config.Name, Mode=OneWay}"
+                                Text="{x:Bind viewModel.SelectedWidget.Config.Name, Mode=OneWay}"
                                TextWrapping="Wrap" 
                                Height="60" 
                                MinWidth="160" />
@@ -203,7 +211,7 @@
                                VerticalAlignment="Center" 
                                Width="120" />
                             <TextBlock 
-                                Text="{x:Bind viewModel.SelectedWidget.widget.Config.Name, Mode=OneWay}"
+                                Text="{x:Bind viewModel.SelectedWidget.Config.Name, Mode=OneWay}"
                                MinWidth="160" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
@@ -213,7 +221,7 @@
                             <TextBlock 
                                Foreground="#666" 
                                TextWrapping="Wrap" 
-                               Text="{x:Bind viewModel.SelectedWidget.widget.Config.Name, Mode=OneWay}"
+                               Text="{x:Bind viewModel.SelectedWidget.Config.Name, Mode=OneWay}"
                                Height="40" 
                                MinWidth="160"
                                Padding="4"/>

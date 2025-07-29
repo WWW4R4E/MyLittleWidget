@@ -7,12 +7,12 @@ namespace MyLittleWidget.Contracts.AppShortcut;
 
 public class AppShortcut : WidgetBase
 {
-  public AppShortcut(WidgetConfig config, IApplicationSettings settings) : base(config, settings)
+  public AppShortcut(WidgetConfig config, IApplicationSettings settings, IWidgetToolService widgetTool) : base(config, settings, widgetTool)
   {
-
+    var appShortcutContent = new AppShortcutContent(config, widgetTool);
     if (Content is Border basBorder)
     {
-      Content = new AppShortcutContent();
+      basBorder.Child = appShortcutContent;
       Background = new SolidColorBrush(Colors.Transparent);
     }
 

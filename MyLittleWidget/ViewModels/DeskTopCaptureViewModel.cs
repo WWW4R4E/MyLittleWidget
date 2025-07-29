@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Graphics.Canvas;
 using MyLittleWidget.Contracts;
-using MyLittleWidget.Models;
 using MyLittleWidget.Utils;
 using MyLittleWidget.Contracts.AppShortcut;
 using MyLittleWidget.Services;
@@ -12,10 +11,10 @@ namespace MyLittleWidget.ViewModels
   internal partial class DeskTopCaptureViewModel : ObservableObject
   {
     // TODO 动态扫描加载小组件
-    internal List<LittleWidget> littleWidgets = new() {
-        new() { Title = "小组件1",widget = new OneLineOfWisdom(new WidgetConfig(),AppSettings.Instance)},
-        new() { Title = "小组件2",widget = new PomodoroClock(new WidgetConfig(),AppSettings.Instance, new WidgetToolService((nint)null))},
-        new() { Title = "小组件3",widget = new AppShortcut(new WidgetConfig(),AppSettings.Instance)},
+    internal List<WidgetBase> Widgets = new() {
+       new OneLineOfWisdom(new (),AppSettings.Instance),
+       new PomodoroClock(new (),AppSettings.Instance, new WidgetToolService((nint)null)),
+         new AppShortcut(new (),AppSettings.Instance,new WidgetToolService((nint)null)),
         };
 
     [ObservableProperty]
@@ -27,12 +26,13 @@ namespace MyLittleWidget.ViewModels
 
     // TODO: 完成和appsetting绑定
     [ObservableProperty] private int _selectedBackdropMaterial = 0;
+
     [ObservableProperty] private bool _isDarkTheme;
 
-    [ObservableProperty] private double _baseUnit =50;
+    [ObservableProperty] private double _baseUnit = 50;
 
     [ObservableProperty]
-    private LittleWidget _selectedWidget;
+    private WidgetBase _selectedWidget;
 
     public string PreviewButtonText => IsPreviewing ? "停止预览" : "开始预览";
     private readonly DispatcherTimer _previewTimer;

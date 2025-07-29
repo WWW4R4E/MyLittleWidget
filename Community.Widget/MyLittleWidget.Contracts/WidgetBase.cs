@@ -1,3 +1,5 @@
+
+
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -7,12 +9,14 @@ using Windows.Foundation;
 
 namespace MyLittleWidget.Contracts;
 
+using System.Runtime.CompilerServices;
+
+
 public partial class WidgetBase : ContentControl
 {
   protected IApplicationSettings AppSettings { get; }
-
-  private bool _isDragging;
-  private Point _pointerOffset;
+  //private bool _isDragging;
+  //private Point _pointerOffset;
   private Canvas _parentCanvas;
 
   #region Events and Handlers
@@ -70,7 +74,7 @@ public partial class WidgetBase : ContentControl
     {
       HorizontalAlignment = HorizontalAlignment.Stretch,
       VerticalAlignment = VerticalAlignment.Stretch,
-      CornerRadius = new CornerRadius(8)
+      CornerRadius = new CornerRadius(18)
     };
     Config = config ?? throw new ArgumentNullException(nameof(config));
     // 子类通过这个配置Config对象

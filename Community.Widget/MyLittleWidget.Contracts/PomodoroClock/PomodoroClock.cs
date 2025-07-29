@@ -99,7 +99,6 @@ public sealed partial class PomodoroClock : WidgetBase
       FontWeight = Microsoft.UI.Text.FontWeights.Bold,
       HorizontalAlignment = HorizontalAlignment.Center,
       FontSize = 48,
-      Foreground = new SolidColorBrush(Colors.White)
     };
     timeTextBlock.SetBinding(TextBlock.TextProperty, new Binding
     {

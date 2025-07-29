@@ -1,7 +1,6 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using MyLittleWidget.Contracts;
-using MyLittleWidget.Models;
 using MyLittleWidget.Services;
 using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
@@ -148,9 +147,9 @@ namespace MyLittleWidget.Views.Pages
 
     private void GridView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
     {
-      if (e.Items.FirstOrDefault() is LittleWidget draggedWidget)
+      if (e.Items.FirstOrDefault() is WidgetBase draggedWidget)
       {
-        _draggedElementType = draggedWidget.widget.GetType();
+        _draggedElementType = draggedWidget.GetType();
       }
     }
 
