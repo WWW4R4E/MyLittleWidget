@@ -9,9 +9,6 @@ namespace MyLittleWidget.Views
   {
     private SharedViewModel _viewModel = SharedViewModel.Instance;
     private ConfigurationService _configService;
-    private DeskTopCaptureViewModel _deskTopCaptureViewModel;
-    private MenuFlyout _contextMenuWidget;  // 用于点击 Widget 时的菜单
-    private MenuFlyout _contextMenuCanvas;  // 用于点击 Canvas 时的菜单
     private WidgetBase _rightClickedWidget;
     private Point _pointerOffset;
 

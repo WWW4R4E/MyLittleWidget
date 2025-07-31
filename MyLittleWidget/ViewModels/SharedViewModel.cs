@@ -7,10 +7,9 @@ public partial class SharedViewModel : ObservableObject
 {
   private static readonly SharedViewModel _instance = new();
   public static SharedViewModel Instance => _instance;
-
+  public SIZE Boundary;
   [ObservableProperty]
   private double _scale = 1.0;
-
   [ObservableProperty]
   private bool _isDragging;
 
@@ -48,13 +47,12 @@ public partial class SharedViewModel : ObservableObject
     if (ActiveWidget == null) return;
 
     var snappedPosition = CheckAndApplySnapping(newX, newY, ActiveWidget.ActualWidth, ActiveWidget.ActualHeight);
-
+    var finalPosition = ConstrainToBoundaries(snappedPosition, ActiveWidget.ActualWidth, ActiveWidget.ActualHeight);
     // 更新的是活动组件的位置属性
-    ActiveWidget.Config.PositionX = snappedPosition.X;
-    ActiveWidget.Config.PositionY = snappedPosition.Y;
-    ActiveWidget.Config.PositionX = snappedPosition.X;
-    ActiveWidget.Config.PositionY = snappedPosition.Y;
+    ActiveWidget.Config.PositionX = finalPosition.X;
+    ActiveWidget.Config.PositionY = finalPosition.Y;
   }
+
 
   // 从PreviewWindow开始处理计算
   public void UpdatePositionFromPreview(double previewX, double previewY)
@@ -88,6 +86,38 @@ public partial class SharedViewModel : ObservableObject
       if (Math.Abs(borderEdgesY[0] - guideY) < SnapThreshold) { finalY = guideY; break; }
       if (Math.Abs(borderEdgesY[2] - guideY) < SnapThreshold) { finalY = guideY - height; break; }
       if (Math.Abs(borderEdgesY[1] - guideY) < SnapThreshold) { finalY = guideY - height / 2; break; }
+    }
+
+    return new Point(finalX, finalY);
+  }
+
+  private Point ConstrainToBoundaries(Point position, double widgetWidth, double widgetHeight)
+  {
+    double finalX = position.X;
+    double finalY = position.Y;
+
+    // 检查左边界
+    if (finalX < 0)
+    {
+      finalX = 0;
+    }
+
+    // 检查右边界
+    if (finalX + widgetWidth > Boundary.Width)
+    {
+      finalX = Boundary.Width - widgetWidth;
+    }
+
+    // 检查上边界
+    if (finalY < 0)
+    {
+      finalY = 0;
+    }
+
+    // 检查下边界
+    if (finalY + widgetHeight > Boundary.Height)
+    {
+      finalY = Boundary.Height - widgetHeight;
     }
 
     return new Point(finalX, finalY);

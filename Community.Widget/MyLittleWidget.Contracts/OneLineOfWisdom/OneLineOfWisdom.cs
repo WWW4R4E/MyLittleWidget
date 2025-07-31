@@ -22,7 +22,6 @@ public sealed partial class OneLineOfWisdom : WidgetBase
     _httpClient = new HttpClient();
     var contentGrid = new Grid()
     {
-      Background =new SolidColorBrush(Colors.Transparent),
       HorizontalAlignment = HorizontalAlignment.Stretch,
       VerticalAlignment = VerticalAlignment.Stretch,
     };
@@ -39,9 +38,9 @@ public sealed partial class OneLineOfWisdom : WidgetBase
     };
 
     contentGrid.Children.Add(_quoteTextBlock);
-    if (Content is Border baseBord)
+    if (Content is Border baseBorder)
     {
-      baseBord.Child = contentGrid;
+      baseBorder.Child = contentGrid;
     }
 
     _ = LoadQuoteAsync();
@@ -58,15 +57,15 @@ public sealed partial class OneLineOfWisdom : WidgetBase
                 new GradientStop
                 {
                     Color = isDarkTheme ?
-                        Color.FromArgb(255, 40, 60, 100) :
-                        Color.FromArgb(255, 60, 80, 120),
+                        Color.FromArgb(128, 40, 60, 100) :
+                        Color.FromArgb(128, 60, 80, 120),
                     Offset = 0.0
                 },
                 new GradientStop
                 {
                     Color = isDarkTheme ?
-                        Color.FromArgb(255, 70, 100, 160) :
-                        Color.FromArgb(255, 90, 120, 180),
+                        Color.FromArgb(128, 70, 100, 160) :
+                        Color.FromArgb(128, 90, 120, 180),
                     Offset = 1.0
                 }
             }
@@ -84,10 +83,9 @@ public sealed partial class OneLineOfWisdom : WidgetBase
 
   protected override void UpdateTheme(bool isDark)
   {
-    if (Content is Grid grid)
+    if (Content is Border baseBordr)
     {
-      grid.Background = CreateBackgroundBrush(isDark);
-      _quoteTextBlock.Foreground = new SolidColorBrush(isDark ? Colors.White : Colors.Black);
+      baseBordr.Background = CreateBackgroundBrush(isDark);
     }
   }
 
@@ -130,7 +128,7 @@ public sealed partial class OneLineOfWisdom : WidgetBase
     {
       Text = $"\n\n— {author}",
       FontSize = 16,
-      Foreground = new SolidColorBrush(AppSettings.IsDarkTheme ? Colors.LightGray : Colors.Gray)
+      Foreground = new SolidColorBrush(AppSettings.IsDarkTheme ? Colors.LightBlue : Colors.Gray)
     };
 
     _quoteTextBlock.Inlines.Clear();

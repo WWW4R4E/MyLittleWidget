@@ -1,3 +1,4 @@
+using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml.Input;
 namespace MyLittleWidget.Views
 {

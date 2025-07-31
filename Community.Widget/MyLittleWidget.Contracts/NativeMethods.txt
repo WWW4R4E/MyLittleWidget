@@ -1,7 +1,14 @@
 ﻿﻿CoCreateInstance
 CoWaitForMultipleObjects
 CreateEvent
+
+
 CreateRectRgn
+CreateRoundRectRgn
+SetWindowRgn
+CombineRgn
+
+
 CreateSolidBrush
 DefSubclassProc
 DeleteObject
@@ -12,8 +19,7 @@ DwmGetWindowAttribute
 DwmSetWindowAttribute
 EnumWindows
 FillRect
-SetWindowRgn
-CombineRgn
+
 FileOpenDialog
 FileSaveDialog
 FindWindowExW

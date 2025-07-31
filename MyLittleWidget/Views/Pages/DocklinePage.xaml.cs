@@ -68,7 +68,7 @@ namespace MyLittleWidget.Views.Pages
           workArea.Width,
           workArea.Height
       ));
-      if (Properties.Settings.Default.IsPreview)
+      if (Properties.Settings.Default.IsPreview )
       {
         HWND progman = PInvoke.FindWindow("Progman", null);
         HWND workerw = PInvoke.FindWindowEx(progman, HWND.Null, "WorkerW", null);
@@ -84,19 +84,24 @@ namespace MyLittleWidget.Views.Pages
           }
         }
         PInvoke.SetParent(myHwnd, workerw);
-
+        ViewModel.Boundary = new SIZE((int)(workArea.Width / dpiScale), (int)(workArea.Height / dpiScale));
         childWindow.Activate();
+
       }
       else
       {
         HWND progman = PInvoke.FindWindow("Progman", null);
         HWND workerw = PInvoke.FindWindowEx(progman, HWND.Null, "SHELLDLL_DefView", null);
+
         PInvoke.SetParent(myHwnd, workerw);
         childWindow.Activate();
         UpdateWindowShape();
+
       }
     }
     // 添加和删除Widget
+
+
     private void OnWidgetsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
       if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)

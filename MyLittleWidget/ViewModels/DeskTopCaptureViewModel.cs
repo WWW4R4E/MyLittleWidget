@@ -5,17 +5,16 @@ using MyLittleWidget.Contracts;
 using MyLittleWidget.Utils;
 using MyLittleWidget.Contracts.AppShortcut;
 using MyLittleWidget.Services;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 
 namespace MyLittleWidget.ViewModels
 {
+
   internal partial class DeskTopCaptureViewModel : ObservableObject
   {
     // TODO 动态扫描加载小组件
-    internal List<WidgetBase> Widgets = new() {
-       new OneLineOfWisdom(new (),AppSettings.Instance),
-       new PomodoroClock(new (),AppSettings.Instance, new WidgetToolService((nint)null)),
-         new AppShortcut(new (),AppSettings.Instance,new WidgetToolService((nint)null)),
-        };
+    [ObservableProperty]
+    private ObservableCollection<WidgetBase> _widgets;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PreviewButtonText))]
@@ -24,6 +23,7 @@ namespace MyLittleWidget.ViewModels
     [ObservableProperty]
     internal CanvasBitmap? _latestBitmap;
 
+    internal CanvasControl DesktopCanvas;
     // TODO: 完成和appsetting绑定
     [ObservableProperty] private int _selectedBackdropMaterial = 0;
 
@@ -33,18 +33,24 @@ namespace MyLittleWidget.ViewModels
 
     [ObservableProperty]
     private WidgetBase _selectedWidget;
-
     public string PreviewButtonText => IsPreviewing ? "停止预览" : "开始预览";
     private readonly DispatcherTimer _previewTimer;
 
     public event Action? PreviewFrameReady;
-
+    
     internal DispatcherTimer timer = new();
     internal float scale;
     internal float Dpiscale = GetDesktop.GetSystemDpiScale();
 
     public DeskTopCaptureViewModel()
     {
+      _widgets = new ObservableCollection<WidgetBase>()
+      {
+         new OneLineOfWisdom(new (),AppSettings.Instance),
+         new PomodoroClock(new (),AppSettings.Instance, new WidgetToolService((nint)null)),
+         new AppShortcut(new (),AppSettings.Instance,new WidgetToolService((nint)null)),
+      };
+
       _previewTimer = new DispatcherTimer
       {
         Interval = TimeSpan.FromMilliseconds(30)
@@ -78,7 +84,7 @@ namespace MyLittleWidget.ViewModels
         _previewTimer.Stop();
         LatestBitmap?.Dispose();
         LatestBitmap = null;
-        CanvasDevice.GetSharedDevice().Trim();
+        DesktopCanvas.Device.Trim();
         PreviewFrameReady?.Invoke();
       }
     }
@@ -95,7 +101,7 @@ namespace MyLittleWidget.ViewModels
       if (softwareBitmap != null)
       {
         LatestBitmap?.Dispose();
-        LatestBitmap = CanvasBitmap.CreateFromSoftwareBitmap(CanvasDevice.GetSharedDevice(), softwareBitmap);
+        LatestBitmap = CanvasBitmap.CreateFromSoftwareBitmap(DesktopCanvas, softwareBitmap);
         PreviewFrameReady?.Invoke();
       }
     }

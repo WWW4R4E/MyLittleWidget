@@ -41,7 +41,7 @@
             </Grid>
         </DataTemplate>
         <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
-        
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
     </Page.Resources>
 
@@ -85,7 +85,7 @@
                 CanDragItems="True"
                 CanReorderItems="True"
                 DragItemsStarting="GridView_DragItemsStarting"
-                SelectedItem="{x:Bind viewModel.SelectedWidget}"
+                SelectedItem="{x:Bind viewModel.SelectedWidget, Mode=TwoWay}"
                 ItemTemplate="{StaticResource WidgetOverlayTemplate}"
                 ItemsSource="{x:Bind viewModel.Widgets}"
                 SelectionMode="Extended" >
@@ -114,8 +114,8 @@
                                Width="120" />
                             <ComboBox SelectedIndex="{x:Bind viewModel.SelectedBackdropMaterial, Mode=TwoWay}" MinWidth="160">
                                 <ComboBoxItem Content="Mica"/>
-                                <ComboBoxItem Content="薄亚克力 (Thin Acrylic)"/>
-                                <ComboBoxItem Content="亚克力 (Acrylic)"/>
+                                <ComboBoxItem Content="Thin Acrylic"/>
+                                <ComboBoxItem Content="Acrylic"/>
                                 <ComboBoxItem Content="Mica Alt"/>
                             </ComboBox>
                         </StackPanel>
@@ -164,7 +164,7 @@
                         </Grid>
                     </Viewbox>
                     <!-- 保存按钮 -->
-                <Button Grid.Column="1" Content="保存设置" 
+                    <Button Grid.Column="1" Content="保存设置" 
                         HorizontalAlignment="Right" 
                         VerticalAlignment="Bottom"
                         Click="SaveButton_OnClick"
@@ -183,7 +183,7 @@
                             <TextBlock Text="组件名字:" 
                                VerticalAlignment="Center" 
                                Width="120" />
-                            <TextBlock Text="{x:Bind viewModel.SelectedWidget, Mode=OneWay}"
+                            <TextBlock Text="{x:Bind viewModel.SelectedWidget.Config.Name, Mode=OneWay}"
                                        MinWidth="400" 
                                        Padding="4,0" />
                         </StackPanel>
@@ -195,16 +195,6 @@
                               SelectedIndex="0" 
                               MinWidth="160"
                             />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,8,0,8">
-                            <TextBlock Text="简介:" 
-                               VerticalAlignment="Top" 
-                               Width="120" />
-                            <TextBlock 
-                                Text="{x:Bind viewModel.SelectedWidget.Config.Name, Mode=OneWay}"
-                               TextWrapping="Wrap" 
-                               Height="60" 
-                               MinWidth="160" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,8,0,8">
                             <TextBlock Text="开发者:" 
@@ -226,6 +216,18 @@
                                MinWidth="160"
                                Padding="4"/>
                         </StackPanel>
+                        <Button Visibility="{x:Bind viewModel.SelectedWidget.Config.HasExecuteMethod, Mode=OneWay , Converter={StaticResource BoolToVisibilityConverter}}" Content="详细配置"  Click="Button_Click"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,8">
+                            <TextBlock Text="简介:" 
+                               VerticalAlignment="Top" 
+                               Width="120" />
+                            <TextBlock 
+                                Text="{x:Bind viewModel.SelectedWidget.Config.Name, Mode=OneWay}"
+                               TextWrapping="Wrap" 
+                               Height="60" 
+                               MinWidth="160" />
+                        </StackPanel>
+
                     </StackPanel>
                 </StackPanel>
             </Border>

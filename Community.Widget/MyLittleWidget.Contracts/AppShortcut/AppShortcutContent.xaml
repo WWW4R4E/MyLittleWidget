@@ -7,16 +7,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    AllowDrop="True"
-    Drop="AppShortcutContent_Drop"
-    DragOver="AppShortcutContent_DragOver"
     PointerReleased="AppShortcutContent_PointerReleased">
-    <Grid Background="Transparent"       HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch">
-        <Image x:Name="AppIconImage"
-                   Stretch="Uniform"
-                   Source="{x:Bind AppData.AppDisplayIcon}"
-          HorizontalAlignment="Stretch"
-                   VerticalAlignment="Stretch" />
+    <Grid Background="Transparent" >
+        <Image x:Name="AppIconImage" Stretch="Uniform" Source="{x:Bind AppData.AppDisplayIcon}"/>
     </Grid>
 </UserControl>

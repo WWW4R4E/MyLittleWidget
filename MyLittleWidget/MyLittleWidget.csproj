@@ -22,9 +22,9 @@
         <None Remove="Assets\SplashScreen.scale-400.png" />
         <None Remove="BlankPage.xaml" />
         <None Remove="DeskTopCapturePage.xaml" />
+        <None Remove="ViewModels\AppShortcutSettingPage.xaml" />
         <None Remove="Views\ChildenWindow.xaml" />
         <None Remove="Views\Pages\DocklinePage.xaml" />
-        <None Remove="Views\Pages\SettingPage.xaml" />
     </ItemGroup> 
     
     <ItemGroup>
@@ -35,9 +35,6 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
-        <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.3.2" />
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4654" />
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
         <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.7" />
     </ItemGroup>
     <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
@@ -60,11 +57,7 @@
         <None Update="GetItemSpacing.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Properties\Settings.settings">
-          <Generator>SettingsSingleFileGenerator</Generator>
-          <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-        </None>
-        <Page Update="Views\Pages\SettingPage.xaml">
+        <Page Update="ViewModels\AppShortcutSettingPage.xaml">
           <Generator>MSBuild:Compile</Generator>
         </Page>
         <Page Update="Views\Pages\PreviewPage.xaml">
@@ -84,14 +77,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Community.Widget\MyLittleWidget.Contracts\MyLittleWidget.Contracts.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Properties\Settings.Designer.cs">
-        <DesignTimeSharedInput>True</DesignTimeSharedInput>
-        <AutoGen>True</AutoGen>
-        <DependentUpon>Settings.settings</DependentUpon>
-      </Compile>
     </ItemGroup>
 
     <!-- Publish Properties -->

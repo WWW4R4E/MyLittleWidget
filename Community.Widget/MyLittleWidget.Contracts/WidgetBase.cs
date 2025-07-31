@@ -10,7 +10,7 @@ using Windows.Foundation;
 namespace MyLittleWidget.Contracts;
 
 using System.Runtime.CompilerServices;
-
+using Windows.UI;
 
 public partial class WidgetBase : ContentControl
 {
@@ -18,6 +18,7 @@ public partial class WidgetBase : ContentControl
   //private bool _isDragging;
   //private Point _pointerOffset;
   private Canvas _parentCanvas;
+  internal IWidgetToolService toolService;
 
   #region Events and Handlers
 
@@ -47,7 +48,6 @@ public partial class WidgetBase : ContentControl
     {
       HorizontalAlignment = HorizontalAlignment.Stretch,
       VerticalAlignment = VerticalAlignment.Stretch,
-      CornerRadius = new CornerRadius(8)
     };
     Config = config ?? throw new ArgumentNullException(nameof(config));
     // 子类通过这个配置Config对象
@@ -65,8 +65,9 @@ public partial class WidgetBase : ContentControl
     SetupContextMenu();
   }
 
-  public WidgetBase(WidgetConfig config, IApplicationSettings settings, IWidgetToolService toolService)
+  public WidgetBase(WidgetConfig config, IApplicationSettings settings, IWidgetToolService widgettoolService)
   {
+    toolService = widgettoolService;
     DefaultStyleKey = typeof(WidgetBase);
     AppSettings = settings ?? throw new ArgumentNullException(nameof(settings));
     // 默认样式
@@ -74,7 +75,6 @@ public partial class WidgetBase : ContentControl
     {
       HorizontalAlignment = HorizontalAlignment.Stretch,
       VerticalAlignment = VerticalAlignment.Stretch,
-      CornerRadius = new CornerRadius(18)
     };
     Config = config ?? throw new ArgumentNullException(nameof(config));
     // 子类通过这个配置Config对象
@@ -210,10 +210,6 @@ public partial class WidgetBase : ContentControl
   protected virtual void SetupContextMenu()
   {
   }
-
-
-
-
 
 
   private void OnConfigPropertyChanged(object? sender, PropertyChangedEventArgs e)

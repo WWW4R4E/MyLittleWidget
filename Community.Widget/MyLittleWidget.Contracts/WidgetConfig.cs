@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 using System.Text.Json;
+using Windows.ApplicationModel.VoiceCommands;
 
 namespace MyLittleWidget.Contracts
 {
@@ -37,6 +38,37 @@ namespace MyLittleWidget.Contracts
       {
         (2, 2)
       };
+    /// <summary>
+    /// 保存原始 JSON 数据，延迟解析。
+    /// </summary>
+    [ObservableProperty]
+    private JsonElement? _customSettings;
+
+
+    // 存储单个执行方法
+    private System.Action _executeMethod;
+
+    /// <summary>
+    /// 设置小部件的执行方法
+    /// </summary>
+    /// <param name="method">要执行的方法</param>
+    public void SetExecuteMethod(System.Action method)
+    {
+      _executeMethod = method;
+    }
+
+    /// <summary>
+    /// 执行存储的方法
+    /// </summary>
+    public void ExecuteMethod()
+    {
+      _executeMethod?.Invoke();
+    }
+
+    /// <summary>
+    /// 指示是否设置了执行方法
+    /// </summary>
+    public bool HasExecuteMethod => _executeMethod != null;
 
     [ObservableProperty]
     private double _positionX;
@@ -46,11 +78,5 @@ namespace MyLittleWidget.Contracts
 
     [ObservableProperty]
     private string _widgetType;
-
-
-    /// <summary>
-    /// 保存原始 JSON 数据，延迟解析。
-    /// </summary>
-    public JsonElement? CustomSettings { get; set; }
   }
 }

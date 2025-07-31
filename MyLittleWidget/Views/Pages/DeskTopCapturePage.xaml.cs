@@ -1,8 +1,6 @@
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using MyLittleWidget.Contracts;
 using MyLittleWidget.Services;
-using MyLittleWidget.Utils;
 using MyLittleWidget.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 
@@ -10,13 +8,12 @@ namespace MyLittleWidget.Views.Pages
 {
   public sealed partial class DeskTopCapturePage : Page
   {
-    internal DeskTopCaptureViewModel viewModel = new();
-    private static Type _draggedElementType;
+    internal DeskTopCaptureViewModel viewModel =new();
+    private WidgetBase _draggingWidgetInstance;
     public DeskTopCapturePage()
     {
       this.InitializeComponent();
       viewModel.timer.Interval = TimeSpan.FromMilliseconds(30);
-      viewModel.timer.Tick += async (s, e) => await RefreshCaptureAsync();
       Loaded += DeskTopCapturePage_Loaded;
     }
 
@@ -24,22 +21,9 @@ namespace MyLittleWidget.Views.Pages
     {
       viewModel.PreviewFrameReady += OnPreviewFrameReady;
       LoadAndApplyWindowSize();
-      ((App)App.Current).MainWindow.VisibilityChanged +=viewModel.ChildenWindow_VisibilityChanged;
+      ((App)App.Current).MainWindow.VisibilityChanged += viewModel.ChildenWindow_VisibilityChanged;
+      viewModel.DesktopCanvas = DesktopCanvas;
     }
-
-    private async Task RefreshCaptureAsync()
-    {
-      using (var softwareBitmap = GetDesktop.CaptureWindow())
-      {
-        if (softwareBitmap != null)
-        {
-          viewModel.LatestBitmap?.Dispose();
-          viewModel.LatestBitmap = CanvasBitmap.CreateFromSoftwareBitmap(CanvasDevice.GetSharedDevice(), softwareBitmap);
-          DesktopCanvas.Invalidate();
-        }
-      }
-    }
-
 
     private void AdjustWindowSizeToContent()
     {
@@ -48,7 +32,7 @@ namespace MyLittleWidget.Views.Pages
       double scale = 5.0 / 7.0;
       int width = (int)(displayArea.WorkArea.Width * scale);
       int height = (int)(displayArea.WorkArea.Height * scale);
-      
+
 
       int centerX = displayArea.WorkArea.Width / 2 - width / 2 + displayArea.WorkArea.X;
       int centerY = displayArea.WorkArea.Height / 2 - height / 2 + displayArea.WorkArea.Y;
@@ -120,18 +104,15 @@ namespace MyLittleWidget.Views.Pages
 
       SharedViewModel.Instance.WidgetList.Add(widget);
     }
-
     private void InteractiveCanvas_Drop(object sender, DragEventArgs e)
     {
-
-      if (_draggedElementType != null)
+      if (_draggingWidgetInstance != null)
       {
-        
         try
         {
-          //TODO 改成单例
+
           var WidgetFactory = new WidgetFactoryService(new AppSettings(), new WidgetToolService(WindowNative.GetWindowHandle((App.Current as App).WidgetWindow)));
-          var newWidget = WidgetFactory.CreateWidgetFromType(new WidgetConfig(), _draggedElementType);
+          var newWidget = WidgetFactory.CreateWidgetFromType(_draggingWidgetInstance.Config, _draggingWidgetInstance.GetType());
           if (newWidget != null && sender is FrameworkElement canvas)
           {
             Point dropPosition = e.GetPosition(canvas);
@@ -140,7 +121,7 @@ namespace MyLittleWidget.Views.Pages
         }
         finally
         {
-          _draggedElementType = null;
+          _draggingWidgetInstance = null;
         }
       }
     }
@@ -149,9 +130,10 @@ namespace MyLittleWidget.Views.Pages
     {
       if (e.Items.FirstOrDefault() is WidgetBase draggedWidget)
       {
-        _draggedElementType = draggedWidget.GetType();
+        _draggingWidgetInstance = draggedWidget;
       }
     }
+
 
     private void InteractiveCanvas_DragOver(object sender, DragEventArgs e)
     {
@@ -160,7 +142,15 @@ namespace MyLittleWidget.Views.Pages
 
     private void SaveButton_OnClick(object sender, RoutedEventArgs e)
     {
-      // TODO : 保存当前配置到AppSettings
+      // TODO : 瀹屾垚淇濆瓨閫昏緫
+    }
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+      if (viewModel.SelectedWidget?.Config != null)
+      {
+        viewModel.SelectedWidget.Config.ExecuteMethod();
+      }
     }
   }
 }
